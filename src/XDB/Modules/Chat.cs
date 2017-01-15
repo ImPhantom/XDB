@@ -12,19 +12,6 @@ namespace XDB.Modules
 {
     public class Chat : ModuleBase
     {
-        [Command("report")]
-        [Remarks("Sends the report message in active channel.")]
-        public async Task Report()
-        {
-            var reportMessage = @"If you believe that a player should be banned, gather
-sufficient evidence and report them on the forums here:
-
-  **>>>** http://xenorp.com/forumdisplay.php?fid=8 **<<<**
-
-__The player reports are checked everyday and handled accordingly.__";
-            await ReplyAsync(reportMessage);
-        }
-
         [Command("info")]
         [Remarks("Displays the bots information and statistics.")]
         public async Task Info()
