@@ -31,7 +31,8 @@ __The player reports are checked everyday and handled accordingly.__";
             var application = await Context.Client.GetApplicationInfoAsync();
             var auth = new EmbedAuthorBuilder()
             {
-                Name = "__Xeno Discord Bot Information__"
+                Name = Context.Client.CurrentUser.Username,
+                IconUrl = Context.Client.CurrentUser.AvatarUrl
             };
             var embed = new EmbedBuilder()
             {
@@ -41,19 +42,25 @@ __The player reports are checked everyday and handled accordingly.__";
             embed.AddField(x =>
             {
                 x.Name = "Author:";
-                x.Value = application.Owner.Mention + " (**ID:** `" + application.Owner.Id + "`)";
+                x.Value = $"{application.Owner.Mention} (**ID:** `{application.Owner.Id}`)";
                 x.IsInline = false;
             });
             embed.AddField(x =>
             {
                 x.Name = "Library:";
-                x.Value = "Discord.Net (`" + DiscordConfig.Version + "`)";
+                x.Value = $"Discord.Net (`{DiscordConfig.Version}`)";
                 x.IsInline = false;
             });
             embed.AddField(x =>
             {
                 x.Name = "Runtime:";
-                x.Value = RuntimeInformation.FrameworkDescription + RuntimeInformation.OSArchitecture;
+                x.Value = $"{RuntimeInformation.FrameworkDescription} ({RuntimeInformation.OSArchitecture})";
+                x.IsInline = false;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "Host OS:";
+                x.Value = RuntimeInformation.OSDescription;
                 x.IsInline = false;
             });
             embed.AddField(x =>
@@ -65,25 +72,13 @@ __The player reports are checked everyday and handled accordingly.__";
             embed.AddField(x =>
             {
                 x.Name = "Heap Size:";
-                x.Value = GetHeapSize() + "MB";
+                x.Value = $"`{GetHeapSize()}MB`";
                 x.IsInline = false;
             });
             embed.AddField(x =>
             {
-                x.Name = "Guilds:";
-                x.Value = $"{(Context.Client as DiscordSocketClient).Guilds.Count}";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Channels:";
-                x.Value = $"{(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Users:";
-                x.Value = $"{(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}";
+                x.Name = "Guilds/Channels/Users:";
+                x.Value = $"{(Context.Client as DiscordSocketClient).Guilds.Count} / {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)} / {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}";
                 x.IsInline = true;
             });
 
