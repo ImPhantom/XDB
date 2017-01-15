@@ -6,7 +6,7 @@ you to have 100+ users in the discord before it can stay, I decided I would try 
 other moderation bots i've tested.
 
 ###Releases?
-As of now XDB is being developed for private use. When I have a somewhat polished version I will begin uploading releases to GitHub/My Site.
+All minor builds will be released on my site. But all Major builds will be posted here under releases, and also on my site under Projects>XDB>Releases
 
 ###What API am I using? 
 [Discord.Net](https://github.com/RogueException/Discord.Net) (rc546)
