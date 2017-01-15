@@ -24,7 +24,7 @@ namespace XDB
 
             client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-                LogLevel = LogSeverity.Info
+                LogLevel = LogSeverity.Verbose
             });
 
             client.Log += (l)
@@ -36,11 +36,8 @@ namespace XDB
 
             Events.Events.initEvents();
 
-            var map = new DependencyMap();
-            map.Add(client);
-
             cmds = new Handler();
-            await cmds.Install(map);
+            await cmds.Install(client);
 
             await Task.Delay(-1);
         }

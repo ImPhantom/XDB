@@ -8,35 +8,38 @@ namespace XDB
 {
     public class Handler
     {
-        private CommandService commands;
-        private DiscordSocketClient client;
-        private IDependencyMap map;
+        private DiscordSocketClient _client;
+        private CommandService _cmds;
 
-        public async Task Install(IDependencyMap _map)
+        public async Task Install(DiscordSocketClient c)
         {
-            client = _map.Get<DiscordSocketClient>();
-            commands = new CommandService();
-            _map.Add(commands);
-            map = _map;
+            _client = c;
+            _cmds = new CommandService();                          
 
-            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _cmds.AddModulesAsync(Assembly.GetEntryAssembly());
 
-            client.MessageReceived += HandleCommand;
+            _client.MessageReceived += HandleCommand;
         }
 
-        public async Task HandleCommand(SocketMessage parameterMessage)
+        private async Task HandleCommand(SocketMessage s)
         {
-            var message = parameterMessage as SocketUserMessage;
-            if (message == null) return;
+            var msg = s as SocketUserMessage;
+            if (msg == null)
+                return;
+
+            var map = new DependencyMap();
+            map.Add(_cmds);
+            var context = new CommandContext(_client, msg);
 
             int argPos = 0;
-            if (!(message.HasMentionPrefix(client.CurrentUser, ref argPos) || message.HasStringPrefix(Config.Load().Prefix, ref argPos))) return;
+            if (msg.HasStringPrefix(Config.Load().Prefix, ref argPos) ||
+                msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
+            {
+                var result = await _cmds.ExecuteAsync(context, argPos, map);
 
-            var context = new CommandContext(client, message);
-            var result = await commands.ExecuteAsync(context, argPos, map);
-
-            if (!result.IsSuccess)
-                await message.Channel.SendMessageAsync($"**Error:** {result.ErrorReason}");
+                if (!result.IsSuccess)
+                    await context.Channel.SendMessageAsync(result.ToString());
+            }
         }
     }
 }
