@@ -22,7 +22,7 @@ namespace XDB.Modules
             var builder = new EmbedBuilder()
             {
                 Color = new Color(25, 212, 84),
-                Description = "These are the commands you have access to."
+                Description = "These are the commands and their modules."
             };
 
             foreach (var module in serv.Modules)

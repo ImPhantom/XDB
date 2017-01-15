@@ -14,6 +14,8 @@ namespace XDB.Common.Types
         public ulong[] Owners { get; set; }
         public string Token { get; set; }
         public ulong LogChannel { get; set; }
+        public bool Welcome { get; set; }
+        public string WelcomeMessage { get; set; }
 
         public Config()
         {
