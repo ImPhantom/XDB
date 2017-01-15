@@ -13,7 +13,7 @@ As of now XDB is being developed for private use. When I have a somewhat polishe
 
 ###To Do List
 
-- Proper JSON Config
+- ~~Proper JSON Config~~
 - Word Filtering
 - Steam Integration (query)
 - Ban/Kick Logging (w/ reason)
