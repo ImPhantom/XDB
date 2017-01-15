@@ -16,5 +16,5 @@ As of now XDB is being developed for private use. When I have a somewhat polishe
 - ~~Proper JSON Config~~
 - Word Filtering
 - Steam Integration (query)
-- Ban/Kick Logging (w/ reason)
+- ~~Ban/Kick Logging (w/ reason)~~
 - Guild Member Rankings
