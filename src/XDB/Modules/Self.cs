@@ -3,6 +3,8 @@ using Discord.Commands;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using XDB.Common.Attributes;
+using XDB.Common.Enums;
 
 namespace XDB.Modules
 {
@@ -16,6 +18,35 @@ namespace XDB.Modules
         {
             await Program.client.SetGameAsync(str);
             await ReplyAsync(":grey_exclamation: You set the bots status to: `" + str + "`");
+        }
+
+        [Command("bpres")]
+        [Alias("pres")]
+        [Remarks("Sets the bots presence.")]
+        [RequireOwner]
+        public async Task SetStatus([Remainder] string str)
+        {
+            var client = Program.client;
+            if(str == "online")
+            {
+                await client.SetStatusAsync(UserStatus.Online);
+                await ReplyAsync($":grey_exclamation: You set the bots presence to `{str}`");
+            } else if(str == "idle")
+            {
+                await client.SetStatusAsync(UserStatus.Idle);
+                await ReplyAsync($":grey_exclamation: You set the bots presence to `{str}`");
+            } else if(str == "dnd" || str == "do not disturb")
+            {
+                await client.SetStatusAsync(UserStatus.DoNotDisturb);
+                await ReplyAsync($":grey_exclamation: You set the bots presence to `{str}`");
+            } else if(str == "invis" || str == "invisible")
+            {
+                await client.SetStatusAsync(UserStatus.Invisible);
+                await ReplyAsync($":grey_exclamation: You set the bots presence to `{str}`");
+            } else
+            {
+                await ReplyAsync(":anger: **Invalid presence** \n(`online`, `idle`, `do not disturb`, `invisible`)");
+            }
         }
 
         [Command("bavatar")]
@@ -41,25 +72,12 @@ namespace XDB.Modules
         [Command("bnick")]
         [Alias("nick")]
         [Remarks("Sets the bots nickname.")]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [Permissions(AccessLevel.ServerAdmin)]
         public async Task SetNick([Remainder] string str)
         {
             var bot = await Context.Guild.GetCurrentUserAsync();
             await bot.ModifyAsync(x => x.Nickname = str);
             await ReplyAsync(":grey_exclamation: You set the bots nickname to: `" + str + "`");
-        }
-
-        [Command("kick")]
-        [Remarks("Kicks user from guild.")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        public async Task Kick(IGuildUser user, [Remainder] string str)
-        {
-            try
-            {
-                await Context.Channel.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention} from {Context.Guild.Name} (Reason: `{str}`)");
-                await user.KickAsync().ConfigureAwait(false);
-            }
-            catch { }
         }
     }
 }
