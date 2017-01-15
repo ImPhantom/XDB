@@ -13,7 +13,7 @@ namespace XDB.Modules
         [Command("bstat")]
         [Alias("status")]
         [Remarks("Sets the bots status.")]
-        [RequireOwner]
+        [Permissions(AccessLevel.BotOwner)]
         public async Task SetGame([Remainder] string str)
         {
             await Program.client.SetGameAsync(str);
@@ -23,7 +23,7 @@ namespace XDB.Modules
         [Command("bpres")]
         [Alias("pres")]
         [Remarks("Sets the bots presence.")]
-        [RequireOwner]
+        [Permissions(AccessLevel.BotOwner)]
         public async Task SetStatus([Remainder] string str)
         {
             var client = Program.client;
@@ -52,7 +52,7 @@ namespace XDB.Modules
         [Command("bavatar")]
         [Alias("avatar")]
         [Remarks("Sets the bots avatar.")]
-        [RequireOwner]
+        [Permissions(AccessLevel.BotOwner)]
         public async Task SetAvatar([Remainder] string str)
         {
             using (var http = new HttpClient())

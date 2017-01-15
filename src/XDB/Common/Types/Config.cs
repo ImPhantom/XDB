@@ -13,12 +13,14 @@ namespace XDB.Common.Types
         public string Prefix { get; set; }
         public ulong[] Owners { get; set; }
         public string Token { get; set; }
+        public ulong LogChannel { get; set; }
 
         public Config()
         {
             Prefix = "~";
             Owners = new ulong[] { 0 };
             Token = "";
+            LogChannel = 0;
         }
 
         public void Save(string dir = "cfg/config.json")
