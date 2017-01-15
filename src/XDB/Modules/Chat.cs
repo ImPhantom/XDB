@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using XDB.Common.Types;
 
 namespace XDB.Modules
 {
@@ -43,6 +44,12 @@ __The player reports are checked everyday and handled accordingly.__";
             {
                 x.Name = "Author:";
                 x.Value = $"{application.Owner.Mention} (**ID:** `{application.Owner.Id}`)";
+                x.IsInline = false;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "Version:";
+                x.Value = $"`XDB v{Strings.ReleaseVersion}`";
                 x.IsInline = false;
             });
             embed.AddField(x =>

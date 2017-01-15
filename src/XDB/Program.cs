@@ -14,21 +14,11 @@ namespace XDB
 
         public static DiscordSocketClient client;
         private Handler cmds;
-        private string header = @"          
-        -----------------------------------------------------------------------------------------------------   
-                                             __   _______  ____  
-                                             \ \ / /  __ \|  _ \ 
-                                              \ V /| |  | | |_) |
-                                               > < | |  | |  _ < 
-                                              / ^ \| |__| | |_) |
-                                             /_/ \_\_____/|____/ 
-        -----------------------------------------------------------------------------------------------------
-                                                         ";
 
         public async Task Run()
         {
-            Console.WriteLine(header);
-            Console.Title = $"XDB ({DiscordConfig.Version})";
+            Console.WriteLine(Strings.XDB_Header);
+            Console.Title = Strings.XDB_Title;
 
             CheckForConfig();
 
@@ -71,7 +61,7 @@ namespace XDB
                 cfg.Token = Console.ReadLine();
                 cfg.Save();
             }
-            Console.WriteLine("[XDB] Config Loaded Successfully.");
+            Console.WriteLine(Strings.XDB_ConfigLoaded);
         }
     }
 }
