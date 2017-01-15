@@ -240,3 +240,6 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+src/XDB/Properties/PublishProfiles/publish-module.psm1
+src/XDB/Properties/PublishProfiles/XDB.pubxml
+*.ps1

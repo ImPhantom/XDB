@@ -1,4 +1,5 @@
 ﻿using Discord;
+using System.Linq;
 using XDB.Common.Types;
 
 namespace XDB.Events
@@ -15,6 +16,19 @@ namespace XDB.Events
                 {
                     var def = await s.Guild.GetDefaultChannelAsync();
                     await def.SendMessageAsync(s.Mention + $" {Config.Load().WelcomeMessage}");
+                }
+            };
+
+            client.MessageReceived += async (s) =>
+            {
+                if(Config.Load().WordFilter == true)
+                {
+                    string[] cont = Config.Load().Filters;
+                    if (cont.Any(s.Content.Contains))
+                    {
+                        //TODO Log channel
+                        await s.DeleteAsync();
+                    }
                 }
             };
         }
