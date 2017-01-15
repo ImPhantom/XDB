@@ -10,7 +10,20 @@ namespace XDB.Modules
 {
     public class Self : ModuleBase
     {
+        [Command("bnick")]
+        [Name("bnick `<string>`")]
+        [Alias("nick")]
+        [Remarks("Sets the bots nickname.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task SetNick([Remainder] string str)
+        {
+            var bot = await Context.Guild.GetCurrentUserAsync();
+            await bot.ModifyAsync(x => x.Nickname = str);
+            await ReplyAsync(":grey_exclamation: You set the bots nickname to: `" + str + "`");
+        }
+
         [Command("bstat")]
+        [Name("bstat `<string>`")]
         [Alias("status")]
         [Remarks("Sets the bots status.")]
         [Permissions(AccessLevel.BotOwner)]
@@ -21,6 +34,7 @@ namespace XDB.Modules
         }
 
         [Command("bpres")]
+        [Name("bpres (`online`, `idle`, `dnd`, `invis`)")]
         [Alias("pres")]
         [Remarks("Sets the bots presence.")]
         [Permissions(AccessLevel.BotOwner)]
@@ -50,6 +64,7 @@ namespace XDB.Modules
         }
 
         [Command("bavatar")]
+        [Name("bavatar `<url>`")]
         [Alias("avatar")]
         [Remarks("Sets the bots avatar.")]
         [Permissions(AccessLevel.BotOwner)]
@@ -67,17 +82,6 @@ namespace XDB.Modules
                     await ReplyAsync(":grey_exclamation: You set the bots avatar!");
                 }
             }
-        }
-
-        [Command("bnick")]
-        [Alias("nick")]
-        [Remarks("Sets the bots nickname.")]
-        [Permissions(AccessLevel.ServerAdmin)]
-        public async Task SetNick([Remainder] string str)
-        {
-            var bot = await Context.Guild.GetCurrentUserAsync();
-            await bot.ModifyAsync(x => x.Nickname = str);
-            await ReplyAsync(":grey_exclamation: You set the bots nickname to: `" + str + "`");
-        }
+        }  
     }
 }

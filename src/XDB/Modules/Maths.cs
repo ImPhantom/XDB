@@ -7,6 +7,7 @@ namespace XDB.Modules
     public class Maths : ModuleBase
     {
         [Command("ftc")]
+        [Name("ftc `<num>`")]
         [Remarks("Converts fahrenheit to celsius.")]
         public async Task FTC(double x)
         {
@@ -15,6 +16,7 @@ namespace XDB.Modules
         }
 
         [Command("ctf")]
+        [Name("ctf `<num>`")]
         [Remarks("Converts fahrenheit to celsius.")]
         public async Task CTF(double x)
         {
@@ -23,6 +25,7 @@ namespace XDB.Modules
         }
 
         [Command("add")]
+        [Name("add `<num>` `<num>`")]
         [Remarks("Adds two doubles together.")]
         public async Task Add(double x, double y)
         {
@@ -31,6 +34,7 @@ namespace XDB.Modules
         }
 
         [Command("sub")]
+        [Name("sub `<num>` `<num>`")]
         [Remarks("Subtracts a double from a double.")]
         public async Task Sub(double x, double y)
         {
@@ -39,6 +43,7 @@ namespace XDB.Modules
         }
 
         [Command("mul")]
+        [Name("mul `<num>` `<num>`")]
         [Remarks("Multiplys a double by a double.")]
         public async Task Mul(double x, double y)
         {
@@ -47,6 +52,7 @@ namespace XDB.Modules
         }
 
         [Command("div")]
+        [Name("div `<num>` `<num>`")]
         [Remarks("Divides a double by a double.")]
         public async Task Div(double x, double y)
         {

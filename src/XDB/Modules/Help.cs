@@ -32,7 +32,7 @@ namespace XDB.Modules
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
-                        desc += $"{pfx}{cmd.Aliases.First()}\n";
+                        desc += $"{pfx}{cmd.Name}\n";
                 }
 
                 if (!string.IsNullOrWhiteSpace(desc))
@@ -50,6 +50,7 @@ namespace XDB.Modules
         }
 
         [Command("help")]
+        [Name("help `<command>`")]
         public async Task HelpAsync(string command)
         {
             var result = serv.Search(Context, command);

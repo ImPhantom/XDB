@@ -12,6 +12,7 @@ namespace XDB.Modules
     public class Admin : ModuleBase
     {
         [Command("cleanup")]
+        [Name("cleanup `<num>` (limit 100)")]
         [Remarks("Cleans up specified amount of messages from channel.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
@@ -27,6 +28,7 @@ namespace XDB.Modules
         }
 
         [Command("cleanup")]
+        [Name("cleanup `<@user>` `<num>` (limit 100)")]
         [Remarks("Cleans up specified amount of messages from channel.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
@@ -44,6 +46,7 @@ namespace XDB.Modules
         }
 
         [Command("kick")]
+        [Name("kick `<@user>`")]
         [Remarks("Kicks user from guild.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
@@ -64,6 +67,7 @@ namespace XDB.Modules
         }
 
         [Command("kick")]
+        [Name("kick `<@user>` `<reason>`")]
         [Remarks("Kicks user from guild.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
@@ -84,7 +88,8 @@ namespace XDB.Modules
         }
 
         [Command("ban")]
-        [Remarks("Bans user from guild")]
+        [Name("ban `<@user>`")]
+        [Remarks("Bans user from guild.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Ban(IGuildUser user)
@@ -104,7 +109,8 @@ namespace XDB.Modules
         }
 
         [Command("ban")]
-        [Remarks("Bans user from guild")]
+        [Name("ban `<@user>` `<reason>`")]
+        [Remarks("Bans user from guild.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Ban(IGuildUser user, [Remainder] string str)
