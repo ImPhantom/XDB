@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using System.Reflection;
 using System.Threading.Tasks;
+using XDB.Common.Types;
 
 namespace XDB
 {
@@ -29,7 +30,7 @@ namespace XDB
             if (message == null) return;
 
             int argPos = 0;
-            if (!(message.HasMentionPrefix(client.CurrentUser, ref argPos) || message.HasCharPrefix('~', ref argPos))) return;
+            if (!(message.HasMentionPrefix(client.CurrentUser, ref argPos) || message.HasStringPrefix(Config.Load().Prefix, ref argPos))) return;
 
             var context = new CommandContext(client, message);
             var result = await commands.ExecuteAsync(context, argPos, map);
