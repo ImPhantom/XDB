@@ -24,7 +24,7 @@ namespace XDB
                 => Task.Run(()
                 => Console.WriteLine($"[{l.Severity}] {l.Source}: {l.Exception?.ToString() ?? l.Message}"));
 
-            string token = "MjU2MjQzNTEzNzU3MjcwMDI4.C1xKKA.8CJnTi69dinJrXtHyonw3jZhTJc";
+            string token = "token here";
 
             await client.LoginAsync(TokenType.Bot, token);
             await client.ConnectAsync();
