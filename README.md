@@ -15,6 +15,6 @@ All minor builds will be released on my site. But all Major builds will be poste
 
 - ~~Proper JSON Config~~
 - Word Filtering
-- Steam Integration (query)
+- ~~Steam Integration (query)~~ (Hows it work? Click Here)
 - ~~Ban/Kick Logging (w/ reason)~~
 - Guild Member Rankings
