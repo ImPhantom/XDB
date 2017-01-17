@@ -15,7 +15,7 @@ namespace XDB.Common.Types
         public string Token { get; set; }
         public ulong LogChannel { get; set; }
         public bool WordFilter { get; set; }
-        public string[] Filters { get; set; }
+        public string[] Words { get; set; }
         public bool Welcome { get; set; }
         public string WelcomeMessage { get; set; }
 
@@ -26,7 +26,7 @@ namespace XDB.Common.Types
             Token = "";
             LogChannel = 0;
             WordFilter = false;
-            Filters = new string[] { "shit", "fuck"};
+            Words = new string[] { "fuck", "shit" };
             Welcome = false;
             WelcomeMessage = "**Welcome to the server!**";
         }

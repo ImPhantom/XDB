@@ -23,8 +23,8 @@ namespace XDB.Events
             {
                 if(Config.Load().WordFilter == true)
                 {
-                    string[] cont = Config.Load().Filters;
-                    if (cont.Any(s.Content.Contains))
+                    var words = Config.Load().Words;
+                    if (words.Any(s.Content.Contains))
                     {
                         //TODO Log channel
                         await s.DeleteAsync();
