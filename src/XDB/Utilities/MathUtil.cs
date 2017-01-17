@@ -2,7 +2,6 @@
 
 namespace XDB.Utilities
 {
-    public class Mth
     {
         public static double FToCelsius(double f)
         {

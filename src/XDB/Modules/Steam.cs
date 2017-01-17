@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System;
 using System.Net.Http;
 using System.IO;
-using XDB.Common.Types;
 using System.Text.RegularExpressions;
 using Discord;
 
