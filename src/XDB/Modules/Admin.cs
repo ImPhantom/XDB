@@ -23,7 +23,7 @@ namespace XDB.Modules
             amt += 1;
             await Context.Message.DeleteAsync().ConfigureAwait(false);
             int lim = (amt < 100) ? amt : 100;
-            var messages = (await Context.Channel.GetMessagesAsync().Flatten().ConfigureAwait(false));
+            var messages = (await Context.Channel.GetMessagesAsync(limit: lim).Flatten().ConfigureAwait(false));
             await Context.Channel.DeleteMessagesAsync(messages).ConfigureAwait(false);
         }
 
@@ -41,7 +41,7 @@ namespace XDB.Modules
                 amt += 1;
 
             int lim = (amt < 100) ? amt : 100;
-            var messages = (await Context.Channel.GetMessagesAsync().Flatten()).Where(m => m.Author == user);
+            var messages = (await Context.Channel.GetMessagesAsync(limit: lim).Flatten()).Where(m => m.Author == user);
             await Context.Channel.DeleteMessagesAsync(messages).ConfigureAwait(false);
         }
 
