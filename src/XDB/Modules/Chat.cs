@@ -17,7 +17,7 @@ namespace XDB.Modules
         [RequireContext(ContextType.Guild)]
         public async Task UserInfo()
         {
-            var date = $"{Context.Guild.CreatedAt.Month}/{Context.Guild.CreatedAt.Day}/{Context.Guild.CreatedAt.Year}";
+            var date = $"{Context.User.CreatedAt.Month}/{Context.User.CreatedAt.Day}/{Context.User.CreatedAt.Year}";
             var user = new EmbedAuthorBuilder()
             {
                 Name = Context.User.Username,
@@ -62,6 +62,62 @@ namespace XDB.Modules
             {
                 x.Name = "Game:";
                 x.Value = $"{GetUserGame(Context)}";
+                x.IsInline = true;
+            });
+            await ReplyAsync("", false, embed.Build());
+        }
+
+        [Command("userinfo")]
+        [Name("userinfo `<user>`")]
+        [Remarks("Display's a specified users information.")]
+        [RequireContext(ContextType.Guild)]
+        public async Task UserInfo(IGuildUser user)
+        {
+            var date = $"{user.CreatedAt.Month}/{user.CreatedAt.Day}/{user.CreatedAt.Year}";
+            var auth = new EmbedAuthorBuilder()
+            {
+                Name = user.Username,
+                IconUrl = user.AvatarUrl
+            };
+            var embed = new EmbedBuilder()
+            {
+                Color = new Color(29, 140, 209),
+                Author = auth
+            };
+            embed.AddField(x =>
+            {
+                x.Name = "Username:";
+                x.Value = $"{user.Username}";
+                x.IsInline = true;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "Discriminator:";
+                x.Value = $"{user.Discriminator}";
+                x.IsInline = true;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "ID:";
+                x.Value = $"`{user.Id}`";
+                x.IsInline = true;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "Created:";
+                x.Value = date;
+                x.IsInline = true;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "Status:";
+                x.Value = $"{user.Status}";
+                x.IsInline = true;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "Game:";
+                x.Value = $"{GetUserGame(user)}";
                 x.IsInline = true;
             });
             await ReplyAsync("", false, embed.Build());
@@ -212,6 +268,16 @@ namespace XDB.Modules
         {
             var playing = ctx.User.Game;
             if(!playing.HasValue)
+            {
+                return $"`n/a`";
+            }
+            return $"`{playing}`";
+        }
+
+        private string GetUserGame(IGuildUser user)
+        {
+            var playing = user.Game;
+            if (!playing.HasValue)
             {
                 return $"`n/a`";
             }
