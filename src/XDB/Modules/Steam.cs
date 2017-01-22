@@ -43,7 +43,7 @@ namespace XDB.Modules
                     embed.AddField(x =>
                     {
                         x.Name = "Hostname:";
-                        x.Value = lines[1];
+                        x.Value = $"`{lines[1]}`";
                         x.IsInline = false;
                     });
                     embed.AddField(x =>

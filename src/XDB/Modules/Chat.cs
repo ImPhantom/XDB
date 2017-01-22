@@ -30,7 +30,7 @@ namespace XDB.Modules
             embed.AddField(x =>
             {
                 x.Name = "Author:";
-                x.Value = $"{application.Owner.Mention} (**ID:** `{application.Owner.Id}`)";
+                x.Value = $"{application.Owner.Username} (**ID:** `{application.Owner.Id}`)";
                 x.IsInline = false;
             });
             embed.AddField(x =>
@@ -61,19 +61,19 @@ namespace XDB.Modules
             {
                 x.Name = "Uptime:";
                 x.Value = $"`{GetUptime()}`";
-                x.IsInline = false;
+                x.IsInline = true;
             });
             embed.AddField(x =>
             {
                 x.Name = "Heap Size:";
                 x.Value = $"`{GetHeapSize()}MB`";
-                x.IsInline = false;
+                x.IsInline = true;
             });
             embed.AddField(x =>
             {
                 x.Name = "Guilds/Channels/Users:";
                 x.Value = $"{(Context.Client as DiscordSocketClient).Guilds.Count} / {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)} / {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}";
-                x.IsInline = true;
+                x.IsInline = false;
             });
 
             await ReplyAsync("", false, embed.Build());
