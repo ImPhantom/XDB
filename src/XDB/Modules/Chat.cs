@@ -12,8 +12,64 @@ namespace XDB.Modules
 {
     public class Chat : ModuleBase
     {
+        [Command("userinfo")]
+        [Remarks("Display's your information.")]
+        [RequireContext(ContextType.Guild)]
+        public async Task UserInfo()
+        {
+            var date = $"{Context.Guild.CreatedAt.Month}/{Context.Guild.CreatedAt.Day}/{Context.Guild.CreatedAt.Year}";
+            var user = new EmbedAuthorBuilder()
+            {
+                Name = Context.User.Username,
+                IconUrl = Context.User.AvatarUrl
+            };
+            var embed = new EmbedBuilder()
+            {
+                Color = new Color(29, 140, 209),
+                Author = user
+            };
+            embed.AddField(x =>
+            {
+                x.Name = "Username:";
+                x.Value = $"{Context.User.Username}";
+                x.IsInline = true;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "Discriminator:";
+                x.Value = $"{Context.User.Discriminator}";
+                x.IsInline = true;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "ID:";
+                x.Value = $"`{Context.User.Id}`";
+                x.IsInline = true;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "Created:";
+                x.Value = date;
+                x.IsInline = true;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "Status:";
+                x.Value = $"{Context.User.Status}";
+                x.IsInline = true;
+            });
+            embed.AddField(x =>
+            {
+                x.Name = "Game:";
+                x.Value = $"{GetUserGame(Context)}";
+                x.IsInline = true;
+            });
+            await ReplyAsync("", false, embed.Build());
+        }
+
         [Command("serverinfo")]
         [Remarks("Display's the current guild's information.")]
+        [RequireContext(ContextType.Guild)]
         public async Task ServerInfo()
         {
             // Ignore this shit
@@ -55,7 +111,7 @@ namespace XDB.Modules
             embed.AddField(x =>
             {
                 x.Name = "Created:";
-                x.Value = $"{date}";
+                x.Value = date;
                 x.IsInline = true;
             });
             embed.AddField(x =>
@@ -150,6 +206,16 @@ namespace XDB.Modules
             });
 
             await ReplyAsync("", false, embed.Build());
+        }
+
+        private string GetUserGame(CommandContext ctx)
+        {
+            var playing = ctx.User.Game;
+            if(!playing.HasValue)
+            {
+                return $"`n/a`";
+            }
+            return $"`{playing}`";
         }
 
         private static string GetUptime()
