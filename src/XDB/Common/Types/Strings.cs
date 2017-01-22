@@ -6,7 +6,7 @@ namespace XDB.Common.Types
     {
         //Global Strings
         #region global
-        public static readonly string ReleaseVersion = "1.0.5";
+        public static readonly string ReleaseVersion = "1.0.6";
         #endregion
 
         //Common Strings
