@@ -15,3 +15,5 @@ other moderation bots i've tested.
 - ~~Steam Integration (query)~~ (Hows it work? Click Here)
 - ~~Ban/Kick Logging (w/ reason)~~
 - Guild Member Rankings
+- Cookie/Star feature
+- User Notes?
