@@ -56,9 +56,9 @@ namespace XDB.Modules
             {
                 var log = await Context.Guild.GetChannelAsync(Config.Load().LogChannel) as ITextChannel;
                 if (log == null)
-                    await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}");
+                    await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `N/A`");
                 else
-                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}");
+                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `N/A`");
                 await user.KickAsync().ConfigureAwait(false);
             }
             catch (Exception e)

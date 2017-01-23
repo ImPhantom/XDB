@@ -32,6 +32,8 @@ namespace XDB.Events
                         else
                             await log.SendMessageAsync($":anger: {s.Author.Mention} violated the word filter. **Message Deleted**");
                             await s.DeleteAsync();
+                        // If log sent to log channel, ignore word filter in log message.
+                        // Send deleted message inside of log message.
                     }
                 }
             };
