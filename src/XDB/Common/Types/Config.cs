@@ -9,7 +9,6 @@ namespace XDB.Common.Types
         [JsonIgnore]
         public static readonly string appdir = AppContext.BaseDirectory;
 
-
         public string Prefix { get; set; }
         public ulong[] Owners { get; set; }
         public string Token { get; set; }

@@ -51,8 +51,7 @@ namespace XDB
             if(!File.Exists(location))
             {
                 var cfg = new Config();
-                Console.WriteLine("The configuration file has been created at 'cfg\\config.json', " +
-                              "please fill out the config and restart XDB.");
+                Console.WriteLine(Strings.XDB_ConfigCreated);
                 Console.Write("Token: ");
                 cfg.Token = Console.ReadLine();
                 cfg.Save();
