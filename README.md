@@ -18,3 +18,4 @@ other moderation bots i've tested.
 - Cookie/Star feature
 - User Notes?
 - URL Shortener
+- Module config (disable/enable)
