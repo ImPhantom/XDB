@@ -17,3 +17,4 @@ other moderation bots i've tested.
 - Guild Member Rankings
 - Cookie/Star feature
 - User Notes?
+- URL Shortener
