@@ -58,7 +58,7 @@ namespace XDB.Modules
                 if (log == null)
                     await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}");
                 else
-                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}");
+                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `N/A`");
                 await user.KickAsync().ConfigureAwait(false);
             }
             catch (Exception e)

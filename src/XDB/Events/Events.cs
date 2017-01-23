@@ -21,6 +21,7 @@ namespace XDB.Events
 
             client.MessageReceived += async (s) =>
             {
+                //Make word filter better
                 if(Config.Load().WordFilter == true)
                 {
                     var words = Config.Load().Words;
@@ -32,6 +33,8 @@ namespace XDB.Events
                         else
                             await log.SendMessageAsync($":anger: {s.Author.Mention} violated the word filter. **Message Deleted**");
                             await s.DeleteAsync();
+
+                        //If in log channel ignore (deleted message in logging)
                     }
                 }
             };

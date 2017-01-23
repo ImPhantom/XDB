@@ -269,7 +269,7 @@ namespace XDB.Modules
             var playing = ctx.User.Game;
             if(!playing.HasValue)
             {
-                return $"`n/a`";
+                return $"`N/A`";
             }
             return $"`{playing}`";
         }
@@ -279,7 +279,7 @@ namespace XDB.Modules
             var playing = user.Game;
             if (!playing.HasValue)
             {
-                return $"`n/a`";
+                return $"`N/A`";
             }
             return $"`{playing}`";
         }
