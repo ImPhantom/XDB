@@ -12,7 +12,7 @@ other moderation bots i've tested.
 
 - ~~Proper JSON Config~~
 - ~~Word Filtering~~
-- ~~Steam Integration (query)~~ (Hows it work? Click Here)
+- ~~Steam Integration (query)~~
 - ~~Ban/Kick Logging (w/ reason)~~
 - Guild Member Rankings
 - Cookie/Star feature
