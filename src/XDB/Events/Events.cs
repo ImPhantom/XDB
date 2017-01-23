@@ -27,8 +27,11 @@ namespace XDB.Events
                     if (words.Any(s.Content.Contains))
                     {
                         var log = client.GetChannel(Config.Load().LogChannel) as ITextChannel;
-                        await log.SendMessageAsync($":anger: {s.Author.Mention} violated the word filter. (message deleted)");
-                        await s.DeleteAsync();
+                        if (log == null)
+                            await s.DeleteAsync();
+                        else
+                            await log.SendMessageAsync($":anger: {s.Author.Mention} violated the word filter. **Message Deleted**");
+                            await s.DeleteAsync();
                     }
                 }
             };

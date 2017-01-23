@@ -56,8 +56,9 @@ namespace XDB.Modules
             {
                 var log = await Context.Guild.GetChannelAsync(Config.Load().LogChannel) as ITextChannel;
                 if (log == null)
-                    return;
-                await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}");
+                    await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}");
+                else
+                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}");
                 await user.KickAsync().ConfigureAwait(false);
             }
             catch (Exception e)
@@ -77,8 +78,9 @@ namespace XDB.Modules
             {
                 var log = await Context.Guild.GetChannelAsync(Config.Load().LogChannel) as ITextChannel;
                 if (log == null)
-                    return;
-                await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `{str}`");
+                    await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `{str}`");
+                else
+                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `{str}`");
                 await user.KickAsync().ConfigureAwait(false);
             }
             catch (Exception e)
@@ -98,8 +100,9 @@ namespace XDB.Modules
             {
                 var log = await Context.Guild.GetChannelAsync(Config.Load().LogChannel) as ITextChannel;
                 if (log == null)
-                    return;
-                await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `N/A`");
+                    await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `N/A`");
+                else
+                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `N/A`");
                 await Context.Guild.AddBanAsync(user).ConfigureAwait(false);
             }
             catch (Exception e)
@@ -119,8 +122,9 @@ namespace XDB.Modules
             {
                 var log = await Context.Guild.GetChannelAsync(Config.Load().LogChannel) as ITextChannel;
                 if (log == null)
-                    return;
-                await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `{str}`");
+                    await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `{str}`");
+                else
+                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `{str}`");
                 await Context.Guild.AddBanAsync(user).ConfigureAwait(false);
             }
             catch (Exception e)
