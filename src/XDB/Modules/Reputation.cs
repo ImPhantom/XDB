@@ -3,6 +3,8 @@ using Discord.Commands;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using XDB.Common.Attributes;
+using XDB.Common.Enums;
 
 namespace XDB.Modules
 {
@@ -42,6 +44,7 @@ namespace XDB.Modules
         [Command("addrep")]
         [Remarks("Add reputation to a user.")]
         [RequireContext(ContextType.Guild)]
+        [Permissions(AccessLevel.ServerAdmin)]
         public async Task AddRep(IGuildUser user)
         {
             ConfigCheck(user);
@@ -80,6 +83,7 @@ namespace XDB.Modules
         [Command("delrep")]
         [Remarks("Deletes reputation from a user.")]
         [RequireContext(ContextType.Guild)]
+        [Permissions(AccessLevel.ServerAdmin)]
         public async Task DelRep(IGuildUser user)
         {
             ConfigCheck(user);
