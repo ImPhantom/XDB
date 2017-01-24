@@ -9,6 +9,13 @@ namespace XDB.Modules
     public class Reputation : ModuleBase
     {
         //Leaderboard? might need json
+        [Command("leaderboard")]
+        [Remarks("Shows the leading users in reputation.")]
+        [RequireContext(ContextType.Guild)]
+        public async Task Leaderboard()
+        {
+            await ReplyAsync("Leaderboard not implemented yet. *sorry*");
+        }
 
         [Command("rep")]
         [Remarks("Views a users reputation.")]
@@ -21,7 +28,13 @@ namespace XDB.Modules
             {
                 using (var reader = new StreamReader(file))
                 {
-                    await ReplyAsync($":grey_exclamation: **{user.Username}'s** reputation: {reader.ReadToEnd()}");
+                    int rep;
+                    int.TryParse(reader.ReadToEnd(), out rep);
+                    if(rep < 0){
+                        await ReplyAsync($":red_circle: **{user.Username}'s** reputation: {rep}");
+                    } else {
+                        await ReplyAsync($":large_blue_circle: **{user.Username}'s** reputation: {rep}");
+                    }
                 }
             }
         }
@@ -49,7 +62,14 @@ namespace XDB.Modules
                             using (var writer = new StreamWriter(write))
                             {
                                 writer.Write(rep);
-                                await ReplyAsync($":white_check_mark: Added reputation. (__Users reputation:__ {rep})");
+                                if (rep < 0)
+                                {
+                                    await ReplyAsync($":red_circle: **{user.Username}'s** reputation: {rep}");
+                                }
+                                else
+                                {
+                                    await ReplyAsync($":large_blue_circle: **{user.Username}'s** reputation: {rep}");
+                                }
                             }
                         }
                     }
@@ -80,7 +100,14 @@ namespace XDB.Modules
                             using (var writer = new StreamWriter(write))
                             {
                                 writer.Write(rep);
-                                await ReplyAsync($":white_check_mark: Removed reputation. (__Users reputation:__ {rep})");
+                                if (rep < 0)
+                                {
+                                    await ReplyAsync($":red_circle: **{user.Username}'s** reputation: {rep}");
+                                }
+                                else
+                                {
+                                    await ReplyAsync($":large_blue_circle: **{user.Username}'s** reputation: {rep}");
+                                }
                             }
                         }
                     }
