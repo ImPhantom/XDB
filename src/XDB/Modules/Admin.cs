@@ -20,7 +20,6 @@ namespace XDB.Modules
         {
             if (amt < 1)
                 return;
-            amt += 1;
             await Context.Message.DeleteAsync().ConfigureAwait(false);
             int lim = (amt < 100) ? amt : 100;
             var messages = (await Context.Channel.GetMessagesAsync(limit: lim).Flatten().ConfigureAwait(false));
