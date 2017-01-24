@@ -14,7 +14,7 @@ other moderation bots i've tested.
 - ~~Word Filtering~~
 - ~~Steam Integration (query)~~
 - ~~Ban/Kick Logging (w/ reason)~~
-- Guild Member Rankings
+- ~~Reputation System~~
 - Cookie/Star feature
 - User Notes?
 - URL Shortener
