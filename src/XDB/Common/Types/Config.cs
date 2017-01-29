@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Discord;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 
@@ -44,5 +45,51 @@ namespace XDB.Common.Types
 
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
+
+        public static void RepCheck(IUser user)
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, $"reputation/{user.Id}.txt");
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "reputation")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "reputation"));
+
+            if (!File.Exists(path))
+            {
+                using (var file = new FileStream(path, FileMode.Create))
+                {
+                    using (var writer = new StreamWriter(file))
+                    {
+                        writer.Write("0");
+                        writer.Dispose();
+                    }
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        public static void RepCheck(IGuildUser user)
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, $"reputation/{user.Id}.txt");
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "reputation")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "reputation"));
+
+            if (!File.Exists(path))
+            {
+                using (var file = new FileStream(path, FileMode.Create))
+                {
+                    using (var writer = new StreamWriter(file))
+                    {
+                        writer.Write("0");
+                        writer.Dispose();
+                    }
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
     }
 }
