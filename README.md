@@ -18,3 +18,4 @@ other moderation bots i've tested.
 - User Notes?
 - ~~URL Shortener~~
 - Module config (disable/enable)
+- Personal TODO Lists
