@@ -15,6 +15,7 @@ namespace XDB.Modules
         }
 
         [Command("help")]
+        [RequireContext(ContextType.Guild)]
         public async Task HelpAsync()
         {
             string pfx = "~";
@@ -51,6 +52,7 @@ namespace XDB.Modules
 
         [Command("help")]
         [Name("help `<command>`")]
+        [RequireContext(ContextType.Guild)]
         public async Task HelpAsync(string command)
         {
             var result = serv.Search(Context, command);

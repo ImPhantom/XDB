@@ -1,8 +1,6 @@
 ﻿using Discord.Commands;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,7 +10,9 @@ namespace XDB.Modules
     public class Utility : ModuleBase
     {
         [Command("shorten")]
+        [Name("shorten <url>")]
         [Remarks("Shortens a link.")]
+        [RequireContext(ContextType.Guild)]
         public async Task Shorten([Remainder] string url)
         {
             if(!url.Contains("http"))
@@ -47,6 +47,5 @@ namespace XDB.Modules
             }
             
         }
-
     }
 }
