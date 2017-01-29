@@ -58,6 +58,8 @@ namespace XDB.Modules
                     await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `N/A`");
                 else
                     await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `N/A`");
+                var dm = await user.CreateDMChannelAsync();
+                await dm.SendMessageAsync($":anger: You were kicked from **{Context.Guild.Name}**\n**Reason:** `N/A`");
                 await user.KickAsync().ConfigureAwait(false);
             }
             catch (Exception e)
@@ -80,7 +82,10 @@ namespace XDB.Modules
                     await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `{str}`");
                 else
                     await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `{str}`");
+                var dm = await user.CreateDMChannelAsync();
+                await dm.SendMessageAsync($":anger: You were kicked from **{Context.Guild.Name}**\n**Reason:** `{str}`");
                 await user.KickAsync().ConfigureAwait(false);
+                
             }
             catch (Exception e)
             {
@@ -102,6 +107,8 @@ namespace XDB.Modules
                     await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `N/A`");
                 else
                     await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `N/A`");
+                var dm = await user.CreateDMChannelAsync();
+                await dm.SendMessageAsync($":anger: You were banned from **{Context.Guild.Name}**\n**Reason:** `N/A`");
                 await Context.Guild.AddBanAsync(user).ConfigureAwait(false);
             }
             catch (Exception e)
@@ -124,6 +131,8 @@ namespace XDB.Modules
                     await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `{str}`");
                 else
                     await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `{str}`");
+                var dm = await user.CreateDMChannelAsync();
+                await dm.SendMessageAsync($":anger: You were banned from **{Context.Guild.Name}**\n**Reason:** `{str}`");
                 await Context.Guild.AddBanAsync(user).ConfigureAwait(false);
             }
             catch (Exception e)
