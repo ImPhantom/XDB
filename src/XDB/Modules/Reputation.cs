@@ -11,7 +11,7 @@ namespace XDB.Modules
 {
     public class Reputation : ModuleBase
     {
-        //Leaderboard? might need json
+        //UNDONE: Leaderboard
         [Command("leaderboard")]
         [Remarks("Shows the leading users in reputation.")]
         [RequireContext(ContextType.Guild)]
@@ -47,7 +47,7 @@ namespace XDB.Modules
         }
 
         [Command("rep")]
-        [Name("rep <@user>")]
+        [Name("rep `<@user>`")]
         [Remarks("Views a users reputation.")]
         [RequireContext(ContextType.Guild)]
         public async Task Rep(IGuildUser user)
@@ -70,7 +70,7 @@ namespace XDB.Modules
         }
 
         [Command("addrep")]
-        [Name("addrep <@user>")]
+        [Name("addrep `<@user>`")]
         [Remarks("Add reputation to a user.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
@@ -110,7 +110,7 @@ namespace XDB.Modules
         }
 
         [Command("delrep")]
-        [Name("delrep <@user>")]
+        [Name("delrep `<@user>`")]
         [Remarks("Deletes reputation from a user.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]

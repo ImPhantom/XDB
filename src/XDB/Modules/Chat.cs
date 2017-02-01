@@ -12,6 +12,15 @@ namespace XDB.Modules
 {
     public class Chat : ModuleBase
     {
+        [Command("8ball")]
+        [Remarks("Asks the magic 8 ball a question.")]
+        public async Task EightBall([Remainder] string question)
+        {
+            Random rand = new Random();
+            var response = Strings.EightBallResponses[rand.Next(Strings.EightBallResponses.Length)];
+            await ReplyAsync($"**You asked:** `{question}` \n**Reponse:** *{response}*");
+        }
+
         [Command("userinfo")]
         [Remarks("Display's your information.")]
         [RequireContext(ContextType.Guild)]

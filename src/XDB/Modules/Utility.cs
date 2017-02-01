@@ -45,7 +45,8 @@ namespace XDB.Modules
             {
                 await ReplyAsync($"**Error:** Shortener is down.\n**Exception:**{ex.Message}");
             }
-            
         }
+
+        //TODO: Personal TODO list
     }
 }
