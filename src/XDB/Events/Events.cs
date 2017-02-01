@@ -14,7 +14,7 @@ namespace XDB.Events
             {
                 if(Config.Load().Welcome == true)
                 {
-                    var def = await s.Guild.GetDefaultChannelAsync();
+                    var def = s.Guild.DefaultChannel;
                     await def.SendMessageAsync(s.Mention + $" {Config.Load().WelcomeMessage}");
                 }
             };
