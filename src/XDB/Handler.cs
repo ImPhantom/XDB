@@ -32,8 +32,7 @@ namespace XDB
             var context = new CommandContext(_client, msg);
 
             int argPos = 0;
-            if (msg.HasStringPrefix(Config.Load().Prefix, ref argPos) ||
-                msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
+            if (msg.HasStringPrefix(Config.Load().Prefix, ref argPos))
             {
                 var result = await _cmds.ExecuteAsync(context, argPos, map);
 

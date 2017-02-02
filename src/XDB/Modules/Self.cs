@@ -82,6 +82,15 @@ namespace XDB.Modules
                     await ReplyAsync(":grey_exclamation: You set the bots avatar!");
                 }
             }
-        }  
+        }
+
+        [Command("leave")]
+        [Remarks("Makes the bot leave the server.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task Leave()
+        {
+            var current = await Context.Guild.GetCurrentUserAsync();
+            await current.Guild.LeaveAsync();
+        }
     }
 }
