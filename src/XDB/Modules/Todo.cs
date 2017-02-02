@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using XDB.Common.Attributes;
 using XDB.Common.Types;
 using System.Linq;
+using System.Text;
 
 namespace XDB.Modules
 {
@@ -23,22 +24,35 @@ namespace XDB.Modules
             var json = JsonConvert.DeserializeObject<List<TodoList>>(filetext);
             try
             {
-                var ret = json.Find(x => x.Id == Context.User.Id);
-                await ReplyAsync("**Your Todo List**");
-                foreach(var item in ret.ListItems)
+                if (!json.Any(x => x.Id == Context.User.Id))
                 {
-                    await ReplyAsync(item.ToString());
+                    var newtodo = new TodoList()
+                    {
+                        Id = Context.User.Id,
+                        ListItems = new List<string> { "" }
+                    };
+                    json.Add(newtodo);
+                    var outjson = JsonConvert.SerializeObject(json);
+                    File.WriteAllText(path, outjson);
+                    await ReplyAsync(":anger: Your todo list is empty.");
+                } else
+                {
+                    var ret = json.Find(x => x.Id == Context.User.Id);
+                    var list = new StringBuilder();
+                    foreach (var item in ret.ListItems)
+                    {
+                        list.AppendLine($"~ {item}");
+                    }
+                    await ReplyAsync($@"**>>>>  Your Todo List  <<<<**
+```
+{list.ToString()}
+```");
+                    
                 }
-            } catch
+                    
+            } catch(Exception e)
             {
-                var newtodo = new TodoList()
-                {
-                    Id = Context.User.Id,
-                    ListItems = new List<string> { "" }
-                };
-                json.Add(newtodo);
-                var outjson = JsonConvert.SerializeObject(json);
-                File.WriteAllText(path, outjson);
+                await ReplyAsync(e.Message);
             }
 
         }
@@ -65,13 +79,13 @@ namespace XDB.Modules
                     json.Add(newtodo);
                     var outjson = JsonConvert.SerializeObject(json);
                     File.WriteAllText(path, outjson);
-                    await ReplyAsync("No todo list found, Creating and adding list item...");
+                    await ReplyAsync(":white_check_mark: Added item to your Todo List.");
                 } else
                 {
                     json.First(x => x.Id == Context.User.Id).ListItems.Add(listitem);
                     var outjson = JsonConvert.SerializeObject(json);
                     File.WriteAllText(path, outjson);
-                    await ReplyAsync("Added item to your Todo List.");
+                    await ReplyAsync(":white_check_mark: Added item to your Todo List.");
                 }
             } catch (Exception e)
             {
@@ -81,7 +95,7 @@ namespace XDB.Modules
 
         [Command("deltodo")]
         [Name("deltodo `<todoitem>`")]
-        [Remarks("Deletes an item from your todo list.")]
+        [Remarks("Deletes an item from your todo list by string.")]
         [RequireContext(ContextType.Guild)]
         public async Task DelTodo([Remainder] string listitem)
         {
@@ -93,7 +107,7 @@ namespace XDB.Modules
             {
                 if (!json.Any(x => x.Id == Context.User.Id))
                 {
-                    await ReplyAsync("You dont have a todo list...");
+                    await ReplyAsync(":anger: You dont have a todo list...");
                 }
                 else
                 {
@@ -104,11 +118,49 @@ namespace XDB.Modules
                         json.First(x => x.Id == Context.User.Id).ListItems.RemoveAt(index);
                         var outjson = JsonConvert.SerializeObject(json);
                         File.WriteAllText(path, outjson);
-                        await ReplyAsync("Removed item from your Todo List.");
+                        await ReplyAsync(":white_check_mark: Removed item from your Todo List.");
                     }
                     else
                     {
                         await ReplyAsync(":anger: No list item was found with that keyword.");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync($"Exception: {e.Message}");
+            }
+        }
+
+        [Command("deltodo")]
+        [Name("deltodo `<index>`")]
+        [Remarks("Deletes an item from your todo list by index.")]
+        [RequireContext(ContextType.Guild)]
+        public async Task DelTodo(int index)
+        {
+            Config.TodoCheck();
+            var all = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
+            var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
+            var json = JsonConvert.DeserializeObject<List<TodoList>>(all);
+            try
+            {
+                index--;
+                if (!json.Any(x => x.Id == Context.User.Id))
+                {
+                    await ReplyAsync(":anger: You dont have a todo list...");
+                }
+                else
+                {
+                    if (index < json.First(x => x.Id == Context.User.Id).ListItems.Count)
+                    {
+                        json.First(x => x.Id == Context.User.Id).ListItems.RemoveAt(index);
+                        var outjson = JsonConvert.SerializeObject(json);
+                        File.WriteAllText(path, outjson);
+                        await ReplyAsync(":white_check_mark: Removed item from your Todo List.");
+                    }
+                    else
+                    {
+                        await ReplyAsync(":anger: There is no list item for that index.");
                     }
                 }
             }
