@@ -15,7 +15,7 @@ namespace XDB.Modules
     {
         [Command("todo")]
         [Remarks("Views your todo list.")]
-        [RequireContext(ContextType.Guild)]
+        //[RequireContext(ContextType.Guild)]
         public async Task ViewTodo()
         {
             Config.TodoCheck();
@@ -60,7 +60,7 @@ namespace XDB.Modules
         [Command("addtodo")]
         [Name("addtodo `<todoitem>`")]
         [Remarks("Add to your todo list.")]
-        [RequireContext(ContextType.Guild)]
+        //[RequireContext(ContextType.Guild)]
         public async Task AddTodo([Remainder] string listitem)
         {
             Config.TodoCheck();
@@ -96,7 +96,7 @@ namespace XDB.Modules
         [Command("deltodo")]
         [Name("deltodo `<todoitem>`")]
         [Remarks("Deletes an item from your todo list by string.")]
-        [RequireContext(ContextType.Guild)]
+        //[RequireContext(ContextType.Guild)]
         public async Task DelTodo([Remainder] string listitem)
         {
             Config.TodoCheck();
@@ -135,7 +135,7 @@ namespace XDB.Modules
         [Command("deltodo")]
         [Name("deltodo `<index>`")]
         [Remarks("Deletes an item from your todo list by index.")]
-        [RequireContext(ContextType.Guild)]
+        //[RequireContext(ContextType.Guild)]
         public async Task DelTodo(int index)
         {
             Config.TodoCheck();
