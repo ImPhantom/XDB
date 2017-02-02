@@ -23,6 +23,8 @@ namespace XDB.Events
             {
                 if(Config.Load().WordFilter == true)
                 {
+                    if (Config.Load().IgnoredChannels.Contains(s.Channel.Id))
+                        return;
                     var words = Config.Load().Words;
                     if (words.Any(s.Content.Contains))
                     {
@@ -32,8 +34,6 @@ namespace XDB.Events
                         else
                             await log.SendMessageAsync($":anger: {s.Author.Mention} violated the word filter. **Message Deleted**");
                             await s.DeleteAsync();
-                        // If log sent to log channel, ignore word filter in log message.
-                        // Send deleted message inside of log message.
                     }
                 }
             };

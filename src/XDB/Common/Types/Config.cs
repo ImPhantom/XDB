@@ -1,7 +1,10 @@
 ﻿using Discord;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Xml;
+using XDB.Common.Attributes;
 
 namespace XDB.Common.Types
 {
@@ -14,6 +17,7 @@ namespace XDB.Common.Types
         public ulong[] Owners { get; set; }
         public string Token { get; set; }
         public ulong LogChannel { get; set; }
+        public ulong[] IgnoredChannels { get; set; }
         public bool WordFilter { get; set; }
         public string[] Words { get; set; }
         public bool Welcome { get; set; }
@@ -25,6 +29,7 @@ namespace XDB.Common.Types
             Owners = new ulong[] { 0 };
             Token = "";
             LogChannel = 0;
+            IgnoredChannels = new ulong[] { 0 };
             WordFilter = false;
             Words = new string[] { "fuck", "shit" };
             Welcome = false;
@@ -67,6 +72,30 @@ namespace XDB.Common.Types
             {
                 return;
             }
+        }
+
+        public static void TodoCheck()
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "todo")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "todo"));
+
+            if (!File.Exists(path))
+            {
+                List<TodoList> lists = new List<TodoList>();
+                List<string> item = new List<string>();
+                item.Add("Default");
+                lists.Add(new TodoList()
+                {
+                    Id = 0,
+                    ListItems = item
+                });
+                var json = JsonConvert.SerializeObject(lists);
+                using (var file = new FileStream(path, FileMode.Create)) { }
+                File.WriteAllText(path, json);
+            }
+            else
+                return;
         }
 
         public static void RepCheck(IGuildUser user)
