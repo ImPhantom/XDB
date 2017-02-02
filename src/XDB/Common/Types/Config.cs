@@ -50,29 +50,6 @@ namespace XDB.Common.Types
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
 
-        public static void RepCheck(IUser user)
-        {
-            var path = Path.Combine(AppContext.BaseDirectory, $"reputation/{user.Id}.txt");
-            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "reputation")))
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "reputation"));
-
-            if (!File.Exists(path))
-            {
-                using (var file = new FileStream(path, FileMode.Create))
-                {
-                    using (var writer = new StreamWriter(file))
-                    {
-                        writer.Write("0");
-                        writer.Dispose();
-                    }
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-
         public static void TodoCheck()
         {
             var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
@@ -97,27 +74,26 @@ namespace XDB.Common.Types
                 return;
         }
 
-        public static void RepCheck(IGuildUser user)
+        public static void RepCheck()
         {
-            var path = Path.Combine(AppContext.BaseDirectory, $"reputation/{user.Id}.txt");
-            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "reputation")))
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "reputation"));
+            var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "rep")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "rep"));
 
             if (!File.Exists(path))
             {
-                using (var file = new FileStream(path, FileMode.Create))
+                List<Reputation> reps = new List<Reputation>();
+                reps.Add(new Reputation()
                 {
-                    using (var writer = new StreamWriter(file))
-                    {
-                        writer.Write("0");
-                        writer.Dispose();
-                    }
-                }
+                    Id = 0,
+                    Rep = 0
+                });
+                var json = JsonConvert.SerializeObject(reps);
+                using (var file = new FileStream(path, FileMode.Create)) { }
+                File.WriteAllText(path, json);
             }
             else
-            {
                 return;
-            }
         }
     }
 }
