@@ -18,6 +18,7 @@ namespace XDB.Modules
         public async Task ViewTodo()
         {
             Config.TodoCheck();
+            var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
             var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
             var json = JsonConvert.DeserializeObject<List<TodoList>>(filetext);
             try
@@ -33,9 +34,11 @@ namespace XDB.Modules
                 var newtodo = new TodoList()
                 {
                     Id = Context.User.Id,
-                    ListItems = { "" }
+                    ListItems = new List<string> { "" }
                 };
                 json.Add(newtodo);
+                var outjson = JsonConvert.SerializeObject(json);
+                File.WriteAllText(path, outjson);
             }
 
         }
