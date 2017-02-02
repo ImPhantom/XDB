@@ -15,7 +15,6 @@ namespace XDB.Modules
     {
         [Command("todo")]
         [Remarks("Views your todo list.")]
-        //[RequireContext(ContextType.Guild)]
         public async Task ViewTodo()
         {
             Config.TodoCheck();
@@ -29,7 +28,7 @@ namespace XDB.Modules
                     var newtodo = new TodoList()
                     {
                         Id = Context.User.Id,
-                        ListItems = new List<string> { "" }
+                        ListItems = new List<string> { null }
                     };
                     json.Add(newtodo);
                     var outjson = JsonConvert.SerializeObject(json);
@@ -38,6 +37,7 @@ namespace XDB.Modules
                 } else
                 {
                     var ret = json.Find(x => x.Id == Context.User.Id);
+                    if(ret.ListItems.Any(x => string.IsNullOrEmpty(x))) { ret.ListItems.RemoveAll(str => string.IsNullOrEmpty(str)); var outjson = JsonConvert.SerializeObject(json); File.WriteAllText(path, outjson); }
                     var list = new StringBuilder();
                     foreach (var item in ret.ListItems)
                     {
@@ -60,7 +60,6 @@ namespace XDB.Modules
         [Command("addtodo")]
         [Name("addtodo `<todoitem>`")]
         [Remarks("Add to your todo list.")]
-        //[RequireContext(ContextType.Guild)]
         public async Task AddTodo([Remainder] string listitem)
         {
             Config.TodoCheck();
@@ -96,7 +95,6 @@ namespace XDB.Modules
         [Command("deltodo")]
         [Name("deltodo `<todoitem>`")]
         [Remarks("Deletes an item from your todo list by string.")]
-        //[RequireContext(ContextType.Guild)]
         public async Task DelTodo([Remainder] string listitem)
         {
             Config.TodoCheck();
@@ -135,7 +133,6 @@ namespace XDB.Modules
         [Command("deltodo")]
         [Name("deltodo `<index>`")]
         [Remarks("Deletes an item from your todo list by index.")]
-        //[RequireContext(ContextType.Guild)]
         public async Task DelTodo(int index)
         {
             Config.TodoCheck();
