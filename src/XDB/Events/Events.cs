@@ -14,6 +14,8 @@ namespace XDB.Events
             {
                 if(Config.Load().Welcome == true)
                 {
+                    if (s.IsBot)
+                        return;
                     var def = s.Guild.DefaultChannel;
                     await def.SendMessageAsync(s.Mention + $" {Config.Load().WelcomeMessage}");
                 }

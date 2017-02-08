@@ -10,7 +10,7 @@ namespace XDB.Modules
     public class Utility : ModuleBase
     {
         [Command("shorten")]
-        [Name("shorten <url>")]
+        [Name("shorten `<url>`")]
         [Remarks("Shortens a link.")]
         [RequireContext(ContextType.Guild)]
         public async Task Shorten([Remainder] string url)
