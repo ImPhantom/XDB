@@ -23,7 +23,8 @@ namespace XDB
 
             client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-                LogLevel = LogSeverity.Verbose
+                LogLevel = LogSeverity.Verbose,
+                AlwaysDownloadUsers = true
             });
 
             client.Log += (l)

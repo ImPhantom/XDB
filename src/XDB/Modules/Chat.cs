@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using XDB.Common.Attributes;
+using XDB.Common.Enums;
 using XDB.Common.Types;
 
 namespace XDB.Modules
@@ -137,40 +139,36 @@ namespace XDB.Modules
         [RequireContext(ContextType.Guild)]
         public async Task ServerInfo()
         {
-            // Ignore this shit
-            var owner = await Context.Guild.GetOwnerAsync();
-            var users = await Context.Guild.GetUsersAsync();
-            var text = await Context.Guild.GetTextChannelsAsync();
-            var voice = await Context.Guild.GetVoiceChannelsAsync();
+            var guild = Context.Guild as SocketGuild;
+            var date = $"{guild.CreatedAt.Month}/{guild.CreatedAt.Day}/{guild.CreatedAt.Year}";
 
-            var date = $"{Context.Guild.CreatedAt.Month}/{Context.Guild.CreatedAt.Day}/{Context.Guild.CreatedAt.Year}";
             var footer = new EmbedFooterBuilder()
             {
-                IconUrl = Context.Guild.IconUrl,
-                Text = $"Server ID: {Context.Guild.Id}"
+                Text = $"Server ID: {guild.Id}"
             };
             var embed = new EmbedBuilder()
             {
                 Color = new Color(29, 140, 209),
-                ThumbnailUrl = Context.Guild.IconUrl,
+                ThumbnailUrl = guild.IconUrl,
                 Footer = footer
             };
             embed.AddField(x =>
             {
                 x.Name = "Owner:";
-                x.Value = owner.Mention;
+                //x.Value = owner.Mention;
+                x.Value = guild.Owner.Mention;
                 x.IsInline = true;
             });
             embed.AddField(x =>
             {
                 x.Name = "Server Name:";
-                x.Value = $"{Context.Guild.Name}";
+                x.Value = $"{guild.Name}";
                 x.IsInline = true;
             });
             embed.AddField(x =>
             {
                 x.Name = "Voice Region:";
-                x.Value = $"`{Context.Guild.VoiceRegionId}`";
+                x.Value = $"`{guild.VoiceRegionId}`";
                 x.IsInline = true;
             });
             embed.AddField(x =>
@@ -182,25 +180,25 @@ namespace XDB.Modules
             embed.AddField(x =>
             {
                 x.Name = "Roles:";
-                x.Value = $"{Context.Guild.Roles.Count}";
+                x.Value = $"{guild.Roles.Count}";
                 x.IsInline = true;
             });
             embed.AddField(x =>
             {
                 x.Name = "Users:";
-                x.Value = $"{users.Count}";
+                x.Value = $"{guild.MemberCount}";
                 x.IsInline = true;
             });
             embed.AddField(x =>
             {
                 x.Name = "Text Channels:";
-                x.Value = $"{text.Count()}";
+                x.Value = $"{guild.TextChannels.Count}";
                 x.IsInline = true;
             });
             embed.AddField(x =>
             {
                 x.Name = "Voice Channels:";
-                x.Value = $"{voice.Count()}";
+                x.Value = $"{guild.VoiceChannels.Count}";
                 x.IsInline = true;
             });
             await ReplyAsync("", false, embed.Build());
