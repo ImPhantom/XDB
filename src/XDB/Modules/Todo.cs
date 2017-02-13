@@ -166,5 +166,34 @@ namespace XDB.Modules
                 await ReplyAsync($"Exception: {e.Message}");
             }
         }
+
+        [Command("cleartodo")]
+        [Name("cleartodo")]
+        [Remarks("Clears your todo list.")]
+        public async Task ClearTodo()
+        {
+            Config.TodoCheck();
+            var all = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
+            var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
+            var json = JsonConvert.DeserializeObject<List<TodoList>>(all);
+            try
+            {
+                if (!json.Any(x => x.Id == Context.User.Id))
+                {
+                    await ReplyAsync(":anger: You dont have a todo list...");
+                }
+                else
+                {
+                    json.First(x => x.Id == Context.User.Id).ListItems.Clear();
+                    var outjson = JsonConvert.SerializeObject(json);
+                    File.WriteAllText(path, outjson);
+                    await ReplyAsync(":white_check_mark: Cleared your todo list!");
+                }
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync($"Exception: {e.Message}");
+            }
+        }
     }
 }
