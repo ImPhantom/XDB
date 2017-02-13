@@ -2,7 +2,7 @@
 
 namespace XDB.Common.Attributes
 {
-    public class TodoList
+    public class UserTodo
     {
         public ulong Id { get; set; }
         public List<string> ListItems { get; set; }

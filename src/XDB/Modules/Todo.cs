@@ -20,12 +20,12 @@ namespace XDB.Modules
             Config.TodoCheck();
             var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
             var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
-            var json = JsonConvert.DeserializeObject<List<TodoList>>(filetext);
+            var json = JsonConvert.DeserializeObject<List<UserTodo>>(filetext);
             try
             {
                 if (!json.Any(x => x.Id == Context.User.Id))
                 {
-                    var newtodo = new TodoList()
+                    var newtodo = new UserTodo()
                     {
                         Id = Context.User.Id,
                         ListItems = new List<string> { null }
@@ -65,12 +65,12 @@ namespace XDB.Modules
             Config.TodoCheck();
             var all = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
             var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
-            var json = JsonConvert.DeserializeObject<List<TodoList>>(all);
+            var json = JsonConvert.DeserializeObject<List<UserTodo>>(all);
             try
             {
                 if(!json.Any(x => x.Id == Context.User.Id))
                 {
-                    var newtodo = new TodoList()
+                    var newtodo = new UserTodo()
                     {
                         Id = Context.User.Id,
                         ListItems = new List<string> { listitem }
@@ -100,7 +100,7 @@ namespace XDB.Modules
             Config.TodoCheck();
             var all = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
             var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
-            var json = JsonConvert.DeserializeObject<List<TodoList>>(all);
+            var json = JsonConvert.DeserializeObject<List<UserTodo>>(all);
             try
             {
                 if (!json.Any(x => x.Id == Context.User.Id))
@@ -138,7 +138,7 @@ namespace XDB.Modules
             Config.TodoCheck();
             var all = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
             var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
-            var json = JsonConvert.DeserializeObject<List<TodoList>>(all);
+            var json = JsonConvert.DeserializeObject<List<UserTodo>>(all);
             try
             {
                 index--;
@@ -175,7 +175,7 @@ namespace XDB.Modules
             Config.TodoCheck();
             var all = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
             var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
-            var json = JsonConvert.DeserializeObject<List<TodoList>>(all);
+            var json = JsonConvert.DeserializeObject<List<UserTodo>>(all);
             try
             {
                 if (!json.Any(x => x.Id == Context.User.Id))

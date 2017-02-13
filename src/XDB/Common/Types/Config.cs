@@ -57,10 +57,10 @@ namespace XDB.Common.Types
 
             if (!File.Exists(path))
             {
-                List<TodoList> lists = new List<TodoList>();
+                List<UserTodo> lists = new List<UserTodo>();
                 List<string> item = new List<string>();
                 item.Add("Default");
-                lists.Add(new TodoList()
+                lists.Add(new UserTodo()
                 {
                     Id = 0,
                     ListItems = item
@@ -81,13 +81,36 @@ namespace XDB.Common.Types
 
             if (!File.Exists(path))
             {
-                List<Reputation> reps = new List<Reputation>();
-                reps.Add(new Reputation()
+                List<UserRep> reps = new List<UserRep>();
+                reps.Add(new UserRep()
                 {
                     Id = 0,
                     Rep = 0
                 });
                 var json = JsonConvert.SerializeObject(reps);
+                using (var file = new FileStream(path, FileMode.Create)) { }
+                File.WriteAllText(path, json);
+            }
+            else
+                return;
+        }
+
+        public static void WarnCheck()
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "warn")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "warn"));
+
+            if (!File.Exists(path))
+            {
+                List<UserWarn> warns = new List<UserWarn>();
+                List<string> defWarns = new List<string> { "Default" };
+                warns.Add(new UserWarn()
+                {
+                    WarnedUser = 0,
+                    WarnReason = defWarns
+                });
+                var json = JsonConvert.SerializeObject(warns);
                 using (var file = new FileStream(path, FileMode.Create)) { }
                 File.WriteAllText(path, json);
             }

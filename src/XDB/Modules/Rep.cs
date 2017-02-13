@@ -31,12 +31,12 @@ namespace XDB.Modules
             Config.RepCheck();
             var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
             var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json"));
-            var json = JsonConvert.DeserializeObject<List<Reputation>>(filetext);
+            var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
             try
             {
                 if(!json.Any(x => x.Id == Context.User.Id))
                 {
-                    var defrep = new Reputation() { Id = Context.User.Id, Rep = 0 };
+                    var defrep = new UserRep() { Id = Context.User.Id, Rep = 0 };
                     json.Add(defrep);
                     var outjson = JsonConvert.SerializeObject(json);
                     File.WriteAllText(path, outjson);
@@ -62,12 +62,12 @@ namespace XDB.Modules
             Config.RepCheck();
             var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
             var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json"));
-            var json = JsonConvert.DeserializeObject<List<Reputation>>(filetext);
+            var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
             try
             {
                 if (!json.Any(x => x.Id == user.Id))
                 {
-                    var defrep = new Reputation() { Id = user.Id, Rep = 0 };
+                    var defrep = new UserRep() { Id = user.Id, Rep = 0 };
                     json.Add(defrep);
                     var outjson = JsonConvert.SerializeObject(json);
                     File.WriteAllText(path, outjson);
@@ -94,12 +94,12 @@ namespace XDB.Modules
             Config.RepCheck();
             var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
             var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json"));
-            var json = JsonConvert.DeserializeObject<List<Reputation>>(filetext);
+            var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
             try
             {
                 if (!json.Any(x => x.Id == user.Id))
                 {
-                    var defrep = new Reputation() { Id = user.Id, Rep = 1 };
+                    var defrep = new UserRep() { Id = user.Id, Rep = 1 };
                     json.Add(defrep);
                     await ReplyAsync($":white_circle: **{user.Username}'s** reputation: 1");
                     var defout = JsonConvert.SerializeObject(json);
@@ -132,12 +132,12 @@ namespace XDB.Modules
             Config.RepCheck();
             var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
             var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json"));
-            var json = JsonConvert.DeserializeObject<List<Reputation>>(filetext);
+            var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
             try
             {
                 if (!json.Any(x => x.Id == user.Id))
                 {
-                    var defrep = new Reputation() { Id = user.Id, Rep = -1 };
+                    var defrep = new UserRep() { Id = user.Id, Rep = -1 };
                     json.Add(defrep);
                     await ReplyAsync($":red_circle: **{user.Username}'s** reputation: -1");
                     var defout = JsonConvert.SerializeObject(json);
