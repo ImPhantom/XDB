@@ -24,29 +24,18 @@ namespace XDB.Modules
             try
             {
                 if (!json.Any(x => x.Id == Context.User.Id))
-                {
-                    var newtodo = new UserTodo()
-                    {
-                        Id = Context.User.Id,
-                        ListItems = new List<string> { null }
-                    };
-                    json.Add(newtodo);
-                    var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
                     await ReplyAsync(":anger: Your todo list is empty.");
-                } else
+                else
                 {
                     var ret = json.Find(x => x.Id == Context.User.Id);
-                    if(ret.ListItems.Any(x => string.IsNullOrEmpty(x))) { ret.ListItems.RemoveAll(str => string.IsNullOrEmpty(str)); var outjson = JsonConvert.SerializeObject(json); File.WriteAllText(path, outjson); }
+                    if (!ret.ListItems.Any()) { await ReplyAsync(":anger: Your todo list is empty."); return; }
+                    if (ret.ListItems.Any(x => string.IsNullOrEmpty(x))) { ret.ListItems.RemoveAll(str => string.IsNullOrEmpty(str)); var outjson = JsonConvert.SerializeObject(json); File.WriteAllText(path, outjson); }
                     var list = new StringBuilder();
                     foreach (var item in ret.ListItems)
                     {
                         list.AppendLine($"~ {item}");
                     }
-                    await ReplyAsync($@"**>>>>  Your Todo List  <<<<**
-```
-{list.ToString()}
-```");
+                    await ReplyAsync($@"**>>>>  Your Todo List  <<<<**```{list.ToString()}```");
                     
                 }
                     
