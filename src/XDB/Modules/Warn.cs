@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
+using XDB.Common.Enums;
 using XDB.Common.Types;
 
 namespace XDB.Modules
@@ -15,6 +16,7 @@ namespace XDB.Modules
     public class Warn : ModuleBase
     {
         [Command("warns")]
+        [Remarks("Checks your personal warns.")]
         public async Task Warns()
         {
             Config.WarnCheck();
@@ -24,26 +26,17 @@ namespace XDB.Modules
             try
             {
                 if(!json.Any(x => x.WarnedUser == Context.User.Id))
-                {
-                    var warn = new UserWarn()
-                    {
-                        WarnedUser = Context.User.Id,
-                        WarnReason = new List<string> { "" }
-                    };
-                    json.Add(warn);
-                    var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
                     await ReplyAsync(":anger: You do not have any warnings.");
-                } else
+                else
                 {
                     var warns = json.Find(x => x.WarnedUser == Context.User.Id);
-                    if(warns.WarnReason.Any(x => string.IsNullOrEmpty(x))) { warns.WarnReason.RemoveAll(str => string.IsNullOrEmpty(str));  }
+                    if (!warns.WarnReason.Any()) { await ReplyAsync(":anger: You do not have any warnings."); return; }
                     var warnsout = new StringBuilder();
                     foreach(var warn in warns.WarnReason)
                     {
                         warnsout.AppendLine($"~ {warn}");
                     }
-                    await ReplyAsync($"Your current warns >\n{warnsout.ToString()}");
+                    await ReplyAsync($"You currently have **{warns.WarnReason.Count}** warns.\n```{warnsout.ToString()}```");
                 }
             } catch(Exception e)
             {
@@ -52,6 +45,8 @@ namespace XDB.Modules
         }
 
         [Command("warns")]
+        [Remarks("Checks a specified users warnings.")]
+        [RequireContext(ContextType.Guild)]
         public async Task Warns(IGuildUser user)
         {
             Config.WarnCheck();
@@ -61,27 +56,17 @@ namespace XDB.Modules
             try
             {
                 if (!json.Any(x => x.WarnedUser == user.Id))
-                {
-                    var warn = new UserWarn()
-                    {
-                        WarnedUser = user.Id,
-                        WarnReason = new List<string> { null }
-                    };
-                    json.Add(warn);
-                    var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
-                    await ReplyAsync(":anger: You do not have any warnings.");
-                }
+                    await ReplyAsync(":anger: That user does not have any warnings.");
                 else
                 {
                     var warns = json.Find(x => x.WarnedUser == user.Id);
-                    if (warns.WarnReason.Any(x => string.IsNullOrEmpty(x))) { warns.WarnReason.RemoveAll(str => string.IsNullOrEmpty(str)); }
+                    if (!warns.WarnReason.Any()) { await ReplyAsync(":anger: You do not have any warnings."); return; }
                     var warnsout = new StringBuilder();
                     foreach (var warn in warns.WarnReason)
                     {
                         warnsout.AppendLine($"~ {warn}");
                     }
-                    await ReplyAsync($"{user.Username}'s warns >\n{warnsout.ToString()}");
+                    await ReplyAsync($"{user.Username} currently has **{warns.WarnReason.Count}** warns.\n```{warnsout.ToString()}```");
                 }
             }
             catch (Exception e)
@@ -91,6 +76,9 @@ namespace XDB.Modules
         }
 
         [Command("warn")]
+        [Remarks("Warns a specified user.")]
+        [RequireContext(ContextType.Guild)]
+        [Permissions(AccessLevel.ServerAdmin)]
         public async Task AddWarn(IGuildUser user, [Remainder] string reason)
         {
             var path = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
@@ -108,17 +96,17 @@ namespace XDB.Modules
                     json.Add(newwarn);
                     var outjson = JsonConvert.SerializeObject(json);
                     File.WriteAllText(path, outjson);
-                    await ReplyAsync(":white_check_mark: Warned the specified user.");
+                    await ReplyAsync($":white_check_mark: You warned {user.Username} for: \n\n `{reason}`");
                     var dm = await user.CreateDMChannelAsync();
-                    await dm.SendMessageAsync($"You have been warned by **{Context.User.Username}** in **{Context.Guild.Name}** for:\n`{reason}`");
+                    await dm.SendMessageAsync($":anger: You have been warned by **{Context.User.Username}** in **{Context.Guild.Name}** for:\n\n`{reason}`");
                 } else
                 {
                     json.First(x => x.WarnedUser == user.Id).WarnReason.Add(reason);
                     var outjson = JsonConvert.SerializeObject(json);
                     File.WriteAllText(path, outjson);
-                    await ReplyAsync(":white_check_mark: Warned the specified user.");
+                    await ReplyAsync($":white_check_mark: You warned {user.Username} for: \n\n `{reason}`");
                     var dm = await user.CreateDMChannelAsync();
-                    await dm.SendMessageAsync($"You have been warned by **{Context.User.Username}** in **{Context.Guild.Name}** for:\n`{reason}`");
+                    await dm.SendMessageAsync($":anger: You have been warned by **{Context.User.Username}** in **{Context.Guild.Name}** for:\n\n`{reason}`");
                 }
             }
             catch (Exception e)
@@ -128,6 +116,9 @@ namespace XDB.Modules
         }
 
         [Command("removewarn")]
+        [Remarks("Removes a warn from a specified user by index.")]
+        [RequireContext(ContextType.Guild)]
+        [Permissions(AccessLevel.ServerAdmin)]
         public async Task RemoveWarn(IGuildUser user, int index)
         {
             var path = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
