@@ -45,6 +45,7 @@ namespace XDB.Modules
         }
 
         [Command("warns")]
+        [Name("warns `<@user>`")]
         [Remarks("Checks a specified users warnings.")]
         [RequireContext(ContextType.Guild)]
         public async Task Warns(IGuildUser user)
@@ -60,7 +61,7 @@ namespace XDB.Modules
                 else
                 {
                     var warns = json.Find(x => x.WarnedUser == user.Id);
-                    if (!warns.WarnReason.Any()) { await ReplyAsync(":anger: You do not have any warnings."); return; }
+                    if (!warns.WarnReason.Any()) { await ReplyAsync(":anger: That user does not have any warnings."); return; }
                     var warnsout = new StringBuilder();
                     foreach (var warn in warns.WarnReason)
                     {
@@ -76,6 +77,7 @@ namespace XDB.Modules
         }
 
         [Command("warn")]
+        [Name("warn `<@user>` `<reason>`")]
         [Remarks("Warns a specified user.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
@@ -116,6 +118,7 @@ namespace XDB.Modules
         }
 
         [Command("removewarn")]
+        [Name("removewarn `<@user>` `<index>`")]
         [Remarks("Removes a warn from a specified user by index.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
