@@ -83,6 +83,7 @@ namespace XDB.Modules
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task AddWarn(IGuildUser user, [Remainder] string reason)
         {
+            Config.WarnCheck();
             var path = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
             var read = File.ReadAllText(path);
             var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
@@ -124,6 +125,7 @@ namespace XDB.Modules
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task RemoveWarn(IGuildUser user, int index)
         {
+            Config.WarnCheck();
             var path = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
             var read = File.ReadAllText(path);
             var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
