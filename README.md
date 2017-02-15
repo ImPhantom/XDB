@@ -6,7 +6,7 @@ you to have 100+ users in the discord before it can stay, I decided I would try 
 other moderation bots i've tested.
 
 ###What API am I using? 
-[Discord.Net](https://github.com/RogueException/Discord.Net) (rc592)
+[Discord.Net](https://github.com/RogueException/Discord.Net) (rc595)
 
 ###To Do List
 
@@ -15,7 +15,9 @@ other moderation bots i've tested.
 - ~~Steam Integration (query)~~
 - ~~Ban/Kick Logging (w/ reason)~~
 - ~~Reputation System~~
-- User Notes?
 - ~~URL Shortener~~
 - Module config (disable/enable)
-- Personal TODO Lists
+- ~~Personal TODO Lists~~
+- ~~Warn System~~
+- Reminders
+- Realtime config edits
