@@ -15,7 +15,9 @@ other moderation bots i've tested.
 - ~~Steam Integration (query)~~
 - ~~Ban/Kick Logging (w/ reason)~~
 - ~~Reputation System~~
-- User Notes?
 - ~~URL Shortener~~
 - Module config (disable/enable)
-- Personal TODO Lists
+- ~~Personal TODO Lists~~
+- ~~Warn System~~
+- Reminders
+- Realtime config edits
