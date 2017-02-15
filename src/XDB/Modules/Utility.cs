@@ -43,7 +43,7 @@ namespace XDB.Modules
                 }
             } catch (Exception ex)
             {
-                await ReplyAsync($"**Error:** Shortener is down.\n**Exception:**{ex.Message}");
+                await ReplyAsync($"**Error:** Shortener is down.\n**Exception: **{ex.Message}");
             }
         }
     }
