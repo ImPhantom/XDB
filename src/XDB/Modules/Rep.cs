@@ -15,7 +15,6 @@ namespace XDB.Modules
 {
     public class Rep : ModuleBase
     {
-        //UNDONE: Leaderboard
         [Command("leaderboard")]
         [Remarks("Shows the leading users in reputation.")]
         [RequireContext(ContextType.Guild)]
