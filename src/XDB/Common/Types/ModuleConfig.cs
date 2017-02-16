@@ -9,18 +9,24 @@ namespace XDB.Common.Types
         [JsonIgnore]
         public static readonly string appdir = AppContext.BaseDirectory;
 
+        public bool ChatModule { get; set; }
+        public bool AdminModule { get; set; }
         public bool MathModule { get; set; }
         public bool UtilModule { get; set; }
         public bool WarnModule { get; set; }
         public bool RepModule { get; set; }
+        public bool TodoModule { get; set; }
         public bool SteamModule { get; set; }
 
         public ModuleConfig()
         {
+            ChatModule = true;
+            AdminModule = true;
             MathModule = true;
             UtilModule = true;
             WarnModule = true;
             RepModule = true;
+            TodoModule = true;
             SteamModule = true;
         }
 

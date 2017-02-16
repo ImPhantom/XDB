@@ -20,11 +20,15 @@ namespace XDB
             await _cmds.AddModulesAsync(Assembly.GetEntryAssembly());
 
             //Module Config Shit
-            if (!ModuleConfig.Load().SteamModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Steam")); }
+            if (!ModuleConfig.Load().ChatModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Chat"));  }
+            if (!ModuleConfig.Load().AdminModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Admin")); }
             if (!ModuleConfig.Load().MathModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Maths")); }
+            if (!ModuleConfig.Load().UtilModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Utility")); }
             if (!ModuleConfig.Load().WarnModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Warn")); }
             if (!ModuleConfig.Load().RepModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Rep")); }
-            if (!ModuleConfig.Load().UtilModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Utility")); }
+            if (!ModuleConfig.Load().TodoModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Todo")); }
+            if (!ModuleConfig.Load().SteamModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Steam")); }
+
 
             _client.MessageReceived += HandleCommand;
         }
