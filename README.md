@@ -16,7 +16,7 @@ other moderation bots i've tested.
 - ~~Ban/Kick Logging (w/ reason)~~
 - ~~Reputation System~~
 - ~~URL Shortener~~
-- Module config (disable/enable)
+- ~~Module config (disable/enable)~~
 - ~~Personal TODO Lists~~
 - ~~Warn System~~
 - Reminders
