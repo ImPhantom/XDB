@@ -15,9 +15,9 @@ namespace XDB.Common.Types
         public ulong[] Owners { get; set; }
         public string Token { get; set; }
         public ulong LogChannel { get; set; }
-        public ulong[] IgnoredChannels { get; set; }
+        public List<ulong> IgnoredChannels { get; set; }
         public bool WordFilter { get; set; }
-        public string[] Words { get; set; }
+        public List<string> Words { get; set; }
         public bool Welcome { get; set; }
         public string WelcomeMessage { get; set; }
 
@@ -27,9 +27,9 @@ namespace XDB.Common.Types
             Owners = new ulong[] { 0 };
             Token = "";
             LogChannel = 0;
-            IgnoredChannels = new ulong[] { 0 };
+            IgnoredChannels = new List<ulong> { 0 };
             WordFilter = false;
-            Words = new string[] { "fuck", "shit" };
+            Words = new List<string> { "fuck", "shit" };
             Welcome = false;
             WelcomeMessage = "**Welcome to the server!**";
         }

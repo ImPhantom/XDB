@@ -99,6 +99,88 @@ namespace XDB.Modules
             await current.Guild.LeaveAsync();
         }
 
+        [Command("logchannel")]
+        [Alias("log")]
+        [Name("log `<channel id>`")]
+        [Remarks("Sets the logging channel")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task LogChannel(ulong channelid)
+        {
+            var cfg = Config.Load();
+            if (cfg.LogChannel == channelid) { await ReplyAsync($":anger: That is already the log channel."); return; }
+            cfg.LogChannel = channelid;
+            cfg.Save();
+            await ReplyAsync($":heavy_check_mark:  You set the logging channel to: `{channelid.ToString()}`");
+        }
+
+        [Command("filter")]
+        [Name("filter")]
+        [Remarks("Toggles the word filter.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task WordFilter()
+        {
+            var cfg = Config.Load();
+            if (cfg.WordFilter == true)
+                cfg.WordFilter = false;
+            else
+                cfg.WordFilter = true;
+            cfg.Save();
+            await ReplyAsync($":heavy_check_mark:  Word filter toggled.");
+        }
+
+        [Command("filteradd")]
+        [Name("filteradd `<string>`")]
+        [Remarks("Adds a word/string to the word filter.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task FilterAdd([Remainder] string str)
+        {
+            var cfg = Config.Load();
+            if (cfg.Words.Contains(str)) { await ReplyAsync($":anger: There is already a string matching `{str}` in the word filter."); return; }
+            cfg.Words.Add(str);
+            cfg.Save();
+            await ReplyAsync($":heavy_check_mark:  You added `{str}` to the word filter!");
+        }
+
+        [Command("filterdel")]
+        [Name("filterdel `<string>`")]
+        [Remarks("Removes a word/string from the word filter.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task FilterDel([Remainder] string str)
+        {
+            var cfg = Config.Load();
+            if (!cfg.Words.Contains(str)) { await ReplyAsync($":anger: There is no string matching `{str}` in the word filter."); return; }
+            cfg.Words.Remove(str);
+            cfg.Save();
+            await ReplyAsync($":heavy_multiplication_x:  You removed `{str}` from the word filter!");
+        }
+
+        [Command("ignore")]
+        [Name("ignore `<channel id>`")]
+        [Remarks("Adds a channel to the ignored channels.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task Ignore(ulong channelid)
+        {
+            var cfg = Config.Load();
+            if (cfg.IgnoredChannels.Contains(channelid)) { await ReplyAsync(":anger: That channel is already ignored."); return; }
+            cfg.IgnoredChannels.Add(channelid);
+            cfg.Save();
+            await ReplyAsync($":heavy_check_mark:  You added channel `{channelid}` to the ignored channels list.");
+        }
+
+        [Command("delignore")]
+        [Name("delignore `<channel id>`")]
+        [Remarks("Removes a channel from the ignored channels.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task DelIgnore(ulong channelid)
+        {
+            var cfg = Config.Load();
+            if(!cfg.IgnoredChannels.Contains(channelid)) { await ReplyAsync(":anger: That channel is not ignored."); return; }
+            cfg.IgnoredChannels.Remove(channelid);
+            cfg.Save();
+            await ReplyAsync($":heavy_multiplication_x:  You removed channel `{channelid}` from the ignored channels list.");
+        }
+
+        #region info (embed)
         [Command("info")]
         [Remarks("Display's the bots information and statistics.")]
         public async Task Info()
@@ -165,10 +247,9 @@ namespace XDB.Modules
 
             await ReplyAsync("", false, embed.Build());
         }
-
-
         private static string GetUptime()
             => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
         private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
+        #endregion
     }
 }
