@@ -58,9 +58,7 @@ namespace XDB
                 cfg.Token = Console.ReadLine();
                 cfg.Save();
             }
-            //Check for module config.
             if(!File.Exists(modules)) { var mdls = new ModuleConfig(); mdls.Save(); }
-
             Console.WriteLine(Strings.XDB_ConfigLoaded);
         }
     }
