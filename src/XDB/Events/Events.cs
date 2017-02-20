@@ -30,7 +30,7 @@ namespace XDB.Events
                     if (Config.Load().IgnoredChannels.Contains(s.Channel.Id))
                         return;
                     var words = Config.Load().Words;
-                    if (words.Any(s.Content.Contains))
+                    if (words.Any(s.Content.ToLower().Contains))
                     {
                         var log = client.GetChannel(Config.Load().LogChannel) as ITextChannel;
                         if (log == null)

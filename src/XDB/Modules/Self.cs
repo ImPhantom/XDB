@@ -136,7 +136,7 @@ namespace XDB.Modules
         {
             var cfg = Config.Load();
             if (cfg.Words.Contains(str)) { await ReplyAsync($":anger: There is already a string matching `{str}` in the word filter."); return; }
-            cfg.Words.Add(str);
+            cfg.Words.Add(str.ToLower());
             cfg.Save();
             await ReplyAsync($":heavy_check_mark:  You added `{str}` to the word filter!");
         }
@@ -149,7 +149,7 @@ namespace XDB.Modules
         {
             var cfg = Config.Load();
             if (!cfg.Words.Contains(str)) { await ReplyAsync($":anger: There is no string matching `{str}` in the word filter."); return; }
-            cfg.Words.Remove(str);
+            cfg.Words.Remove(str.ToLower());
             cfg.Save();
             await ReplyAsync($":heavy_multiplication_x:  You removed `{str}` from the word filter!");
         }
