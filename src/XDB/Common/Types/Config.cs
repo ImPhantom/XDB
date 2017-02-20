@@ -27,9 +27,9 @@ namespace XDB.Common.Types
             Owners = new ulong[] { 0 };
             Token = "";
             LogChannel = 0;
-            IgnoredChannels = new List<ulong> { 0 };
+            IgnoredChannels = new List<ulong> { };
             WordFilter = false;
-            Words = new List<string> { "fuck", "shit" };
+            Words = new List<string> { };
             Welcome = false;
             WelcomeMessage = "**Welcome to the server!**";
         }
