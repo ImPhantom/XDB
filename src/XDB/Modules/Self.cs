@@ -121,11 +121,15 @@ namespace XDB.Modules
         {
             var cfg = Config.Load();
             if (cfg.WordFilter == true)
+            {
                 cfg.WordFilter = false;
-            else
-                cfg.WordFilter = true;
+                await ReplyAsync($":heavy_multiplication_x:  Word Filter disabled.");
+            } else
+            {
+                cfg.Welcome = true;
+                await ReplyAsync($":heavy_check_mark:  Word Filter enabled.");
+            }
             cfg.Save();
-            await ReplyAsync($":heavy_check_mark:  Word filter toggled.");
         }
 
         [Command("filteradd")]
@@ -178,6 +182,36 @@ namespace XDB.Modules
             cfg.IgnoredChannels.Remove(channelid);
             cfg.Save();
             await ReplyAsync($":heavy_multiplication_x:  You removed channel `{channelid}` from the ignored channels list.");
+        }
+
+        [Command("welcome")]
+        [Remarks("Toggles the welcome message.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task Welcome()
+        {
+            var cfg = Config.Load();
+            if (cfg.Welcome == true)
+            {
+                cfg.Welcome = false;
+                await ReplyAsync($":heavy_multiplication_x:  Welcome Message disabled.");
+            } else
+            {
+                cfg.Welcome = true;
+                await ReplyAsync($":heavy_check_mark:  Welcome Message enabled.");
+            }
+            cfg.Save();
+        }
+
+        [Command("welcome")]
+        [Name("welcome `<message>`")]
+        [Remarks("Toggles the welcome message.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task Welcome([Remainder] string message)
+        {
+            var cfg = Config.Load();
+            cfg.WelcomeMessage = message;
+            cfg.Save();
+            await ReplyAsync($":heavy_check_mark:  You changed the welcome message to: \n\n{message}");
         }
 
         #region info (embed)
