@@ -2,6 +2,7 @@
 using Discord.Commands;
 using System.Linq;
 using System.Threading.Tasks;
+using XDB.Common.Types;
 
 namespace XDB.Modules
 {
@@ -18,12 +19,12 @@ namespace XDB.Modules
         [RequireContext(ContextType.Guild)]
         public async Task HelpAsync()
         {
-            string pfx = "~";
+            string prefix = Config.Load().Prefix;
 
             var builder = new EmbedBuilder()
             {
                 Color = new Color(25, 212, 84),
-                Description = "These are the commands and their modules."
+                Description = "**These are all the commands you have access to.**"
             };
 
             foreach (var module in serv.Modules)
@@ -33,7 +34,7 @@ namespace XDB.Modules
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
-                        desc += $"{pfx}{cmd.Name}\n";
+                        desc += $"{prefix}{cmd.Name}\n";
                 }
 
                 if (!string.IsNullOrWhiteSpace(desc))
@@ -57,16 +58,18 @@ namespace XDB.Modules
         {
             var result = serv.Search(Context, command);
 
+            var prefix = Config.Load().Prefix;
+
             if (!result.IsSuccess)
             {
-                await ReplyAsync($"Sorry, I couldn't find a command like **{command}**.");
+                await ReplyAsync($":anger: There are no commands matching your input.");
                 return;
             }
 
             var builder = new EmbedBuilder()
             {
                 Color = new Color(25, 212, 84),
-                Description = $"Here are some commands like **{command}**"
+                Description = $"**Commands similar to:** `{prefix}{command}`"
             };
 
             foreach (var match in result.Commands)
@@ -76,8 +79,9 @@ namespace XDB.Modules
                 builder.AddField(x =>
                 {
                     x.Name = string.Join(", ", cmd.Aliases);
-                    x.Value = $"Parameters: {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n" +
-                              $"Remarks: {cmd.Remarks}";
+                    x.Value = $"**Parameters:**  {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n" +
+                              $"**Remarks:**  {cmd.Remarks}\n" +
+                              $"**Syntax:**  {prefix + cmd.Name}";
                     x.IsInline = false;
                 });
             }
