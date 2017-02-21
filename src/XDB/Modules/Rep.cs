@@ -26,19 +26,29 @@ namespace XDB.Modules
             var json = JsonConvert.DeserializeObject<List<UserRep>>(read);
 
             var topreps = json.OrderByDescending(x => x.Rep).Take(10);
+            var embed = new EmbedBuilder() { Color = new Color(21, 144, 232) };
             var str = new StringBuilder();
-            str.AppendLine("```");
             foreach(var rep in topreps)
             {
                 var user = await Context.Client.GetUserAsync(rep.Id);
                 if (user == null)
-                    str.AppendLine($"NULL ~ {rep.Rep.ToString()}");
-                else
-                    str.AppendLine($"{user.Username} ~ {rep.Rep.ToString()}");
+                {
+                    embed.AddField(x => {
+                        x.Name = "**null_user**";
+                        x.Value = $"Reputation: {rep.Rep}";
+                        x.IsInline = false;
+                    });
+                } else
+                {
+                    embed.AddField(x => {
+                        x.Name = $"**{user.Username}**";
+                        x.Value = $"Reputation: {rep.Rep}";
+                        x.IsInline = false;
+                    });
+                }
             }
-            str.AppendLine("```");
-            await ReplyAsync(":grey_exclamation: Current top reputations.");
-            await ReplyAsync($"{str.ToString()}");
+            await ReplyAsync(":star: **Top 10 Reputations:**");
+            await ReplyAsync("", false, embed.Build());
         }
 
         [Command("rep")]
