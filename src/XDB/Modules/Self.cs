@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
 using XDB.Common.Enums;
@@ -101,39 +102,34 @@ namespace XDB.Modules
 
         [Command("logchannel")]
         [Alias("log")]
-        [Name("log `<channel id>`")]
-        [Remarks("Sets the logging channel")]
+        [Name("log `<channel-id>`")]
+        [Remarks("Sets the logging channel.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task LogChannel(ulong channelid)
         {
             var cfg = Config.Load();
-            if (cfg.LogChannel == channelid) { await ReplyAsync($":anger: That is already the log channel."); return; }
+            if (cfg.LogChannel == channelid) { await ReplyAsync($":anger: That is already the logging channel."); return; }
             cfg.LogChannel = channelid;
             cfg.Save();
             await ReplyAsync($":heavy_check_mark:  You set the logging channel to: `{channelid.ToString()}`");
         }
 
-        [Command("filter")]
-        [Name("filter")]
-        [Remarks("Toggles the word filter.")]
+        [Command("filters")]
+        [Remarks("Displays all words in the word filter.")]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task WordFilter()
+        public async Task FilterWords()
         {
-            var cfg = Config.Load();
-            if (cfg.WordFilter == true)
+            var words = new StringBuilder();
+            if (!Config.Load().Words.Any()) { await ReplyAsync(":anger: There are no words in the word filter."); return; }
+            foreach(var word in Config.Load().Words)
             {
-                cfg.WordFilter = false;
-                await ReplyAsync($":heavy_multiplication_x:  Word Filter disabled.");
-            } else
-            {
-                cfg.Welcome = true;
-                await ReplyAsync($":heavy_check_mark:  Word Filter enabled.");
+                words.AppendLine(word);
             }
-            cfg.Save();
+            await ReplyAsync($":heavy_check_mark:  Currently Blacklisted Words:\n```\n{words.ToString()}\n```");
         }
 
-        [Command("filteradd")]
-        [Name("filteradd `<string>`")]
+        [Command("addword")]
+        [Name("addword `<string>`")]
         [Remarks("Adds a word/string to the word filter.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task FilterAdd([Remainder] string str)
@@ -145,8 +141,8 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  You added `{str}` to the word filter!");
         }
 
-        [Command("filterdel")]
-        [Name("filterdel `<string>`")]
+        [Command("delword")]
+        [Name("delword `<string>`")]
         [Remarks("Removes a word/string from the word filter.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task FilterDel([Remainder] string str)
@@ -159,7 +155,7 @@ namespace XDB.Modules
         }
 
         [Command("ignore")]
-        [Name("ignore `<channel id>`")]
+        [Name("ignore `<channel-id>`")]
         [Remarks("Adds a channel to the ignored channels.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Ignore(ulong channelid)
@@ -171,8 +167,24 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  You added channel `{channelid}` to the ignored channels list.");
         }
 
+        [Command("ignored")]
+        [Name("ignored")]
+        [Remarks("Displays the ignored channels.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task Ignored()
+        {
+            var ignored = new StringBuilder();
+            if (!Config.Load().IgnoredChannels.Any()) { await ReplyAsync(":anger: There are no ignored channels!"); return; }
+            foreach(var channel in Config.Load().IgnoredChannels)
+            {
+                var chan = await Context.Guild.GetChannelAsync(channel);
+                ignored.AppendLine($"**#{chan.Name}** -- `{chan.Id}`");
+            }
+            await ReplyAsync($":heavy_check_mark:  Currently ignored channels:\n{ignored.ToString()}");
+        }
+
         [Command("delignore")]
-        [Name("delignore `<channel id>`")]
+        [Name("delignore `<channel-id>`")]
         [Remarks("Removes a channel from the ignored channels.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task DelIgnore(ulong channelid)
