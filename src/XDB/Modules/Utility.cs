@@ -1,7 +1,10 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -44,6 +47,39 @@ namespace XDB.Modules
             } catch (Exception ex)
             {
                 await ReplyAsync($"**Error:** Shortener is down.\n**Exception: **{ex.Message}");
+            }
+        }
+
+        [Command("urban")]
+        [Name("urban `<string>`")]
+        [Remarks("Retrieves a definition from UrbanDictionary.")]
+        public async Task Urban([Remainder]string define)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                var get = await client.GetStringAsync($"http://api.urbandictionary.com/v0/define?term={Uri.EscapeUriString(define)}");
+                try
+                {
+                    var items = JObject.Parse(get);
+                    var item = items["list"][0];
+                    var word = item["word"].ToString();
+                    var def = item["definition"].ToString();
+                    var link = item["permalink"].ToString();
+
+                    var embed = new EmbedBuilder() { Color = new Color(21, 144, 232) };
+                    embed.AddField(x =>
+                    {
+                        x.Name = $"{word}";
+                        x.Value = $"\"{def}\"\n\nPermalink: {link}";
+                        x.IsInline = false;
+                    });
+                    await ReplyAsync("", false, embed.Build());
+                } catch
+                {
+                    await ReplyAsync(":anger: Could not find a definition for that word!");
+                }
             }
         }
     }
