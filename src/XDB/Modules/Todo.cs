@@ -18,8 +18,7 @@ namespace XDB.Modules
         public async Task ViewTodo()
         {
             Config.TodoCheck();
-            var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
-            var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
+            var filetext = File.ReadAllText(Strings.TodoPath);
             var json = JsonConvert.DeserializeObject<List<UserTodo>>(filetext);
             try
             {
@@ -29,7 +28,8 @@ namespace XDB.Modules
                 {
                     var ret = json.Find(x => x.Id == Context.User.Id);
                     if (!ret.ListItems.Any()) { await ReplyAsync(":anger: Your todo list is empty."); return; }
-                    if (ret.ListItems.Any(x => string.IsNullOrEmpty(x))) { ret.ListItems.RemoveAll(str => string.IsNullOrEmpty(str)); var outjson = JsonConvert.SerializeObject(json); File.WriteAllText(path, outjson); }
+                    // removed temporarily to see if still needed.
+                    //if (ret.ListItems.Any(x => string.IsNullOrEmpty(x))) { ret.ListItems.RemoveAll(str => string.IsNullOrEmpty(str)); var outjson = JsonConvert.SerializeObject(json); File.WriteAllText(Strings.TodoPath, outjson); }
                     var list = new StringBuilder();
                     foreach (var item in ret.ListItems)
                     {
@@ -52,8 +52,7 @@ namespace XDB.Modules
         public async Task AddTodo([Remainder] string listitem)
         {
             Config.TodoCheck();
-            var all = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
-            var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
+            var all = File.ReadAllText(Strings.TodoPath);
             var json = JsonConvert.DeserializeObject<List<UserTodo>>(all);
             try
             {
@@ -66,13 +65,13 @@ namespace XDB.Modules
                     };
                     json.Add(newtodo);
                     var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
+                    File.WriteAllText(Strings.TodoPath, outjson);
                     await ReplyAsync(":white_check_mark: Added item to your Todo List.");
                 } else
                 {
                     json.First(x => x.Id == Context.User.Id).ListItems.Add(listitem);
                     var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
+                    File.WriteAllText(Strings.TodoPath, outjson);
                     await ReplyAsync(":white_check_mark: Added item to your Todo List.");
                 }
             } catch (Exception e)
@@ -87,8 +86,7 @@ namespace XDB.Modules
         public async Task DelTodo([Remainder] string listitem)
         {
             Config.TodoCheck();
-            var all = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
-            var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
+            var all = File.ReadAllText(Strings.TodoPath);
             var json = JsonConvert.DeserializeObject<List<UserTodo>>(all);
             try
             {
@@ -104,7 +102,7 @@ namespace XDB.Modules
                         var index = json.FindIndex(x => x.ListItems.Contains(listitem));
                         json.First(x => x.Id == Context.User.Id).ListItems.RemoveAt(index);
                         var outjson = JsonConvert.SerializeObject(json);
-                        File.WriteAllText(path, outjson);
+                        File.WriteAllText(Strings.TodoPath, outjson);
                         await ReplyAsync(":white_check_mark: Removed item from your Todo List.");
                     }
                     else
@@ -125,8 +123,7 @@ namespace XDB.Modules
         public async Task DelTodo(int index)
         {
             Config.TodoCheck();
-            var all = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
-            var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
+            var all = File.ReadAllText(Strings.TodoPath);
             var json = JsonConvert.DeserializeObject<List<UserTodo>>(all);
             try
             {
@@ -141,7 +138,7 @@ namespace XDB.Modules
                     {
                         json.First(x => x.Id == Context.User.Id).ListItems.RemoveAt(index);
                         var outjson = JsonConvert.SerializeObject(json);
-                        File.WriteAllText(path, outjson);
+                        File.WriteAllText(Strings.TodoPath, outjson);
                         await ReplyAsync(":white_check_mark: Removed item from your Todo List.");
                     }
                     else
@@ -162,8 +159,7 @@ namespace XDB.Modules
         public async Task ClearTodo()
         {
             Config.TodoCheck();
-            var all = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json"));
-            var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
+            var all = File.ReadAllText(Strings.TodoPath);
             var json = JsonConvert.DeserializeObject<List<UserTodo>>(all);
             try
             {
@@ -175,7 +171,7 @@ namespace XDB.Modules
                 {
                     json.First(x => x.Id == Context.User.Id).ListItems.Clear();
                     var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
+                    File.WriteAllText(Strings.TodoPath, outjson);
                     await ReplyAsync(":white_check_mark: Cleared your todo list!");
                 }
             }

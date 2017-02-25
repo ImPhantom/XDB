@@ -47,10 +47,7 @@ namespace XDB
             if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "cfg")))
                 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "cfg"));
 
-            string location = Path.Combine(AppContext.BaseDirectory, "cfg/config.json");
-            string modules = Path.Combine(AppContext.BaseDirectory, "cfg/modules.json");
-
-            if (!File.Exists(location))
+            if (!File.Exists(Strings.ConfigPath))
             {
                 var cfg = new Config();
                 Console.WriteLine(Strings.XDB_ConfigCreated);
@@ -58,7 +55,7 @@ namespace XDB
                 cfg.Token = Console.ReadLine();
                 cfg.Save();
             }
-            if(!File.Exists(modules)) { var mdls = new ModuleConfig(); mdls.Save(); }
+            if(!File.Exists(Strings.ModulePath)) { var mdls = new ModuleConfig(); mdls.Save(); }
             Console.WriteLine(Strings.XDB_ConfigLoaded);
         }
     }

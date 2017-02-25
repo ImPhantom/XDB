@@ -20,8 +20,7 @@ namespace XDB.Modules
         public async Task Warns()
         {
             Config.WarnCheck();
-            var path = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
-            var read = File.ReadAllText(path);
+            var read = File.ReadAllText(Strings.WarnPath);
             var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
             try
             {
@@ -51,8 +50,7 @@ namespace XDB.Modules
         public async Task Warns(IGuildUser user)
         {
             Config.WarnCheck();
-            var path = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
-            var read = File.ReadAllText(path);
+            var read = File.ReadAllText(Strings.WarnPath);
             var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
             try
             {
@@ -84,8 +82,7 @@ namespace XDB.Modules
         public async Task AddWarn(IGuildUser user, [Remainder] string reason)
         {
             Config.WarnCheck();
-            var path = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
-            var read = File.ReadAllText(path);
+            var read = File.ReadAllText(Strings.WarnPath);
             var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
             try
             {
@@ -98,7 +95,7 @@ namespace XDB.Modules
                     };
                     json.Add(newwarn);
                     var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
+                    File.WriteAllText(Strings.WarnPath, outjson);
                     await ReplyAsync($":white_check_mark: You warned {user.Username} for: \n\n `{reason}`");
                     var dm = await user.CreateDMChannelAsync();
                     await dm.SendMessageAsync($":anger: You have been warned by **{Context.User.Username}** in **{Context.Guild.Name}** for:\n\n`{reason}`");
@@ -106,7 +103,7 @@ namespace XDB.Modules
                 {
                     json.First(x => x.WarnedUser == user.Id).WarnReason.Add(reason);
                     var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
+                    File.WriteAllText(Strings.WarnPath, outjson);
                     await ReplyAsync($":white_check_mark: You warned {user.Username} for: \n\n `{reason}`");
                     var dm = await user.CreateDMChannelAsync();
                     await dm.SendMessageAsync($":anger: You have been warned by **{Context.User.Username}** in **{Context.Guild.Name}** for:\n\n`{reason}`");
@@ -126,8 +123,7 @@ namespace XDB.Modules
         public async Task RemoveWarn(IGuildUser user, int index)
         {
             Config.WarnCheck();
-            var path = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
-            var read = File.ReadAllText(path);
+            var read = File.ReadAllText(Strings.WarnPath);
             var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
             try
             {
@@ -142,7 +138,7 @@ namespace XDB.Modules
                     {
                         json.First(x => x.WarnedUser == user.Id).WarnReason.RemoveAt(index);
                         var outjson = JsonConvert.SerializeObject(json);
-                        File.WriteAllText(path, outjson);
+                        File.WriteAllText(Strings.WarnPath, outjson);
                         await ReplyAsync(":white_check_mark: Removed warn from specified user.");
                     }
                     else

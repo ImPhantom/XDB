@@ -21,8 +21,7 @@ namespace XDB.Modules
         public async Task Leaderboard()
         {
             Config.RepCheck();
-            var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
-            var read = File.ReadAllText(path);
+            var read = File.ReadAllText(Strings.RepPath);
             var json = JsonConvert.DeserializeObject<List<UserRep>>(read);
 
             var topreps = json.OrderByDescending(x => x.Rep).Take(10);
@@ -57,8 +56,7 @@ namespace XDB.Modules
         public async Task MyRep()
         {
             Config.RepCheck();
-            var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
-            var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json"));
+            var filetext = File.ReadAllText(Strings.RepPath);
             var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
             try
             {
@@ -67,7 +65,7 @@ namespace XDB.Modules
                     var defrep = new UserRep() { Id = Context.User.Id, Rep = 0 };
                     json.Add(defrep);
                     var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
+                    File.WriteAllText(Strings.RepPath, outjson);
                 }
                 var rep = json.First(x => x.Id == Context.User.Id).Rep;
                 if (rep < 0)
@@ -88,8 +86,7 @@ namespace XDB.Modules
         public async Task CheckRep(IGuildUser user)
         {
             Config.RepCheck();
-            var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
-            var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json"));
+            var filetext = File.ReadAllText(Strings.RepPath);
             var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
             try
             {
@@ -98,7 +95,7 @@ namespace XDB.Modules
                     var defrep = new UserRep() { Id = user.Id, Rep = 0 };
                     json.Add(defrep);
                     var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
+                    File.WriteAllText(Strings.RepPath, outjson);
                 }
                 var rep = json.First(x => x.Id == user.Id).Rep;
                 if (rep < 0)
@@ -120,8 +117,7 @@ namespace XDB.Modules
         public async Task AddRep(IGuildUser user)
         {
             Config.RepCheck();
-            var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
-            var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json"));
+            var filetext = File.ReadAllText(Strings.RepPath);
             var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
             try
             {
@@ -131,7 +127,7 @@ namespace XDB.Modules
                     json.Add(defrep);
                     await ReplyAsync($":white_circle: **{user.Username}'s** reputation: 1");
                     var defout = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, defout);
+                    File.WriteAllText(Strings.RepPath, defout);
                 } else
                 {
                     json.First(x => x.Id == user.Id).Rep++;
@@ -141,7 +137,7 @@ namespace XDB.Modules
                     else
                         await ReplyAsync($":white_circle: **{user.Username}'s** reputation: {rep}");
                     var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
+                    File.WriteAllText(Strings.RepPath, outjson);
                 }
             }
             catch (Exception e)
@@ -158,8 +154,7 @@ namespace XDB.Modules
         public async Task DelRep(IGuildUser user)
         {
             Config.RepCheck();
-            var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
-            var filetext = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json"));
+            var filetext = File.ReadAllText(Strings.RepPath);
             var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
             try
             {
@@ -169,7 +164,7 @@ namespace XDB.Modules
                     json.Add(defrep);
                     await ReplyAsync($":red_circle: **{user.Username}'s** reputation: -1");
                     var defout = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, defout);
+                    File.WriteAllText(Strings.RepPath, defout);
                 }
                 else
                 {
@@ -180,7 +175,7 @@ namespace XDB.Modules
                     else
                         await ReplyAsync($":white_circle: **{user.Username}'s** reputation: {rep}");
                     var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(path, outjson);
+                    File.WriteAllText(Strings.RepPath, outjson);
                 }
             }
             catch (Exception e)

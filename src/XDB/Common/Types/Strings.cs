@@ -1,4 +1,6 @@
 ﻿using Discord;
+using System;
+using System.IO;
 
 namespace XDB.Common.Types
 {
@@ -13,6 +15,13 @@ namespace XDB.Common.Types
         public static string XDB_ConfigLoaded = "[XDB] [Info] Configuration Successfully Loaded!";
         public static string XDB_ConfigCreated = @"After you input your token, a config will be generated at 'cfg\\config.json'.
 Please fill in all your info and restart the bot.";
+
+        // Config/Storage Paths
+        public static string ConfigPath = Path.Combine(AppContext.BaseDirectory, "cfg/config.json");
+        public static string ModulePath = Path.Combine(AppContext.BaseDirectory, "cfg/modules.json");
+        public static string TodoPath = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
+        public static string RepPath = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
+        public static string WarnPath = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
         #endregion
 
         #region 8ball
