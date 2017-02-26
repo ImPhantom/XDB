@@ -226,16 +226,29 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  You changed the welcome message to: \n\n{message}");
         }
 
+        // Need to find a better way to do this...
+        /*[Command("suggest")]
+        [Name("suggest `<idea>`")]
+        [Remarks("Suggests a feature to be added to XDB.")]
+        public async Task Suggest([Remainder] string str)
+        {
+            var dev = await Context.Client.GetUserAsync(93765631177920512);
+            var dm = await dev.CreateDMChannelAsync();
+            await dm.SendMessageAsync($"**{Context.User.Username}** submitted a suggestion:\n\n`{str}`");
+            await ReplyAsync(":white_check_mark: You submitted your suggestion!");
+        }*/
+
         #region info (embed)
         [Command("info")]
         [Remarks("Display's the bots information and statistics.")]
         public async Task Info()
         {
             var application = await Context.Client.GetApplicationInfoAsync();
+            var avurl = Context.Client.CurrentUser.GetAvatarUrl();
             var auth = new EmbedAuthorBuilder()
             {
                 Name = Context.Client.CurrentUser.Username,
-                IconUrl = Context.Client.CurrentUser.AvatarUrl
+                IconUrl = avurl
             };
             var embed = new EmbedBuilder()
             {
