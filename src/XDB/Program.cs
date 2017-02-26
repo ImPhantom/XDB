@@ -32,7 +32,7 @@ namespace XDB
                 => Console.WriteLine($"[{l.Severity}] {l.Source}: {l.Exception?.ToString() ?? l.Message}"));
 
             await client.LoginAsync(TokenType.Bot, Config.Load().Token);
-            await client.ConnectAsync();
+            await client.StartAsync();
 
             Events.Events.initEvents();
 

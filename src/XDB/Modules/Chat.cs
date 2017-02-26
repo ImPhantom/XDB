@@ -24,10 +24,11 @@ namespace XDB.Modules
         public async Task UserInfo()
         {
             var date = $"{Context.User.CreatedAt.Month}/{Context.User.CreatedAt.Day}/{Context.User.CreatedAt.Year}";
+            var avurl = Context.User.GetAvatarUrl();
             var user = new EmbedAuthorBuilder()
             {
                 Name = Context.User.Username,
-                IconUrl = Context.User.AvatarUrl
+                IconUrl = avurl
             };
             var embed = new EmbedBuilder()
             {
@@ -80,10 +81,11 @@ namespace XDB.Modules
         public async Task UserInfo(IGuildUser user)
         {
             var date = $"{user.CreatedAt.Month}/{user.CreatedAt.Day}/{user.CreatedAt.Year}";
+            var avurl = user.GetAvatarUrl();
             var auth = new EmbedAuthorBuilder()
             {
                 Name = user.Username,
-                IconUrl = user.AvatarUrl
+                IconUrl = avurl
             };
             var embed = new EmbedBuilder()
             {
