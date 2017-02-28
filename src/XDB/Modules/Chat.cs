@@ -202,22 +202,18 @@ namespace XDB.Modules
         
         private string GetUserGame(CommandContext ctx)
         {
-            var playing = ctx.User.Game;
-            if(!playing.HasValue)
-            {
+            if(!ctx.User.Game.HasValue)
                 return $"`N/A`";
-            }
-            return $"`{playing}`";
+            else
+                return $"`{ctx.User.Game}`";
         }
 
         private string GetUserGame(IGuildUser user)
         {
-            var playing = user.Game;
-            if (!playing.HasValue)
-            {
+            if (!user.Game.HasValue)
                 return $"`N/A`";
-            }
-            return $"`{playing}`";
+            else
+                return $"`{user.Game}`";
         }
     }
 }
