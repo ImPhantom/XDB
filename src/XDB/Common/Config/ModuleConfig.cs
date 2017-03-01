@@ -17,6 +17,7 @@ namespace XDB.Common.Types
         public bool RepModule { get; set; }
         public bool TodoModule { get; set; }
         public bool SteamModule { get; set; }
+        public bool RemindModule { get; set; }
 
         public ModuleConfig()
         {
@@ -28,6 +29,7 @@ namespace XDB.Common.Types
             RepModule = true;
             TodoModule = true;
             SteamModule = true;
+            RemindModule = true;
         }
 
         public static ModuleConfig Load(string dir = "cfg/modules.json")

@@ -28,6 +28,7 @@ namespace XDB
             if (!ModuleConfig.Load().RepModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Rep")); }
             if (!ModuleConfig.Load().TodoModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Todo")); }
             if (!ModuleConfig.Load().SteamModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Steam")); }
+            if (!ModuleConfig.Load().RemindModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Name == "Remind")); }
 
 
             _client.MessageReceived += HandleCommand;
