@@ -28,8 +28,6 @@ namespace XDB.Modules
                 {
                     var ret = json.Find(x => x.Id == Context.User.Id);
                     if (!ret.ListItems.Any()) { await ReplyAsync(":anger: Your todo list is empty."); return; }
-                    // removed temporarily to see if still needed.
-                    //if (ret.ListItems.Any(x => string.IsNullOrEmpty(x))) { ret.ListItems.RemoveAll(str => string.IsNullOrEmpty(str)); var outjson = JsonConvert.SerializeObject(json); File.WriteAllText(Strings.TodoPath, outjson); }
                     var list = new StringBuilder();
                     foreach (var item in ret.ListItems)
                     {
