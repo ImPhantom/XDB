@@ -7,7 +7,7 @@ namespace XDB.Common.Types
     public class Strings
     {
         #region global
-        public static readonly string ReleaseVersion = "1.1.4";
+        public static readonly string ReleaseVersion = "1.1.5";
         #endregion
 
         #region common
