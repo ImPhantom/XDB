@@ -10,12 +10,24 @@ namespace XDB.Modules
         // UNDONE
         // SERIOUSLY UNDONE
         [Command("remind")]
+        [Name("remind `<1s/1m/1h/1d>` `<reminder>`")]
         [Remarks("Sets a reminder for the calling user.")]
         [RequireContext(ContextType.Guild)]
         public async Task RemindMe(string time, [Remainder] string reminder)
         {
             var ms = Convert.ToInt32(ToMS(time));
             var serv = new TimerService(ms, reminder, Context.User.Id, Context.Channel.Id);
+            await ReplyAsync($":alarm_clock: Okay, I will remind you in {time}.");
+        }
+
+        [Command("remind")]
+        [Name("remind `<1s/1m/1h/1d>`")]
+        [Remarks("Sets a reminder for the calling user.")]
+        [RequireContext(ContextType.Guild)]
+        public async Task RemindMe(string time)
+        {
+            var ms = Convert.ToInt32(ToMS(time));
+            var serv = new TimerService(ms, "", Context.User.Id, Context.Channel.Id);
             await ReplyAsync($":alarm_clock: Okay, I will remind you in {time}.");
         }
 

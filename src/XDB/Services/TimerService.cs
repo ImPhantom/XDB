@@ -14,7 +14,10 @@ namespace XDB.Services
             {
                 var c = client.GetChannel(channel) as ITextChannel;
                 var u = client.GetUser(user) as IUser;
-                c.SendMessageAsync($":mega: {u.Mention} Timer is up! You need to do: `{reminder}`");
+                if (string.IsNullOrEmpty(reminder))
+                    c.SendMessageAsync($":mega: {u.Mention} Timer is up!");
+                else
+                    c.SendMessageAsync($":mega: {u.Mention} Timer is up! You need to: `{reminder}`");
             }, null, time, Timeout.Infinite);
         }
 
