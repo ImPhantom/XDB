@@ -6,6 +6,7 @@ using XDB.Common.Types;
 
 namespace XDB.Modules
 {
+    [Summary("Help")]
     public class Help : ModuleBase<CommandContext>
     {
         private CommandService serv;
@@ -23,7 +24,7 @@ namespace XDB.Modules
 
             var builder = new EmbedBuilder()
             {
-                Color = new Color(25, 212, 84),
+                Color = new Color(29, 140, 209),
                 Description = "**These are all the commands you have access to.**"
             };
 
@@ -41,14 +42,15 @@ namespace XDB.Modules
                 {
                     builder.AddField(x =>
                     {
-                        x.Name = module.Name;
+                        x.Name = module.Summary;
                         x.Value = desc;
                         x.IsInline = false;
                     });
                 }
             }
 
-            await ReplyAsync("", false, builder.Build());
+            var dm = await Context.User.CreateDMChannelAsync();
+            await dm.SendMessageAsync("", false, builder.Build());
         }
 
         [Command("help")]
@@ -68,7 +70,7 @@ namespace XDB.Modules
 
             var builder = new EmbedBuilder()
             {
-                Color = new Color(25, 212, 84),
+                Color = new Color(29, 140, 209),
                 Description = $"**Commands similar to:** `{prefix}{command}`"
             };
 
@@ -86,7 +88,8 @@ namespace XDB.Modules
                 });
             }
 
-            await ReplyAsync("", false, builder.Build());
+            var dm = await Context.User.CreateDMChannelAsync();
+            await dm.SendMessageAsync("", false, builder.Build());
         }
     }
 }
