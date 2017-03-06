@@ -1,14 +1,15 @@
 ﻿using Discord;
 using Discord.Commands;
-using System;
+using Discord.WebSocket;
 using System.Linq;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
 using XDB.Common.Enums;
-using XDB.Common.Types;
+using XDB.Utilities;
 
 namespace XDB.Modules
 {
+    [Summary("Admin")]
     public class Admin : ModuleBase
     {
         [Command("cleanup")]
@@ -31,7 +32,7 @@ namespace XDB.Modules
         [Remarks("Cleans up specified amount of messages from channel.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task Cleanup(IGuildUser user, int amt)
+        public async Task Cleanup(SocketGuildUser user, int amt)
         {
             if (amt < 1)
                 return;
@@ -40,105 +41,34 @@ namespace XDB.Modules
                 amt += 1;
 
             int lim = (amt < 100) ? amt : 100;
-            var messages = (await Context.Channel.GetMessagesAsync(limit: lim).Flatten()).Where(m => m.Author == user);
+            var messages = (await Context.Channel.GetMessagesAsync(limit: lim).Flatten()).Where(m => m.Author.Id == user.Id);
             await Context.Channel.DeleteMessagesAsync(messages).ConfigureAwait(false);
         }
 
         [Command("kick")]
-        [Name("kick `<@user>`")]
+        [Name("kick `<@user>` `<reason>` <(opt)")]
         [Remarks("Kicks user from guild.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task Kick(IGuildUser user)
+        public async Task Kick(SocketGuildUser user, [Remainder] string reason = "")
         {
-            try
-            {
-                var log = await Context.Guild.GetChannelAsync(Config.Load().LogChannel) as ITextChannel;
-                if (log == null)
-                    await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `N/A`");
-                else
-                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `N/A`");
-                var dm = await user.CreateDMChannelAsync();
-                await dm.SendMessageAsync($":anger: You were kicked from **{Context.Guild.Name}**\n**Reason:** `N/A`");
-                await user.KickAsync().ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
-        }
-
-        [Command("kick")]
-        [Name("kick `<@user>` `<reason>`")]
-        [Remarks("Kicks user from guild.")]
-        [RequireContext(ContextType.Guild)]
-        [Permissions(AccessLevel.ServerAdmin)]
-        public async Task Kick(IGuildUser user, [Remainder] string str)
-        {
-            try
-            {
-                var log = await Context.Guild.GetChannelAsync(Config.Load().LogChannel) as ITextChannel;
-                if (log == null)
-                    await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `{str}`");
-                else
-                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has kicked {user.Mention}\n**Reason:** `{str}`");
-                var dm = await user.CreateDMChannelAsync();
-                await dm.SendMessageAsync($":anger: You were kicked from **{Context.Guild.Name}**\n**Reason:** `{str}`");
-                await user.KickAsync().ConfigureAwait(false);
-                
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
+            if (string.IsNullOrEmpty(reason))
+                await ModUtil.KickUserAsync(user, Context, "");
+            else
+                await ModUtil.KickUserAsync(user, Context, reason);
         }
 
         [Command("ban")]
-        [Name("ban `<@user>`")]
+        [Name("ban `<@user>` `<reason>` <(opt)")]
         [Remarks("Bans user from guild.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task Ban(IGuildUser user)
+        public async Task Ban(SocketGuildUser user, [Remainder] string reason = "")
         {
-            try
-            {
-                var log = await Context.Guild.GetChannelAsync(Config.Load().LogChannel) as ITextChannel;
-                if (log == null)
-                    await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `N/A`");
-                else
-                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `N/A`");
-                var dm = await user.CreateDMChannelAsync();
-                await dm.SendMessageAsync($":anger: You were banned from **{Context.Guild.Name}**\n**Reason:** `N/A`");
-                await Context.Guild.AddBanAsync(user).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
-        }
-
-        [Command("ban")]
-        [Name("ban `<@user>` `<reason>`")]
-        [Remarks("Bans user from guild.")]
-        [RequireContext(ContextType.Guild)]
-        [Permissions(AccessLevel.ServerAdmin)]
-        public async Task Ban(IGuildUser user, [Remainder] string str)
-        {
-            try
-            {
-                var log = await Context.Guild.GetChannelAsync(Config.Load().LogChannel) as ITextChannel;
-                if (log == null)
-                    await ReplyAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `{str}`");
-                else
-                    await log.SendMessageAsync($":grey_exclamation: {Context.Message.Author.Mention} has banned {user.Mention}\n**Reason:** `{str}`");
-                var dm = await user.CreateDMChannelAsync();
-                await dm.SendMessageAsync($":anger: You were banned from **{Context.Guild.Name}**\n**Reason:** `{str}`");
-                await Context.Guild.AddBanAsync(user).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
+            if (string.IsNullOrEmpty(reason))
+                await ModUtil.BanUserAsync(user, Context, "");
+            else
+                await ModUtil.BanUserAsync(user, Context, reason);
         }
     }
 }
