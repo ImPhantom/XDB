@@ -7,6 +7,7 @@ using XDB.Common.Types;
 
 namespace XDB.Modules
 {
+    [Summary("Chat")]
     public class Chat : ModuleBase
     {
         [Command("8ball")]

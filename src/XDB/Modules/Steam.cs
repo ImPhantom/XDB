@@ -8,6 +8,7 @@ using Discord;
 
 namespace XDB.Modules
 {
+    [Summary("Steam")]
     public class Steam : ModuleBase
     {
         [Command("query")]

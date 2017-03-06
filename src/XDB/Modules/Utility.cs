@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace XDB.Modules
 {
+    [Summary("Utility")]
     public class Utility : ModuleBase
     {
         [Command("shorten")]

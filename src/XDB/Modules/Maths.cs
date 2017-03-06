@@ -4,6 +4,7 @@ using XDB.Utilities;
 
 namespace XDB.Modules
 {
+    [Summary("Maths")]
     public class Maths : ModuleBase
     {
         [Command("ftc")]

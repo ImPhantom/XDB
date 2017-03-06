@@ -13,6 +13,7 @@ using XDB.Common.Types;
 
 namespace XDB.Modules
 {
+    [Summary("Warn")]
     public class Warn : ModuleBase
     {
         [Command("warns")]

@@ -5,6 +5,7 @@ using XDB.Services;
 
 namespace XDB.Modules
 {
+    [Summary("Remind")]
     public class Remind : ModuleBase
     {
         // UNDONE
