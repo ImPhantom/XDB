@@ -6,11 +6,9 @@ namespace XDB.Common.Types
 {
     public class Strings
     {
-        #region global
-        public static readonly string ReleaseVersion = "1.1.5";
-        #endregion
+        public static readonly string ReleaseVersion = "1.1.6";
 
-        #region common
+        // Common Strings
         public static string XDB_Title = $"XDB (rel: {ReleaseVersion})(api: {DiscordConfig.Version})";
         public static string XDB_ConfigLoaded = "[XDB] [Info] Configuration Successfully Loaded!";
         public static string XDB_ConfigCreated = @"After you input your token, a config will be generated at 'cfg\\config.json'.
@@ -22,13 +20,11 @@ Please fill in all your info and restart the bot.";
         public static string TodoPath = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
         public static string RepPath = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
         public static string WarnPath = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
-        #endregion
 
-        #region 8ball
+        // 8-Ball Strings
         public static string[] EightBallResponses = {"It is certain", "It is decidedly so", "Without a doubt", "Yes, definitely", "You may rely on it", "As I see it, yes", "Most likely", "Outlook good", "Yes", "Signs point to yes", "Reply hazy try again", "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again", "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"};
-        #endregion
 
-        #region header
+        // Console Window Header
         public static string XDB_Header = @"          
         -----------------------------------------------------------------------------------------------------   
                                              __   _______  ____  
@@ -39,6 +35,5 @@ Please fill in all your info and restart the bot.";
                                              /_/ \_\_____/|____/ 
         -----------------------------------------------------------------------------------------------------
                                                          ";
-        #endregion
     }
 }

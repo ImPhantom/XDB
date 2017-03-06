@@ -15,11 +15,11 @@ using XDB.Common.Types;
 
 namespace XDB.Modules
 {
+    [Summary("Self")]
     public class Self : ModuleBase
     {
-        [Command("bnick")]
-        [Name("bnick `<string>`")]
-        [Alias("nick")]
+        [Command("nick")]
+        [Name("nick `<string>`")]
         [Remarks("Sets the bots nickname.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task SetNick([Remainder] string str)
@@ -29,9 +29,8 @@ namespace XDB.Modules
             await ReplyAsync(":grey_exclamation: You set the bots nickname to: `" + str + "`");
         }
 
-        [Command("bstat")]
-        [Name("bstat `<string>`")]
-        [Alias("status")]
+        [Command("status")]
+        [Name("status `<string>`")]
         [Remarks("Sets the bots status.")]
         [Permissions(AccessLevel.BotOwner)]
         public async Task SetGame([Remainder] string str)
@@ -40,9 +39,8 @@ namespace XDB.Modules
             await ReplyAsync(":grey_exclamation: You set the bots status to: `" + str + "`");
         }
 
-        [Command("bpres")]
-        [Name("bpres (`online`, `idle`, `dnd`, `invis`)")]
-        [Alias("pres")]
+        [Command("pres")]
+        [Name("pres (`online`, `idle`, `dnd`, `invis`)")]
         [Remarks("Sets the bots presence.")]
         [Permissions(AccessLevel.BotOwner)]
         public async Task SetStatus([Remainder] string str)
@@ -70,9 +68,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("bavatar")]
-        [Name("bavatar `<url>`")]
-        [Alias("avatar")]
+        [Command("avatar")]
+        [Name("avatar `<url>`")]
         [Remarks("Sets the bots avatar.")]
         [Permissions(AccessLevel.BotOwner)]
         public async Task SetAvatar([Remainder] string str)
