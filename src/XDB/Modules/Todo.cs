@@ -11,9 +11,12 @@ using System.Text;
 
 namespace XDB.Modules
 {
+    [Summary("Todo")]
+    [Group("todo")]
     public class Todo : ModuleBase
     {
-        [Command("todo")]
+        [Command]
+        [Name("todo")]
         [Remarks("Views your todo list.")]
         public async Task ViewTodo()
         {
@@ -44,8 +47,8 @@ namespace XDB.Modules
 
         }
 
-        [Command("addtodo")]
-        [Name("addtodo `<todoitem>`")]
+        [Command("add")]
+        [Name("todo add `<todoitem>`")]
         [Remarks("Add to your todo list.")]
         public async Task AddTodo([Remainder] string listitem)
         {
@@ -78,8 +81,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("deltodo")]
-        [Name("deltodo `<todoitem>`")]
+        [Command("del")]
+        [Name("todo del `<todoitem>`")]
         [Remarks("Deletes an item from your todo list by string.")]
         public async Task DelTodo([Remainder] string listitem)
         {
@@ -115,8 +118,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("deltodo")]
-        [Name("deltodo `<index>`")]
+        [Command("del")]
+        [Name("todo del `<index>`")]
         [Remarks("Deletes an item from your todo list by index.")]
         public async Task DelTodo(int index)
         {
@@ -151,8 +154,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("cleartodo")]
-        [Name("cleartodo")]
+        [Command("clear")]
+        [Name("todo clear")]
         [Remarks("Clears your todo list.")]
         public async Task ClearTodo()
         {

@@ -13,9 +13,13 @@ using XDB.Common.Types;
 
 namespace XDB.Modules
 {
+    [Summary("Reputation")]
+    [Group("rep")]
     public class Rep : ModuleBase
     {
-        [Command("leaderboard")]
+        [Command("top")]
+        [Name("rep top")]
+        [Alias("leaderboard")]
         [Remarks("Shows the leading users in reputation.")]
         [RequireContext(ContextType.Guild)]
         public async Task Leaderboard()
@@ -50,7 +54,8 @@ namespace XDB.Modules
             await ReplyAsync("", false, embed.Build());
         }
 
-        [Command("rep")]
+        [Command]
+        [Name("rep")]
         [Remarks("Views your reputation.")]
         [RequireContext(ContextType.Guild)]
         public async Task MyRep()
@@ -79,8 +84,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("rep")]
-        [Name("rep `<@user>`")]
+        [Command("user")]
+        [Name("rep user `<@user>`")]
         [Remarks("Views a users reputation.")]
         [RequireContext(ContextType.Guild)]
         public async Task CheckRep(IGuildUser user)
@@ -109,8 +114,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("addrep")]
-        [Name("addrep `<@user>`")]
+        [Command("add")]
+        [Name("rep add `<@user>`")]
         [Remarks("Add reputation to a user.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
@@ -146,8 +151,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("delrep")]
-        [Name("delrep `<@user>`")]
+        [Command("del")]
+        [Name("rep del `<@user>`")]
         [Remarks("Deletes reputation from a user.")]
         [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
