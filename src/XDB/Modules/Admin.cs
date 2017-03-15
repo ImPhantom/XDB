@@ -60,6 +60,16 @@ namespace XDB.Modules
             await TimedMessage(reply);
         }
 
+        [Command("bot"), Summary("Cleans bot messages from a channel.")]
+        [Name("clean bot `<num>` (limit 100)")]
+        public async Task BotClean(int amt = 5)
+        {
+            var _messages = (await Context.Channel.GetMessagesAsync(amt).Flatten()).Where(x => x.Author.IsBot);
+            await Context.Channel.DeleteMessagesAsync(_messages).ConfigureAwait(false);
+            var reply = await ReplyAsync($":grey_exclamation: Deleted the last {amt} bot messages.");
+            await TimedMessage(reply);
+        }
+
         private async Task TimedMessage(IMessage message, int ms = 5000)
         {
             await Task.Delay(ms);
