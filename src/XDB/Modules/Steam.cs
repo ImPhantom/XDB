@@ -9,12 +9,11 @@ using Discord;
 namespace XDB.Modules
 {
     [Summary("Steam")]
+    [RequireContext(ContextType.Guild)]
     public class Steam : ModuleBase
     {
-        [Command("query")]
+        [Command("query"), Summary("Querys a source server for information about itself.")]
         [Name("query `<ip>` `<port>`")]
-        [Remarks("Querys a source server for information about itself.")]
-        [RequireContext(ContextType.Guild)]
         public async Task Query(string ip, string port)
         {
             var url = $"http://xeno.nn.pe/xdb/?ip={ip}&port={port}";
@@ -76,9 +75,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("players")]
+        [Command("players"), Summary("Retrives the playerlist from a source server.")]
         [Name("players `<ip>` `<port>`")]
-        [Remarks("Retrives the playerlist from a source server.")]
         [RequireContext(ContextType.Guild)]
         public async Task Players(string ip, string port)
         {

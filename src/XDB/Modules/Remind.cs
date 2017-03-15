@@ -6,14 +6,13 @@ using XDB.Services;
 namespace XDB.Modules
 {
     [Summary("Remind")]
+    [RequireContext(ContextType.Guild)]
     public class Remind : ModuleBase
     {
         // UNDONE
         // SERIOUSLY UNDONE
-        [Command("remind")]
+        [Command("remind"), Summary("Sets a reminder for the calling user.")]
         [Name("remind `<1s/1m/1h/1d>` `<reminder>`")]
-        [Remarks("Sets a reminder for the calling user.")]
-        [RequireContext(ContextType.Guild)]
         public async Task RemindMe(string time, [Remainder] string reminder)
         {
             var ms = Convert.ToInt32(ToMS(time));
@@ -21,10 +20,8 @@ namespace XDB.Modules
             await ReplyAsync($":alarm_clock: Okay, I will remind you in {time}.");
         }
 
-        [Command("remind")]
+        [Command("remind"), Summary("Sets a reminder for the calling user.")]
         [Name("remind `<1s/1m/1h/1d>`")]
-        [Remarks("Sets a reminder for the calling user.")]
-        [RequireContext(ContextType.Guild)]
         public async Task RemindMe(string time)
         {
             var ms = Convert.ToInt32(ToMS(time));

@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,13 +16,12 @@ namespace XDB.Modules
 {
     [Summary("Reputation")]
     [Group("rep")]
+    [RequireContext(ContextType.Guild)]
     public class Rep : ModuleBase
     {
-        [Command("top")]
+        [Command("top"), Summary("Displays the users with the highest reputation.")]
         [Name("rep top")]
         [Alias("leaderboard")]
-        [Remarks("Shows the leading users in reputation.")]
-        [RequireContext(ContextType.Guild)]
         public async Task Leaderboard()
         {
             Config.RepCheck();
@@ -54,10 +54,8 @@ namespace XDB.Modules
             await ReplyAsync("", false, embed.Build());
         }
 
-        [Command]
+        [Command, Summary("Displays your reputation.")]
         [Name("rep")]
-        [Remarks("Views your reputation.")]
-        [RequireContext(ContextType.Guild)]
         public async Task MyRep()
         {
             Config.RepCheck();
@@ -84,11 +82,9 @@ namespace XDB.Modules
             }
         }
 
-        [Command("user")]
+        [Command("user"), Summary("Displays a specified users reputation.")]
         [Name("rep user `<@user>`")]
-        [Remarks("Views a users reputation.")]
-        [RequireContext(ContextType.Guild)]
-        public async Task CheckRep(IGuildUser user)
+        public async Task CheckRep(SocketUser user)
         {
             Config.RepCheck();
             var filetext = File.ReadAllText(Strings.RepPath);
@@ -114,12 +110,10 @@ namespace XDB.Modules
             }
         }
 
-        [Command("add")]
+        [Command("add"), Summary("Adds reputation to a user.")]
         [Name("rep add `<@user>`")]
-        [Remarks("Add reputation to a user.")]
-        [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task AddRep(IGuildUser user)
+        public async Task AddRep(SocketUser user)
         {
             Config.RepCheck();
             var filetext = File.ReadAllText(Strings.RepPath);
@@ -151,12 +145,10 @@ namespace XDB.Modules
             }
         }
 
-        [Command("del")]
+        [Command("del"), Summary("Deletes reputation from a user.")]
         [Name("rep del `<@user>`")]
-        [Remarks("Deletes reputation from a user.")]
-        [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task DelRep(IGuildUser user)
+        public async Task DelRep(SocketUser user)
         {
             Config.RepCheck();
             var filetext = File.ReadAllText(Strings.RepPath);

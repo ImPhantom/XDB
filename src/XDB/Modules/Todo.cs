@@ -15,9 +15,8 @@ namespace XDB.Modules
     [Group("todo")]
     public class Todo : ModuleBase
     {
-        [Command]
+        [Command, Summary("Displays your todo list.")]
         [Name("todo")]
-        [Remarks("Views your todo list.")]
         public async Task ViewTodo()
         {
             Config.TodoCheck();
@@ -47,9 +46,8 @@ namespace XDB.Modules
 
         }
 
-        [Command("add")]
+        [Command("add"), Summary("Adds item to you todo list.")]
         [Name("todo add `<todoitem>`")]
-        [Remarks("Add to your todo list.")]
         public async Task AddTodo([Remainder] string listitem)
         {
             Config.TodoCheck();
@@ -81,9 +79,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("del")]
+        [Command("del"), Summary("Removes item from your todo list.")]
         [Name("todo del `<todoitem>`")]
-        [Remarks("Deletes an item from your todo list by string.")]
         public async Task DelTodo([Remainder] string listitem)
         {
             Config.TodoCheck();
@@ -99,7 +96,6 @@ namespace XDB.Modules
                 {
                     if (json.First(x => x.Id == Context.User.Id).ListItems.Contains(listitem))
                     {
-                        //Check if list item just contains one word
                         var index = json.FindIndex(x => x.ListItems.Contains(listitem));
                         json.First(x => x.Id == Context.User.Id).ListItems.RemoveAt(index);
                         var outjson = JsonConvert.SerializeObject(json);
@@ -118,9 +114,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("del")]
+        [Command("del"), Summary("Removes an item from your todo list by index.")]
         [Name("todo del `<index>`")]
-        [Remarks("Deletes an item from your todo list by index.")]
         public async Task DelTodo(int index)
         {
             Config.TodoCheck();
@@ -154,9 +149,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("clear")]
+        [Command("clear"), Summary("Clears your todo list.")]
         [Name("todo clear")]
-        [Remarks("Clears your todo list.")]
         public async Task ClearTodo()
         {
             Config.TodoCheck();

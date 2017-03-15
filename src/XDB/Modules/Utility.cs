@@ -11,12 +11,11 @@ using System.Threading.Tasks;
 namespace XDB.Modules
 {
     [Summary("Utility")]
+    [RequireContext(ContextType.Guild)]
     public class Utility : ModuleBase
     {
-        [Command("shorten")]
+        [Command("shorten"), Summary("Shortens a link.")]
         [Name("shorten `<url>`")]
-        [Remarks("Shortens a link.")]
-        [RequireContext(ContextType.Guild)]
         public async Task Shorten([Remainder] string url)
         {
             if(!url.Contains("http"))
@@ -51,9 +50,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("urban")]
+        [Command("urban"), Summary("Retrieves a definition from UrbanDictionary.")]
         [Name("urban `<string>`")]
-        [Remarks("Retrieves a definition from UrbanDictionary.")]
         public async Task Urban([Remainder]string define)
         {
             using (var client = new HttpClient())

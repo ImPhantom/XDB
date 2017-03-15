@@ -16,7 +16,7 @@ namespace XDB.Modules
             serv = service;
         }
 
-        [Command("help")]
+        [Command("help"), Summary("Shows all commands available to you.")]
         [RequireContext(ContextType.Guild)]
         public async Task HelpAsync()
         {
@@ -53,7 +53,7 @@ namespace XDB.Modules
             await dm.SendMessageAsync("", false, builder.Build());
         }
 
-        [Command("help")]
+        [Command("help"), Summary("Shows the help for a specified command")]
         [Name("help `<command>`")]
         [RequireContext(ContextType.Guild)]
         public async Task HelpAsync(string command)
@@ -82,7 +82,7 @@ namespace XDB.Modules
                 {
                     x.Name = string.Join(", ", cmd.Aliases);
                     x.Value = $"**Parameters:**  {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n" +
-                              $"**Remarks:**  {cmd.Remarks}\n" +
+                              $"**Remarks:**  {cmd.Summary}\n" +
                               $"**Syntax:**  {prefix + cmd.Name}";
                     x.IsInline = false;
                 });

@@ -18,9 +18,8 @@ namespace XDB.Modules
     [Summary("Self")]
     public class Self : ModuleBase
     {
-        [Command("nick")]
+        [Command("nick"), Summary("Sets the bots nickname.")]
         [Name("nick `<string>`")]
-        [Remarks("Sets the bots nickname.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task SetNick([Remainder] string str)
         {
@@ -29,9 +28,8 @@ namespace XDB.Modules
             await ReplyAsync(":grey_exclamation: You set the bots nickname to: `" + str + "`");
         }
 
-        [Command("status")]
+        [Command("status"), Summary("Sets the bots status.")]
         [Name("status `<string>`")]
-        [Remarks("Sets the bots status.")]
         [Permissions(AccessLevel.BotOwner)]
         public async Task SetGame([Remainder] string str)
         {
@@ -39,9 +37,8 @@ namespace XDB.Modules
             await ReplyAsync(":grey_exclamation: You set the bots status to: `" + str + "`");
         }
 
-        [Command("pres")]
+        [Command("pres"), Summary("Sets the bots presence.")]
         [Name("pres (`online`, `idle`, `dnd`, `invis`)")]
-        [Remarks("Sets the bots presence.")]
         [Permissions(AccessLevel.BotOwner)]
         public async Task SetStatus([Remainder] string str)
         {
@@ -68,9 +65,8 @@ namespace XDB.Modules
             }
         }
 
-        [Command("avatar")]
+        [Command("avatar"), Summary("Sets the bots avatar.")]
         [Name("avatar `<url>`")]
-        [Remarks("Sets the bots avatar.")]
         [Permissions(AccessLevel.BotOwner)]
         public async Task SetAvatar([Remainder] string str)
         {
@@ -88,8 +84,7 @@ namespace XDB.Modules
             }
         }
 
-        [Command("leave")]
-        [Remarks("Makes the bot leave the server.")]
+        [Command("leave"), Summary("Forces the bot to leave its current guild.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Leave()
         {
@@ -97,10 +92,9 @@ namespace XDB.Modules
             await current.Guild.LeaveAsync();
         }
 
-        [Command("logchannel")]
+        [Command("logchannel"), Summary("Sets the logging channel.")]
         [Alias("log")]
         [Name("log `<channel-id>`")]
-        [Remarks("Sets the logging channel.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task LogChannel(ulong channelid)
         {
@@ -111,8 +105,7 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  You set the logging channel to: `{channelid.ToString()}`");
         }
 
-        [Command("filters")]
-        [Remarks("Displays all words in the word filter.")]
+        [Command("filters"), Summary("Displays all words in the word filter.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task FilterWords()
         {
@@ -125,9 +118,8 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  Currently Blacklisted Words:\n```\n{words.ToString()}\n```");
         }
 
-        [Command("addword")]
+        [Command("addword"), Summary("Adds a word/string to the word filter.")]
         [Name("addword `<string>`")]
-        [Remarks("Adds a word/string to the word filter.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task FilterAdd([Remainder] string str)
         {
@@ -138,9 +130,8 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  You added `{str}` to the word filter!");
         }
 
-        [Command("delword")]
+        [Command("delword"), Summary("Removes a word/string from the word filter.")]
         [Name("delword `<string>`")]
-        [Remarks("Removes a word/string from the word filter.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task FilterDel([Remainder] string str)
         {
@@ -151,9 +142,8 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_multiplication_x:  You removed `{str}` from the word filter!");
         }
 
-        [Command("ignore")]
+        [Command("ignore"), Summary("Adds a channel to the list of ignored channels.")]
         [Name("ignore `<channel-id>`")]
-        [Remarks("Adds a channel to the ignored channels.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Ignore(ulong channelid)
         {
@@ -164,9 +154,8 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  You added channel `{channelid}` to the ignored channels list.");
         }
 
-        [Command("ignored")]
+        [Command("ignored"), Summary("Displays all ignored channels.")]
         [Name("ignored")]
-        [Remarks("Displays the ignored channels.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Ignored()
         {
@@ -180,9 +169,8 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  Currently ignored channels:\n{ignored.ToString()}");
         }
 
-        [Command("delignore")]
+        [Command("delignore"), Summary("Removes a channel from the list of ignored channels.")]
         [Name("delignore `<channel-id>`")]
-        [Remarks("Removes a channel from the ignored channels.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task DelIgnore(ulong channelid)
         {
@@ -193,8 +181,7 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_multiplication_x:  You removed channel `{channelid}` from the ignored channels list.");
         }
 
-        [Command("welcome")]
-        [Remarks("Toggles the welcome message.")]
+        [Command("welcome"), Summary("Toggles the welcome message.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Welcome()
         {
@@ -211,9 +198,8 @@ namespace XDB.Modules
             cfg.Save();
         }
 
-        [Command("welcome")]
+        [Command("welcome"), Summary("Sets the welcome message.")]
         [Name("welcome `<message>`")]
-        [Remarks("Toggles the welcome message.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Welcome([Remainder] string message)
         {
@@ -223,21 +209,7 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  You changed the welcome message to: \n\n{message}");
         }
 
-        // Need to find a better way to do this...
-        /*[Command("suggest")]
-        [Name("suggest `<idea>`")]
-        [Remarks("Suggests a feature to be added to XDB.")]
-        public async Task Suggest([Remainder] string str)
-        {
-            var dev = await Context.Client.GetUserAsync(93765631177920512);
-            var dm = await dev.CreateDMChannelAsync();
-            await dm.SendMessageAsync($"**{Context.User.Username}** submitted a suggestion:\n\n`{str}`");
-            await ReplyAsync(":white_check_mark: You submitted your suggestion!");
-        }*/
-
-        #region info (embed)
-        [Command("info")]
-        [Remarks("Display's the bots information and statistics.")]
+        [Command("info"), Summary("Display's the bots information and statistics.")]
         public async Task Info()
         {
             var application = await Context.Client.GetApplicationInfoAsync();
@@ -306,6 +278,5 @@ namespace XDB.Modules
         private static string GetUptime()
             => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
         private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
-        #endregion
     }
 }

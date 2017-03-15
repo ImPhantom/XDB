@@ -1,5 +1,5 @@
-﻿using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
+using Discord.WebSocket;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,10 +14,10 @@ using XDB.Common.Types;
 namespace XDB.Modules
 {
     [Summary("Warn")]
+    [RequireContext(ContextType.Guild)]
     public class Warn : ModuleBase
     {
-        [Command("warns")]
-        [Remarks("Checks your personal warns.")]
+        [Command("warns"), Summary("Views your personal warns.")]
         public async Task Warns()
         {
             Config.WarnCheck();
@@ -44,11 +44,9 @@ namespace XDB.Modules
             }
         }
 
-        [Command("warns")]
+        [Command("warns"), Summary("Checks a specified users warnings.")]
         [Name("warns `<@user>`")]
-        [Remarks("Checks a specified users warnings.")]
-        [RequireContext(ContextType.Guild)]
-        public async Task Warns(IGuildUser user)
+        public async Task Warns(SocketUser user)
         {
             Config.WarnCheck();
             var read = File.ReadAllText(Strings.WarnPath);
@@ -75,12 +73,10 @@ namespace XDB.Modules
             }
         }
 
-        [Command("warn")]
+        [Command("warn"), Summary("Warns a specified user.")]
         [Name("warn `<@user>` `<reason>`")]
-        [Remarks("Warns a specified user.")]
-        [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task AddWarn(IGuildUser user, [Remainder] string reason)
+        public async Task AddWarn(SocketUser user, [Remainder] string reason)
         {
             Config.WarnCheck();
             var read = File.ReadAllText(Strings.WarnPath);
@@ -116,12 +112,10 @@ namespace XDB.Modules
             }
         }
 
-        [Command("removewarn")]
+        [Command("removewarn"), Summary("Removes a warn from a specified user by index.")]
         [Name("removewarn `<@user>` `<index>`")]
-        [Remarks("Removes a warn from a specified user by index.")]
-        [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task RemoveWarn(IGuildUser user, int index)
+        public async Task RemoveWarn(SocketUser user, int index)
         {
             Config.WarnCheck();
             var read = File.ReadAllText(Strings.WarnPath);

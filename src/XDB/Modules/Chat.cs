@@ -8,10 +8,10 @@ using XDB.Common.Types;
 namespace XDB.Modules
 {
     [Summary("Chat")]
+    [RequireContext(ContextType.Guild)]
     public class Chat : ModuleBase
     {
-        [Command("8ball")]
-        [Remarks("Asks the magic 8 ball a question.")]
+        [Command("8ball"), Summary("Asks the magic 8 ball a question.")]
         public async Task EightBall([Remainder] string question)
         {
             Random rand = new Random();
@@ -19,9 +19,7 @@ namespace XDB.Modules
             await ReplyAsync($"**You asked:** `{question}` \n**Reponse:** *{response}*");
         }
 
-        [Command("userinfo")]
-        [Remarks("Display's your information.")]
-        [RequireContext(ContextType.Guild)]
+        [Command("userinfo"), Summary("Displays your user information.")]
         public async Task UserInfo()
         {
             var date = $"{Context.User.CreatedAt.Month}/{Context.User.CreatedAt.Day}/{Context.User.CreatedAt.Year}";
@@ -75,11 +73,9 @@ namespace XDB.Modules
             await ReplyAsync("", false, embed.Build());
         }
 
-        [Command("userinfo")]
+        [Command("userinfo"), Summary("Displays a specified users information.")]
         [Name("userinfo `<user>`")]
-        [Remarks("Display's a specified users information.")]
-        [RequireContext(ContextType.Guild)]
-        public async Task UserInfo(IGuildUser user)
+        public async Task UserInfo(SocketUser user)
         {
             var date = $"{user.CreatedAt.Month}/{user.CreatedAt.Day}/{user.CreatedAt.Year}";
             var avurl = user.GetAvatarUrl();
@@ -132,9 +128,7 @@ namespace XDB.Modules
             await ReplyAsync("", false, embed.Build());
         }
 
-        [Command("serverinfo")]
-        [Remarks("Display's the current guild's information.")]
-        [RequireContext(ContextType.Guild)]
+        [Command("serverinfo"), Summary("Display's the current guild's information.")]
         public async Task ServerInfo()
         {
             var guild = Context.Guild as SocketGuild;
@@ -209,7 +203,7 @@ namespace XDB.Modules
                 return $"`{ctx.User.Game}`";
         }
 
-        private string GetUserGame(IGuildUser user)
+        private string GetUserGame(SocketUser user)
         {
             if (!user.Game.HasValue)
                 return $"`N/A`";
