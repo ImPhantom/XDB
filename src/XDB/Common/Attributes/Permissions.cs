@@ -25,7 +25,7 @@ namespace XDB.Common.Attributes
             if (access >= Level)
                 return Task.FromResult(PreconditionResult.FromSuccess());
             else
-                return Task.FromResult(PreconditionResult.FromError(":anger: You do not have permission to use this command."));
+                return Task.FromResult(PreconditionResult.FromError("You do not have permission to use this command."));
         }
 
         public AccessLevel GetPermission(ICommandContext c)

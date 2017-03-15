@@ -23,10 +23,10 @@ namespace XDB.Events
 
             client.MessageReceived += async (s) =>
             {
-                if (s.Author.IsBot)
-                    return;
                 if(Config.Load().WordFilter == true)
                 {
+                    if (s.Author.IsBot)
+                        return;
                     if (Config.Load().IgnoredChannels.Contains(s.Channel.Id))
                         return;
                     var words = Config.Load().Words;
