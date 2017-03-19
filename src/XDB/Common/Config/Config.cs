@@ -14,6 +14,7 @@ namespace XDB.Common.Types
         public string Prefix { get; set; }
         public ulong[] Owners { get; set; }
         public string Token { get; set; }
+        public string GoogleKey { get; set; }
         public ulong LogChannel { get; set; }
         public List<ulong> IgnoredChannels { get; set; }
         public bool WordFilter { get; set; }
@@ -26,6 +27,7 @@ namespace XDB.Common.Types
             Prefix = "~";
             Owners = new ulong[] { 0 };
             Token = "";
+            GoogleKey = "";
             LogChannel = 0;
             IgnoredChannels = new List<ulong> { };
             WordFilter = false;
@@ -98,6 +100,23 @@ namespace XDB.Common.Types
             }
             else
                 return;
+        }
+
+        public static void CheckExistence()
+        {
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "cfg")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "cfg"));
+
+            if (!File.Exists(Strings.ConfigPath))
+            {
+                var cfg = new Config();
+                Console.WriteLine(Strings.XDB_ConfigCreated);
+                Console.Write("Token: ");
+                cfg.Token = Console.ReadLine();
+                cfg.Save();
+            }
+            if (!File.Exists(Strings.ModulePath)) { var mdls = new ModuleConfig(); mdls.Save(); }
+            Console.WriteLine(Strings.XDB_ConfigLoaded);
         }
     }
 }

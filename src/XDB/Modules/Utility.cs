@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using XDB.Common.Types;
 
 namespace XDB.Modules
 {
@@ -23,9 +24,7 @@ namespace XDB.Modules
                 await ReplyAsync(":anger: Please provide a valid link.");
                 return;
             }
-                
-            var key = "AIzaSyAVz7oHvn1PyVfY05ZnWh7BH73tS1_9EPI";
-            var request = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/urlshortener/v1/url?key=" + key);
+            var request = (HttpWebRequest)WebRequest.Create($"https://www.googleapis.com/urlshortener/v1/url?key={Config.Load().GoogleKey}");
             try
             {
                 request.ContentType = "application/json";
@@ -44,6 +43,7 @@ namespace XDB.Modules
                     var shorturl = Regex.Match(reader.ReadToEnd(), @"""id"": ?""(?<id>.+)""").Groups["id"].Value;
                     await ReplyAsync($":white_check_mark: Shortened: {shorturl}");
                 }
+                await Context.Message.DeleteAsync();
             } catch (Exception ex)
             {
                 await ReplyAsync($"**Error:** Shortener is down.\n**Exception: **{ex.Message}");
