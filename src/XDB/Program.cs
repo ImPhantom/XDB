@@ -19,7 +19,7 @@ namespace XDB
             Console.WriteLine(Strings.XDB_Header);
             Console.Title = Strings.XDB_Title;
 
-            CheckForConfig();
+            Config.CheckExistence();
 
             client = new DiscordSocketClient(new DiscordSocketConfig()
             {
@@ -40,23 +40,6 @@ namespace XDB
             await cmds.Install(client);
 
             await Task.Delay(-1);
-        }
-
-        private void CheckForConfig()
-        {
-            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "cfg")))
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "cfg"));
-
-            if (!File.Exists(Strings.ConfigPath))
-            {
-                var cfg = new Config();
-                Console.WriteLine(Strings.XDB_ConfigCreated);
-                Console.Write("Token: ");
-                cfg.Token = Console.ReadLine();
-                cfg.Save();
-            }
-            if(!File.Exists(Strings.ModulePath)) { var mdls = new ModuleConfig(); mdls.Save(); }
-            Console.WriteLine(Strings.XDB_ConfigLoaded);
         }
     }
 }
