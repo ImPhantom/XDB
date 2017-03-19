@@ -40,8 +40,39 @@ namespace XDB.Modules
                     await ReplyAsync($":red_circle: **{Context.User.Username}'s** reputation: {rep}");
                 else
                     await ReplyAsync($":white_circle: **{Context.User.Username}'s** reputation: {rep}");
+                await Context.Message.DeleteAsync();
             }
             catch(Exception e)
+            {
+                await ReplyAsync(e.Message);
+            }
+        }
+
+        [Command("user"), Summary("Displays a specified users reputation.")]
+        [Name("rep user `<@user>`")]
+        public async Task CheckRep(SocketUser user)
+        {
+            Config.RepCheck();
+            var filetext = File.ReadAllText(Strings.RepPath);
+            var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
+            try
+            {
+                if (!json.Any(x => x.Id == user.Id))
+                {
+                    var defrep = new UserRep() { Id = user.Id, Rep = 0 };
+                    json.Add(defrep);
+                    var outjson = JsonConvert.SerializeObject(json);
+                    File.WriteAllText(Strings.RepPath, outjson);
+                }
+                var rep = json.First(x => x.Id == user.Id).Rep;
+                if (rep < 0)
+                    await ReplyAsync($":red_circle: **{user.Username}'s** reputation: {rep}");
+                else
+                    await ReplyAsync($":white_circle: **{user.Username}'s** reputation: {rep}");
+
+                await Context.Message.DeleteAsync();
+            }
+            catch (Exception e)
             {
                 await ReplyAsync(e.Message);
             }
@@ -83,34 +114,6 @@ namespace XDB.Modules
             await ReplyAsync("", false, embed.Build());
         }
 
-        [Command("user"), Summary("Displays a specified users reputation.")]
-        [Name("rep user `<@user>`")]
-        public async Task CheckRep(SocketUser user)
-        {
-            Config.RepCheck();
-            var filetext = File.ReadAllText(Strings.RepPath);
-            var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
-            try
-            {
-                if (!json.Any(x => x.Id == user.Id))
-                {
-                    var defrep = new UserRep() { Id = user.Id, Rep = 0 };
-                    json.Add(defrep);
-                    var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.RepPath, outjson);
-                }
-                var rep = json.First(x => x.Id == user.Id).Rep;
-                if (rep < 0)
-                    await ReplyAsync($":red_circle: **{user.Username}'s** reputation: {rep}");
-                else
-                    await ReplyAsync($":white_circle: **{user.Username}'s** reputation: {rep}");
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
-        }
-
         [Command("add"), Summary("Adds reputation to a user.")]
         [Name("rep add `<@user>`")]
         [Permissions(AccessLevel.ServerAdmin)]
@@ -139,6 +142,7 @@ namespace XDB.Modules
                     var outjson = JsonConvert.SerializeObject(json);
                     File.WriteAllText(Strings.RepPath, outjson);
                 }
+                await Context.Message.DeleteAsync();
             }
             catch (Exception e)
             {
@@ -175,6 +179,7 @@ namespace XDB.Modules
                     var outjson = JsonConvert.SerializeObject(json);
                     File.WriteAllText(Strings.RepPath, outjson);
                 }
+                await Context.Message.DeleteAsync();
             }
             catch (Exception e)
             {
