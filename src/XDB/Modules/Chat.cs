@@ -23,16 +23,16 @@ namespace XDB.Modules
         public async Task UserInfo()
         {
             var date = $"{Context.User.CreatedAt.Month}/{Context.User.CreatedAt.Day}/{Context.User.CreatedAt.Year}";
-            var avurl = Context.User.GetAvatarUrl();
-            var user = new EmbedAuthorBuilder()
+            var avatar = Context.User.GetAvatarUrl();
+            var auth = new EmbedAuthorBuilder()
             {
                 Name = Context.User.Username,
-                IconUrl = avurl
+                IconUrl = avatar
             };
             var embed = new EmbedBuilder()
             {
                 Color = new Color(29, 140, 209),
-                Author = user
+                Author = auth
             };
             embed.AddField(x =>
             {
@@ -67,7 +67,7 @@ namespace XDB.Modules
             embed.AddField(x =>
             {
                 x.Name = "Game:";
-                x.Value = $"{GetUserGame(Context)}";
+                x.Value = $"{GetUserGame(Context.User as SocketUser)}";
                 x.IsInline = true;
             });
             await ReplyAsync("", false, embed.Build());
@@ -78,11 +78,11 @@ namespace XDB.Modules
         public async Task UserInfo(SocketUser user)
         {
             var date = $"{user.CreatedAt.Month}/{user.CreatedAt.Day}/{user.CreatedAt.Year}";
-            var avurl = user.GetAvatarUrl();
+            var avatar = user.GetAvatarUrl();
             var auth = new EmbedAuthorBuilder()
             {
                 Name = user.Username,
-                IconUrl = avurl
+                IconUrl = avatar
             };
             var embed = new EmbedBuilder()
             {
@@ -193,14 +193,6 @@ namespace XDB.Modules
                 x.IsInline = true;
             });
             await ReplyAsync("", false, embed.Build());
-        }
-        
-        private string GetUserGame(CommandContext ctx)
-        {
-            if(!ctx.User.Game.HasValue)
-                return $"`N/A`";
-            else
-                return $"`{ctx.User.Game}`";
         }
 
         private string GetUserGame(SocketUser user)

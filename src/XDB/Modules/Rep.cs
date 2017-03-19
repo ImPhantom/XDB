@@ -19,41 +19,6 @@ namespace XDB.Modules
     [RequireContext(ContextType.Guild)]
     public class Rep : ModuleBase
     {
-        [Command("top"), Summary("Displays the users with the highest reputation.")]
-        [Name("rep top")]
-        [Alias("leaderboard")]
-        public async Task Leaderboard()
-        {
-            Config.RepCheck();
-            var read = File.ReadAllText(Strings.RepPath);
-            var json = JsonConvert.DeserializeObject<List<UserRep>>(read);
-
-            var topreps = json.OrderByDescending(x => x.Rep).Take(10);
-            var embed = new EmbedBuilder() { Color = new Color(21, 144, 232) };
-            var str = new StringBuilder();
-            foreach(var rep in topreps)
-            {
-                var user = await Context.Client.GetUserAsync(rep.Id);
-                if (user == null)
-                {
-                    embed.AddField(x => {
-                        x.Name = "**null_user**";
-                        x.Value = $"Reputation: {rep.Rep}";
-                        x.IsInline = false;
-                    });
-                } else
-                {
-                    embed.AddField(x => {
-                        x.Name = $"**{user.Username}**";
-                        x.Value = $"Reputation: {rep.Rep}";
-                        x.IsInline = false;
-                    });
-                }
-            }
-            await ReplyAsync(":star: **Top 10 Reputations:**");
-            await ReplyAsync("", false, embed.Build());
-        }
-
         [Command, Summary("Displays your reputation.")]
         [Name("rep")]
         public async Task MyRep()
@@ -80,6 +45,42 @@ namespace XDB.Modules
             {
                 await ReplyAsync(e.Message);
             }
+        }
+
+        [Command("top"), Summary("Displays the users with the highest reputation.")]
+        [Name("rep top")]
+        [Alias("leaderboard")]
+        public async Task Leaderboard()
+        {
+            Config.RepCheck();
+            var read = File.ReadAllText(Strings.RepPath);
+            var json = JsonConvert.DeserializeObject<List<UserRep>>(read);
+
+            var topreps = json.OrderByDescending(x => x.Rep).Take(10);
+            var embed = new EmbedBuilder() { Color = new Color(21, 144, 232) };
+            var str = new StringBuilder();
+            foreach (var rep in topreps)
+            {
+                var user = await Context.Client.GetUserAsync(rep.Id);
+                if (user == null)
+                {
+                    embed.AddField(x => {
+                        x.Name = "**null_user**";
+                        x.Value = $"Reputation: {rep.Rep}";
+                        x.IsInline = false;
+                    });
+                }
+                else
+                {
+                    embed.AddField(x => {
+                        x.Name = $"**{user.Username}**";
+                        x.Value = $"Reputation: {rep.Rep}";
+                        x.IsInline = false;
+                    });
+                }
+            }
+            await ReplyAsync(":star: **Top 10 Reputations:**");
+            await ReplyAsync("", false, embed.Build());
         }
 
         [Command("user"), Summary("Displays a specified users reputation.")]
