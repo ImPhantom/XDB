@@ -41,12 +41,14 @@ namespace XDB
                 return;
 
             var map = new DependencyMap();
-            map.Add(_cmds);
+            //map.Add(_cmds);
             var context = new CommandContext(_client, msg);
 
             int argPos = 0;
             if (msg.HasStringPrefix(Config.Load().Prefix, ref argPos))
             {
+                if (s.Author.IsBot)
+                    return;
                 var result = await _cmds.ExecuteAsync(context, argPos, map);
 
                 if (!result.IsSuccess)
