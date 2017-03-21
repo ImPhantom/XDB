@@ -16,7 +16,7 @@ namespace XDB.Modules
         {
             Random rand = new Random();
             var response = Strings.EightBallResponses[rand.Next(Strings.EightBallResponses.Length)];
-            await ReplyAsync($"**You asked:** `{question}` \n**Reponse:** *{response}*");
+            await ReplyAsync($":8ball: {response}");
         }
 
         [Command("userinfo"), Summary("Displays your user information.")]
