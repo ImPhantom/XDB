@@ -79,41 +79,6 @@ namespace XDB.Modules
             }
         }
 
-        [Command("del"), Summary("Removes item from your todo list.")]
-        [Name("todo del `<todoitem>`")]
-        public async Task DelTodo([Remainder] string listitem)
-        {
-            Config.TodoCheck();
-            var all = File.ReadAllText(Strings.TodoPath);
-            var json = JsonConvert.DeserializeObject<List<UserTodo>>(all);
-            try
-            {
-                if (!json.Any(x => x.Id == Context.User.Id))
-                {
-                    await ReplyAsync(":anger: You dont have a todo list...");
-                }
-                else
-                {
-                    if (json.First(x => x.Id == Context.User.Id).ListItems.Contains(listitem))
-                    {
-                        var index = json.FindIndex(x => x.ListItems.Contains(listitem));
-                        json.First(x => x.Id == Context.User.Id).ListItems.RemoveAt(index);
-                        var outjson = JsonConvert.SerializeObject(json);
-                        File.WriteAllText(Strings.TodoPath, outjson);
-                        await ReplyAsync(":white_check_mark: Removed item from your Todo List.");
-                    }
-                    else
-                    {
-                        await ReplyAsync(":anger: No list item was found with that keyword.");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"Exception: {e.Message}");
-            }
-        }
-
         [Command("del"), Summary("Removes an item from your todo list by index.")]
         [Name("todo del `<index>`")]
         public async Task DelTodo(int index)

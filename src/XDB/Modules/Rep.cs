@@ -96,7 +96,7 @@ namespace XDB.Modules
                 if (user == null)
                 {
                     embed.AddField(x => {
-                        x.Name = "**null_user**";
+                        x.Name = "**unknown_user**";
                         x.Value = $"Reputation: {rep.Rep}";
                         x.IsInline = false;
                     });
