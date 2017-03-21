@@ -44,6 +44,7 @@ namespace XDB.Modules
         [Name("clean `<num>` (limit 100)")]
         public async Task AllClean(int amt = 5)
         {
+            await Context.Message.DeleteAsync();
             var _messages = await Context.Channel.GetMessagesAsync(amt).Flatten().ConfigureAwait(false);
             await Context.Channel.DeleteMessagesAsync(_messages).ConfigureAwait(false);
             var reply = await ReplyAsync($":grey_exclamation: Deleted {amt} messages.");
@@ -54,6 +55,7 @@ namespace XDB.Modules
         [Name("clean user `<@user>` `<num>` (limit 100)")]
         public async Task UserClean(SocketGuildUser user, int amt = 5)
         {
+            await Context.Message.DeleteAsync();
             var _messages = (await Context.Channel.GetMessagesAsync(amt).Flatten()).Where(x => x.Author.Id == user.Id);
             await Context.Channel.DeleteMessagesAsync(_messages).ConfigureAwait(false);
             var reply = await ReplyAsync($":grey_exclamation: Deleted {user.Username}'s last {amt} messages.");
@@ -64,6 +66,7 @@ namespace XDB.Modules
         [Name("clean bot `<num>` (limit 100)")]
         public async Task BotClean(int amt = 5)
         {
+            await Context.Message.DeleteAsync();
             var _messages = (await Context.Channel.GetMessagesAsync(amt).Flatten()).Where(x => x.Author.IsBot);
             await Context.Channel.DeleteMessagesAsync(_messages).ConfigureAwait(false);
             var reply = await ReplyAsync($":grey_exclamation: Deleted the last {amt} bot messages.");
