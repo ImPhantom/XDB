@@ -55,7 +55,6 @@ namespace XDB.Modules
 
         [Command("help"), Summary("Shows the help for a specified command")]
         [Name("help `<command>`")]
-        [RequireContext(ContextType.Guild)]
         public async Task HelpAsync(string command)
         {
             var result = serv.Search(Context, command);
