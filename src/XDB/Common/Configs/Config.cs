@@ -11,30 +11,17 @@ namespace XDB.Common.Types
         [JsonIgnore]
         public static readonly string appdir = AppContext.BaseDirectory;
 
-        public string Prefix { get; set; }
-        public ulong[] Owners { get; set; }
-        public string Token { get; set; }
-        public string GoogleKey { get; set; }
-        public ulong LogChannel { get; set; }
-        public List<ulong> IgnoredChannels { get; set; }
-        public bool WordFilter { get; set; }
-        public List<string> Words { get; set; }
-        public bool Welcome { get; set; }
-        public string WelcomeMessage { get; set; }
-
-        public Config()
-        {
-            Prefix = "~";
-            Owners = new ulong[] { 0 };
-            Token = "";
-            GoogleKey = "";
-            LogChannel = 0;
-            IgnoredChannels = new List<ulong> { };
-            WordFilter = false;
-            Words = new List<string> { };
-            Welcome = false;
-            WelcomeMessage = "**Welcome to the server!**";
-        }
+        public string Prefix { get; set; } = "~";
+        public ulong[] Owners { get; set; } = new ulong[] { 0 };
+        public string Token { get; set; } = "";
+        public string GoogleKey { get; set; } = "";
+        public ulong LogChannel { get; set; } = 0;
+        public bool MessageLogging { get; set; } = false;
+        public List<ulong> IgnoredChannels { get; set; } = new List<ulong> { };
+        public bool WordFilter { get; set; } = false;
+        public List<string> Words { get; set; } = new List<string> { };
+        public bool Welcome { get; set; } = false;
+        public string WelcomeMessage { get; set; } = "**Welcome to the server!**";
 
         public void Save(string dir = "cfg/config.json")
         {

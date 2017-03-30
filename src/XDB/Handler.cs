@@ -41,7 +41,6 @@ namespace XDB
                 return;
 
             var map = new DependencyMap();
-            //map.Add(_cmds);
             var context = new CommandContext(_client, msg);
 
             int argPos = 0;

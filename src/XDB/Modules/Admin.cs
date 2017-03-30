@@ -44,6 +44,7 @@ namespace XDB.Modules
         [Name("clean `<num>` (limit 100)")]
         public async Task AllClean(int amt = 5)
         {
+            amt++;
             await Context.Message.DeleteAsync();
             var _messages = await Context.Channel.GetMessagesAsync(amt).Flatten().ConfigureAwait(false);
             await Context.Channel.DeleteMessagesAsync(_messages).ConfigureAwait(false);
@@ -55,6 +56,7 @@ namespace XDB.Modules
         [Name("clean user `<@user>` `<num>` (limit 100)")]
         public async Task UserClean(SocketGuildUser user, int amt = 5)
         {
+            amt++;
             await Context.Message.DeleteAsync();
             var _messages = (await Context.Channel.GetMessagesAsync(amt).Flatten()).Where(x => x.Author.Id == user.Id);
             await Context.Channel.DeleteMessagesAsync(_messages).ConfigureAwait(false);
@@ -66,6 +68,7 @@ namespace XDB.Modules
         [Name("clean bot `<num>` (limit 100)")]
         public async Task BotClean(int amt = 5)
         {
+            amt++;
             await Context.Message.DeleteAsync();
             var _messages = (await Context.Channel.GetMessagesAsync(amt).Flatten()).Where(x => x.Author.IsBot);
             await Context.Channel.DeleteMessagesAsync(_messages).ConfigureAwait(false);
