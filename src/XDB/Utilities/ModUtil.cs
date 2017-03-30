@@ -12,22 +12,16 @@ namespace XDB.Utilities
         {
             try
             {
-                var log = await context.Guild.GetChannelAsync(Config.Load().LogChannel) as SocketTextChannel;
                 var dm = await user.CreateDMChannelAsync();
                 if (string.IsNullOrEmpty(reason))
                 {
-                    if (log == null)
-                        await context.Channel.SendMessageAsync($":grey_exclamation: {context.User.Mention} has kicked {user.Mention}\n**Reason:** `N/A`");
-                    else
-                        await log.SendMessageAsync($":grey_exclamation: {context.User.Mention} has kicked {user.Mention}\n**Reason:** `N/A`");
+                    await Logging.TryLoggingAsync($":grey_exclamation: **{context.User.Username}** has kicked {user.Mention}\n**Reason:** `N/A`");
                     await dm.SendMessageAsync($":anger: You were kicked from **{context.Guild.Name}**\n**Reason:** `N/A`");
-                } else {
-                    if (log == null)
-                        await context.Channel.SendMessageAsync($":grey_exclamation: {context.User.Mention} has kicked {user.Mention}\n**Reason:** `{reason}`");
-                    else
-                        await log.SendMessageAsync($":grey_exclamation: {context.User.Mention} has kicked {user.Mention}\n**Reason:** `{reason}`");
+                } else
+                {
+                    await Logging.TryLoggingAsync($":grey_exclamation: **{context.User.Username}** has kicked {user.Mention}\n**Reason:** `{reason}`");
                     await dm.SendMessageAsync($":anger: You were kicked from **{context.Guild.Name}**\n**Reason:** `{reason}`");
-                }               
+                }
                 await user.KickAsync().ConfigureAwait(false);
             }
             catch (Exception e)
@@ -38,22 +32,15 @@ namespace XDB.Utilities
 
         public static async Task BanUserAsync(SocketGuildUser user, CommandContext context, string reason)
         {
-            var log = await context.Guild.GetChannelAsync(Config.Load().LogChannel) as SocketTextChannel;
             var dm = await user.CreateDMChannelAsync();
             try
             {
                 if (string.IsNullOrEmpty(reason))
                 {
-                    if (log == null)
-                        await context.Channel.SendMessageAsync($":grey_exclamation: {context.User.Mention} has banned {user.Mention}\n**Reason:** `N/A`");
-                    else
-                        await log.SendMessageAsync($":grey_exclamation: {context.User.Mention} has banned {user.Mention}\n**Reason:** `N/A`");
+                    await Logging.TryLoggingAsync($":grey_exclamation: **{context.User.Username}** has banned {user.Mention}\n**Reason:** `N/A`");
                     await dm.SendMessageAsync($":anger: You were banned from **{context.Guild.Name}**\n**Reason:** `N/A`");
                 } else {
-                    if (log == null)
-                        await context.Channel.SendMessageAsync($":grey_exclamation: {context.User.Mention} has banned {user.Mention}\n**Reason:** `{reason}`");
-                    else
-                        await log.SendMessageAsync($":grey_exclamation: {context.User.Mention} has banned {user.Mention}\n**Reason:** `{reason}`");
+                    await Logging.TryLoggingAsync($":grey_exclamation: **{context.User.Username}** has banned {user.Mention}\n**Reason:** `{reason}`");
                     await dm.SendMessageAsync($":anger: You were banned from **{context.Guild.Name}**\n**Reason:** `{reason}`");
                 }
                 await context.Guild.AddBanAsync(user);

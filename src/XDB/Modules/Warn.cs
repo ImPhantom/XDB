@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using XDB.Common.Attributes;
 using XDB.Common.Enums;
 using XDB.Common.Types;
+using XDB.Utilities;
 
 namespace XDB.Modules
 {
@@ -81,6 +82,7 @@ namespace XDB.Modules
             Config.WarnCheck();
             var read = File.ReadAllText(Strings.WarnPath);
             var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
+            var dm = await user.CreateDMChannelAsync();
             try
             {
                 if (!json.Any(x => x.WarnedUser == user.Id))
@@ -93,16 +95,14 @@ namespace XDB.Modules
                     json.Add(newwarn);
                     var outjson = JsonConvert.SerializeObject(json);
                     File.WriteAllText(Strings.WarnPath, outjson);
-                    await ReplyAsync($":white_check_mark: You warned {user.Username} for: \n\n `{reason}`");
-                    var dm = await user.CreateDMChannelAsync();
+                    await Logging.TryLoggingAsync($":exclamation: {user.Username} has been warned by {Context.User.Username} for:\n`{reason}`");
                     await dm.SendMessageAsync($":anger: You have been warned by **{Context.User.Username}** in **{Context.Guild.Name}** for:\n\n`{reason}`");
                 } else
                 {
                     json.First(x => x.WarnedUser == user.Id).WarnReason.Add(reason);
                     var outjson = JsonConvert.SerializeObject(json);
                     File.WriteAllText(Strings.WarnPath, outjson);
-                    await ReplyAsync($":white_check_mark: You warned {user.Username} for: \n\n `{reason}`");
-                    var dm = await user.CreateDMChannelAsync();
+                    await Logging.TryLoggingAsync($":exclamation: {user.Username} has been warned by {Context.User.Username} for:\n`{reason}`");
                     await dm.SendMessageAsync($":anger: You have been warned by **{Context.User.Username}** in **{Context.Guild.Name}** for:\n\n`{reason}`");
                 }
             }
@@ -131,10 +131,11 @@ namespace XDB.Modules
                 {
                     if (index < json.First(x => x.WarnedUser == user.Id).WarnReason.Count)
                     {
+                        var reason = json.First(x => x.WarnedUser == user.Id).WarnReason[index];
                         json.First(x => x.WarnedUser == user.Id).WarnReason.RemoveAt(index);
                         var outjson = JsonConvert.SerializeObject(json);
                         File.WriteAllText(Strings.WarnPath, outjson);
-                        await ReplyAsync(":white_check_mark: Removed warn from specified user.");
+                        await Logging.TryLoggingAsync($":heavy_check_mark: {Context.User.Username} has removed {user.Username}'s warn for:\n`{reason}`");
                     }
                     else
                         await ReplyAsync($":anger: There are no warns at index[`{index}`]");
