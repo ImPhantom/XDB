@@ -18,6 +18,14 @@ namespace XDB.Modules
     [Summary("Self")]
     public class Self : ModuleBase
     {
+        [Command("changelog"), Summary("Displays the XDB Changelog for this version.")]
+        [Permissions(AccessLevel.ServerAdmin)]
+        public async Task Changelog()
+        {
+            var log = $"I've been updated to `v{Strings.ReleaseVersion}`\n\n**Changes:**\n~ Added Bot Clean (`~clean bot <int>`)\n~ Changed Steam IP Format (`~query/~players ip:port`)\n~ Added Message Logging (Deletes/Edits)\n~ Updated shitty logging system";
+            await ReplyAsync(log);
+        }
+
         [Command("nick"), Summary("Sets the bots nickname.")]
         [Name("nick `<string>`")]
         [Permissions(AccessLevel.ServerAdmin)]
