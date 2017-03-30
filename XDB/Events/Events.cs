@@ -56,7 +56,7 @@ namespace XDB.Events
                         return;
                     if (Config.Load().IgnoredChannels.Contains(channel.Id))
                         return;
-                    if(!msg.Attachments.Any())
+                    if (!msg.Attachments.Any())
                         await Logging.TryLoggingAsync($":heavy_multiplication_x: **{msg.Author.Username}** deleted their message:\n{msg.Content}");
                     else
                         await Logging.TryLoggingAsync($":heavy_multiplication_x: **{msg.Author.Username}** deleted their message:\n{msg.Content}\n{msg.Attachments.FirstOrDefault().Url}");
