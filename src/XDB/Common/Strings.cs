@@ -6,7 +6,7 @@ namespace XDB.Common.Types
 {
     public class Strings
     {
-        public static readonly string ReleaseVersion = "1.1.7rc";
+        public static readonly string ReleaseVersion = "1.1.8";
 
         // Common Strings
         public static string XDB_Title = $"XDB (rel: {ReleaseVersion})(api: {DiscordConfig.Version})";

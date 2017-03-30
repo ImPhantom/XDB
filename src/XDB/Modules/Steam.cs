@@ -13,10 +13,13 @@ namespace XDB.Modules
     public class Steam : ModuleBase
     {
         [Command("query"), Summary("Querys a source server for information about itself.")]
-        [Name("query `<ip>` `<port>`")]
-        public async Task Query(string ip, string port)
+        [Name("query `<ip:port>`")]
+        public async Task Query(string info)
         {
-            var url = $"http://xeno.nn.pe/xdb/?ip={ip}&port={port}";
+            var ip = info.Split(':');
+            if (ip.Length != 2)
+                return;
+            var url = $"http://xeno.nn.pe/xdb/?ip={ip[0]}&port={ip[1]}";
             using (HttpClient client = new HttpClient())
             using (HttpResponseMessage response = await client.GetAsync(url))
             using (HttpContent content = response.Content)
@@ -76,11 +79,14 @@ namespace XDB.Modules
         }
 
         [Command("players"), Summary("Retrives the playerlist from a source server.")]
-        [Name("players `<ip>` `<port>`")]
+        [Name("players `<ip:port>`")]
         [RequireContext(ContextType.Guild)]
-        public async Task Players(string ip, string port)
+        public async Task Players(string info)
         {
-            var url = $"http://xeno.nn.pe/xdb/players.php?ip={ip}&port={port}";
+            var ip = info.Split(':');
+            if (ip.Length != 2)
+                return;
+            var url = $"http://xeno.nn.pe/xdb/players.php?ip={ip[0]}&port={ip[1]}";
             using (HttpClient client = new HttpClient())
             using (HttpResponseMessage response = await client.GetAsync(url))
             using (HttpContent content = response.Content)
