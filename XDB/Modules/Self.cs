@@ -92,6 +92,15 @@ namespace XDB.Modules
             }
         }
 
+        [Command("username"), Summary("Sets the bots username.")]
+        [Name("username `<string>`")]
+        [Permissions(AccessLevel.BotOwner)]
+        public async Task SetUsername([Remainder] string str)
+        {
+            await Program.client.CurrentUser.ModifyAsync(x => x.Username = str);
+            await ReplyAsync($":grey_exclamation: You set the bots username to: `{str}`");
+        }
+
         [Command("leave"), Summary("Forces the bot to leave its current guild.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Leave()
