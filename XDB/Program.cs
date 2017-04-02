@@ -24,7 +24,7 @@ namespace XDB
             {
                 LogLevel = LogSeverity.Verbose,
                 AlwaysDownloadUsers = true,
-                MessageCacheSize = 100
+                MessageCacheSize = 1000
             });
 
             client.Log += (l)
