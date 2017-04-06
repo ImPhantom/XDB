@@ -10,18 +10,14 @@ namespace XDB.Modules
         [Command("ftc"), Summary("Converts fahrenheit to celsius.")]
         [Name("ftc `<num>`")]
         public async Task FTC(double x)
-        {
-            var amt = MathUtil.FToCelsius(x);
-            await ReplyAsync(":grey_exclamation:" + x.ToString() + "°F = " + amt.ToString() + "°C");
-        }
+            => await ReplyAsync(":grey_exclamation:" + x.ToString() + "°F = " + MathUtil.FToCelsius(x).ToString() + "°C");
 
         [Command("ctf"), Summary("Converts celsius to fahrenheit.")]
         [Name("ctf `<num>`")]
         public async Task CTF(double x)
-        {
-            var amt = MathUtil.CelsiusToF(x);
-            await ReplyAsync(":grey_exclamation:" + x.ToString() + "°C = " + amt.ToString() + "°F");
-        }
+            => await ReplyAsync(":grey_exclamation:" + x.ToString() + "°C = " + MathUtil.CelsiusToF(x).ToString() + "°F");
+
+        // TODO accept multiple arguments for math commands
 
         [Command("add"), Summary("Adds two doubles together.")]
         [Name("add `<num>` `<num>`")]
