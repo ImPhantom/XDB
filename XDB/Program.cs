@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using XDB.Common.Types;
 
@@ -33,6 +34,9 @@ namespace XDB
 
             await client.LoginAsync(TokenType.Bot, Config.Load().Token);
             await client.StartAsync();
+
+            await Task.Delay(3000);
+            await client.SetGameAsync($"{Config.Load().Prefix}help | Users: {client.Guilds.Sum(x => x.Users.Count())}");
 
             Events.Events.initEvents();
 

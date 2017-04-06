@@ -18,7 +18,7 @@ namespace XDB.Utilities
             }
             else
             {
-                Console.WriteLine("[Logging] [Error] Log message failed to send! Set your Logging Channel ID in config.json!");
+                Console.WriteLine("[Logging] [Error] Log message failed to send! Set your Logging Channel ID in cfg/config.json!");
             }
         }
 
@@ -37,7 +37,7 @@ namespace XDB.Utilities
             else if (after.Nickname == null)
                 await Logging.TryLoggingAsync($":black_small_square:  **{before.Username}#{before.Discriminator}** has removed their nickname.");
             else
-                await Logging.TryLoggingAsync($":white_small_square: **{before.Username}{before.Discriminator}** has changed their nickname:\n`{before.Nickname}` >> `{after.Nickname}`");
+                await Logging.TryLoggingAsync($":white_small_square: **{before.Username}#{before.Discriminator}** has changed their nickname:\n`{before.Nickname}` >> `{after.Nickname}`");
         }
     }
 }
