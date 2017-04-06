@@ -20,131 +20,23 @@ namespace XDB.Modules
     {
         [Command("warns"), Summary("Views your personal warns.")]
         public async Task Warns()
-        {
-            Config.WarnCheck();
-            var read = File.ReadAllText(Strings.WarnPath);
-            var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
-            try
-            {
-                if(!json.Any(x => x.WarnedUser == Context.User.Id))
-                    await ReplyAsync(":anger: You do not have any warnings.");
-                else
-                {
-                    var warns = json.Find(x => x.WarnedUser == Context.User.Id);
-                    if (!warns.WarnReason.Any()) { await ReplyAsync(":anger: You do not have any warnings."); return; }
-                    var warnsout = new StringBuilder();
-                    foreach(var warn in warns.WarnReason)
-                    {
-                        warnsout.AppendLine($"~ {warn}");
-                    }
-                    await ReplyAsync($"You currently have **{warns.WarnReason.Count}** warns.\n```{warnsout.ToString()}```");
-                }
-            } catch(Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
-        }
+            => await Warning.GetUserWarns(Context, Context.User as SocketGuildUser);
 
         [Command("warns"), Summary("Checks a specified users warnings.")]
         [Name("warns `<@user>`")]
-        public async Task Warns(SocketUser user)
-        {
-            Config.WarnCheck();
-            var read = File.ReadAllText(Strings.WarnPath);
-            var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
-            try
-            {
-                if (!json.Any(x => x.WarnedUser == user.Id))
-                    await ReplyAsync(":anger: That user does not have any warnings.");
-                else
-                {
-                    var warns = json.Find(x => x.WarnedUser == user.Id);
-                    if (!warns.WarnReason.Any()) { await ReplyAsync(":anger: That user does not have any warnings."); return; }
-                    var warnsout = new StringBuilder();
-                    foreach (var warn in warns.WarnReason)
-                    {
-                        warnsout.AppendLine($"~ {warn}");
-                    }
-                    await ReplyAsync($"{user.Username} currently has **{warns.WarnReason.Count}** warns.\n```{warnsout.ToString()}```");
-                }
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
-        }
+        public async Task Warns(SocketGuildUser user)
+            => await Warning.GetUserWarns(Context, user);
 
         [Command("warn"), Summary("Warns a specified user.")]
         [Name("warn `<@user>` `<reason>`")]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task AddWarn(SocketUser user, [Remainder] string reason)
-        {
-            Config.WarnCheck();
-            var read = File.ReadAllText(Strings.WarnPath);
-            var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
-            var dm = await user.CreateDMChannelAsync();
-            try
-            {
-                if (!json.Any(x => x.WarnedUser == user.Id))
-                {
-                    var newwarn = new UserWarn()
-                    {
-                        WarnedUser = user.Id,
-                        WarnReason = new List<string> { reason }
-                    };
-                    json.Add(newwarn);
-                    var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.WarnPath, outjson);
-                    await Logging.TryLoggingAsync($":exclamation: {user.Username} has been warned by {Context.User.Username} for:\n`{reason}`");
-                    await dm.SendMessageAsync($":anger: You have been warned by **{Context.User.Username}** in **{Context.Guild.Name}** for:\n\n`{reason}`");
-                } else
-                {
-                    json.First(x => x.WarnedUser == user.Id).WarnReason.Add(reason);
-                    var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.WarnPath, outjson);
-                    await Logging.TryLoggingAsync($":exclamation: {user.Username} has been warned by {Context.User.Username} for:\n`{reason}`");
-                    await dm.SendMessageAsync($":anger: You have been warned by **{Context.User.Username}** in **{Context.Guild.Name}** for:\n\n`{reason}`");
-                }
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"Exception: {e.Message}");
-            }
-        }
+        public async Task AddWarn(SocketGuildUser user, [Remainder] string reason)
+            => await Warning.WarnUserAsync(Context, user, reason);
 
         [Command("removewarn"), Summary("Removes a warn from a specified user by index.")]
         [Name("removewarn `<@user>` `<index>`")]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task RemoveWarn(SocketUser user, int index)
-        {
-            Config.WarnCheck();
-            var read = File.ReadAllText(Strings.WarnPath);
-            var json = JsonConvert.DeserializeObject<List<UserWarn>>(read);
-            try
-            {
-                index--;
-                if (!json.Any(x => x.WarnedUser == user.Id))
-                {
-                    await ReplyAsync(":anger: That user does not have any warns.");
-                }
-                else
-                {
-                    if (index < json.First(x => x.WarnedUser == user.Id).WarnReason.Count)
-                    {
-                        var reason = json.First(x => x.WarnedUser == user.Id).WarnReason[index];
-                        json.First(x => x.WarnedUser == user.Id).WarnReason.RemoveAt(index);
-                        var outjson = JsonConvert.SerializeObject(json);
-                        File.WriteAllText(Strings.WarnPath, outjson);
-                        await Logging.TryLoggingAsync($":heavy_check_mark: {Context.User.Username} has removed {user.Username}'s warn for:\n`{reason}`");
-                    }
-                    else
-                        await ReplyAsync($":anger: There are no warns at index[`{index}`]");
-                }
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"Exception: {e.Message}");
-            }
-        }
+        public async Task RemoveWarn(SocketGuildUser user, int index)
+            => await Warning.RemoveWarnAsync(Context, user, index);
     }
 }
