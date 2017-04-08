@@ -32,11 +32,8 @@ namespace XDB.Modules
                     string vac;
                     line = Regex.Replace(line, "<br />", Environment.NewLine);
                     string[] lines = line.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-                    if (lines[6] == "1") { vac = "Yes"; } else { vac = "No"; } //Makes VAC Status readable 
-                    var embed = new EmbedBuilder()
-                    {
-                        Color = new Color(29, 140, 209)
-                    };
+                    if (lines[6] == "1") { vac = "Yes"; } else { vac = "No"; }
+                    var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209));
                     embed.AddField(x =>
                     {
                         x.Name = "Game:";
@@ -98,16 +95,8 @@ namespace XDB.Modules
                 {
                     line = Regex.Replace(line, "<br />", Environment.NewLine);
                     string[] lines = line.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-                    var embed = new EmbedBuilder()
-                    {
-                        Color = new Color(29, 140, 209)
-                    };
-                    embed.AddField(x =>
-                    {
-                        x.Name = $"Players ({lines[0]}/{lines[1]}):";
-                        x.Value = $"{line.Replace(lines[1], null).Replace(lines[0], null)}";
-                        x.IsInline = false;
-                    });
+                    var field = new EmbedFieldBuilder().WithName($"Players ({lines[0]}/{lines[1]}):").WithValue($"{line.Replace(lines[1], null).Replace(lines[0], null)}").WithIsInline(false);
+                    var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).AddField(field);
                     await ReplyAsync("", false, embed.Build());
                 }
             }

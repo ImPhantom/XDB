@@ -22,18 +22,8 @@ namespace XDB.Modules
         [Command("userinfo"), Summary("Displays your user information.")]
         public async Task UserInfo()
         {
-            var date = $"{Context.User.CreatedAt.Month}/{Context.User.CreatedAt.Day}/{Context.User.CreatedAt.Year}";
-            var avatar = Context.User.GetAvatarUrl();
-            var auth = new EmbedAuthorBuilder()
-            {
-                Name = Context.User.Username,
-                IconUrl = avatar
-            };
-            var embed = new EmbedBuilder()
-            {
-                Color = new Color(29, 140, 209),
-                Author = auth
-            };
+            var author = new EmbedAuthorBuilder().WithName(Context.User.Username).WithIconUrl(Context.User.GetAvatarUrl());
+            var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(author);
             embed.AddField(x =>
             {
                 x.Name = "Username:";
@@ -55,7 +45,7 @@ namespace XDB.Modules
             embed.AddField(x =>
             {
                 x.Name = "Created:";
-                x.Value = date;
+                x.Value = $"{Context.User.CreatedAt.Month}/{Context.User.CreatedAt.Day}/{Context.User.CreatedAt.Year}";
                 x.IsInline = true;
             });
             embed.AddField(x =>
@@ -77,18 +67,8 @@ namespace XDB.Modules
         [Name("userinfo `<user>`")]
         public async Task UserInfo(SocketUser user)
         {
-            var date = $"{user.CreatedAt.Month}/{user.CreatedAt.Day}/{user.CreatedAt.Year}";
-            var avatar = user.GetAvatarUrl();
-            var auth = new EmbedAuthorBuilder()
-            {
-                Name = user.Username,
-                IconUrl = avatar
-            };
-            var embed = new EmbedBuilder()
-            {
-                Color = new Color(29, 140, 209),
-                Author = auth
-            };
+            var author = new EmbedAuthorBuilder().WithName(user.Username).WithIconUrl(user.GetAvatarUrl());
+            var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(author);
             embed.AddField(x =>
             {
                 x.Name = "Username:";
@@ -110,7 +90,7 @@ namespace XDB.Modules
             embed.AddField(x =>
             {
                 x.Name = "Created:";
-                x.Value = date;
+                x.Value = $"{user.CreatedAt.Month}/{user.CreatedAt.Day}/{user.CreatedAt.Year}";
                 x.IsInline = true;
             });
             embed.AddField(x =>
@@ -132,18 +112,8 @@ namespace XDB.Modules
         public async Task ServerInfo()
         {
             var guild = Context.Guild as SocketGuild;
-            var date = $"{guild.CreatedAt.Month}/{guild.CreatedAt.Day}/{guild.CreatedAt.Year}";
-
-            var footer = new EmbedFooterBuilder()
-            {
-                Text = $"Server ID: {guild.Id}"
-            };
-            var embed = new EmbedBuilder()
-            {
-                Color = new Color(29, 140, 209),
-                ThumbnailUrl = guild.IconUrl,
-                Footer = footer
-            };
+            var footer = new EmbedFooterBuilder().WithText($"Server ID: {guild.Id}");
+            var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithThumbnailUrl(guild.IconUrl).WithFooter(footer);
             embed.AddField(x =>
             {
                 x.Name = "Owner:";
@@ -165,7 +135,7 @@ namespace XDB.Modules
             embed.AddField(x =>
             {
                 x.Name = "Created:";
-                x.Value = date;
+                x.Value = $"{guild.CreatedAt.Month}/{guild.CreatedAt.Day}/{guild.CreatedAt.Year}";
                 x.IsInline = true;
             });
             embed.AddField(x =>

@@ -6,13 +6,14 @@ namespace XDB.Common.Types
 {
     public class Strings
     {
-        public static readonly string ReleaseVersion = "1.1.9";
+        public static readonly string ReleaseVersion = "1.2.0";
 
         // Common Strings
         public static string XDB_Title = $"XDB (rel: {ReleaseVersion})(api: {DiscordConfig.Version})";
         public static string XDB_ConfigLoaded = "[XDB] [Info] Configuration Successfully Loaded!";
         public static string XDB_ConfigCreated = @"After you input your token, a config will be generated at 'cfg\\config.json'.
 Please fill in all your info and restart the bot.";
+        public static string XDB_LoggingFailed = "[Logging] [Error] Log message failed to send! Either set your Logging Channel ID in cfg/config.json or use the '~log <channel-id>' command.";
 
         // Config/Storage Paths
         public static string ConfigPath = Path.Combine(AppContext.BaseDirectory, "cfg/config.json");

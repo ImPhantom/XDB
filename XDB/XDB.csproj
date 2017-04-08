@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net.Commands" Version="1.0.0-rc-00667" />
-    <PackageReference Include="Discord.Net.WebSocket" Version="1.0.0-rc-00667" />
+    <PackageReference Include="Discord.Net.Commands" Version="1.0.0-rc2-00691" />
+    <PackageReference Include="Discord.Net.WebSocket" Version="1.0.0-rc2-00691" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using XDB.Common.Attributes;
+using XDB.Common.Models;
 
 namespace XDB.Common.Types
 {

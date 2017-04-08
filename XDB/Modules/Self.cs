@@ -233,17 +233,9 @@ namespace XDB.Modules
         public async Task Info()
         {
             var application = await Context.Client.GetApplicationInfoAsync();
-            var avurl = Context.Client.CurrentUser.GetAvatarUrl();
-            var auth = new EmbedAuthorBuilder()
-            {
-                Name = Context.Client.CurrentUser.Username,
-                IconUrl = avurl
-            };
-            var embed = new EmbedBuilder()
-            {
-                Color = new Color(29, 140, 209),
-                Author = auth
-            };
+            var avatar = Context.Client.CurrentUser.GetAvatarUrl();
+            var author = new EmbedAuthorBuilder().WithName(Context.Client.CurrentUser.Username).WithIconUrl(avatar);
+            var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(author);
             embed.AddField(x =>
             {
                 x.Name = "Author:";
