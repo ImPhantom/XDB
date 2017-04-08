@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using XDB.Common.Attributes;
 using XDB.Common.Enums;
 using XDB.Common.Types;
+using XDB.Utilities;
 
 namespace XDB.Modules
 {
@@ -168,7 +169,8 @@ namespace XDB.Modules
             if (cfg.IgnoredChannels.Contains(channelid)) { await ReplyAsync(":anger: That channel is already ignored."); return; }
             cfg.IgnoredChannels.Add(channelid);
             cfg.Save();
-            await ReplyAsync($":heavy_check_mark:  You added channel `{channelid}` to the ignored channels list.");
+            var channel = await Context.Guild.GetTextChannelAsync(channelid);
+            await Logging.TryLoggingAsync($":heavy_check_mark:  **{Context.User.Username}#{Context.User.Discriminator}** added {channel.Mention} (`{channelid}`) to the ignored channels list.");
         }
 
         [Command("ignored"), Summary("Displays all ignored channels.")]
@@ -195,7 +197,8 @@ namespace XDB.Modules
             if(!cfg.IgnoredChannels.Contains(channelid)) { await ReplyAsync(":anger: That channel is not ignored."); return; }
             cfg.IgnoredChannels.Remove(channelid);
             cfg.Save();
-            await ReplyAsync($":heavy_multiplication_x:  You removed channel `{channelid}` from the ignored channels list.");
+            var channel = await Context.Guild.GetTextChannelAsync(channelid);
+            await Logging.TryLoggingAsync($":heavy_multiplication_x:  **{Context.User.Username}#{Context.User.Discriminator}** removed {channel.Mention} (`{channelid}`) from the ignored channels list.");
         }
 
         [Command("welcome"), Summary("Toggles the welcome message.")]
