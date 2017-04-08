@@ -19,14 +19,15 @@ namespace XDB.Events
                     if (user.IsBot)
                         return;
                     var def = user.Guild.DefaultChannel;
-                    await def.SendMessageAsync(user.Mention + $" {Config.Load().WelcomeMessage}");
+                    var message = Config.Load().WelcomeMessage.Replace("{mention}", user.Mention).Replace("{username}", user.Username);
+                    await def.SendMessageAsync(message);
                 }
 
                 if (Config.Load().ExtraLogging)
                 {
                     if (user.IsBot)
                         return;
-                    await Logging.TryLoggingAsync($":white_check_mark: {user.Username}#{user.Discriminator} has joined the server!");
+                    await Logging.TryLoggingAsync($":white_check_mark:  `{user.Username}#{user.Discriminator}` has joined the server!");
                 }
             };
 
@@ -36,7 +37,7 @@ namespace XDB.Events
                 if (user.IsBot)
                     return;
                 if (Config.Load().ExtraLogging)
-                    await Logging.TryLoggingAsync($":x: {user.Username}#{user.Discriminator} has left the server!");
+                    await Logging.TryLoggingAsync($":x:  `{user.Username}#{user.Discriminator}` has left the server!");
             };
 
             client.MessageReceived += async (s) =>

@@ -21,7 +21,7 @@ namespace XDB.Common.Types
         public bool WordFilter { get; set; } = false;
         public List<string> Words { get; set; } = new List<string> { };
         public bool Welcome { get; set; } = false;
-        public string WelcomeMessage { get; set; } = "**Welcome to the server!**";
+        public string WelcomeMessage { get; set; } = "**Welcome to the server, **{mention}";
 
         public void Save(string dir = "cfg/config.json")
         {
