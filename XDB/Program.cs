@@ -38,7 +38,7 @@ namespace XDB
             await Task.Delay(3000);
             await client.SetGameAsync($"{Config.Load().Prefix}help | Users: {client.Guilds.Sum(x => x.Users.Count())}");
 
-            Events.Events.initEvents();
+            Events.Listen();
 
             cmds = new Handler();
             await cmds.Install(client);

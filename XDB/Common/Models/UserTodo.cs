@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XDB.Common.Attributes
+namespace XDB.Common.Models
 {
     public class UserTodo
     {

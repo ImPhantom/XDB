@@ -26,7 +26,7 @@ namespace XDB.Modules
         [Command("subtract"), Alias("sub"), Summary("Subtracts a double from a double")]
         [Name("subtract `<num>` `<num>`")]
         public async Task Subtract(params double[] nums)
-            => await ReplyAsync($":grey_exclamation: Result: {nums.Aggregate((a, x) => a - x).ToString()}");
+            => await ReplyAsync($":grey_exclamation: Result: `{nums.Aggregate((a, x) => a - x).ToString()}`");
 
         [Command("multiply"), Alias("mul"), Summary("Multiplys a double by a double.")]
         [Name("multiply `<num>` `<num>`")]

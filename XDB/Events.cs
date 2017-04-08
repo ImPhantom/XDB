@@ -1,14 +1,13 @@
 ﻿using Discord.WebSocket;
 using System.Linq;
-using System.Threading.Tasks;
 using XDB.Common.Types;
 using XDB.Utilities;
 
-namespace XDB.Events
+namespace XDB
 {
     public class Events
     {
-        public static void initEvents()
+        public static void Listen()
         {
             var client = Program.client;
 

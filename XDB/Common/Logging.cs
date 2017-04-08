@@ -17,9 +17,7 @@ namespace XDB.Utilities
                 await log.SendMessageAsync(message);
             }
             else
-            {
                 Console.WriteLine("[Logging] [Error] Log message failed to send! Set your Logging Channel ID in cfg/config.json!");
-            }
         }
 
         private static bool LogChannelExists()
