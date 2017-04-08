@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using System.Linq;
 using System.Threading.Tasks;
 using XDB.Utilities;
 
@@ -17,38 +18,24 @@ namespace XDB.Modules
         public async Task CTF(double x)
             => await ReplyAsync(":grey_exclamation:" + x.ToString() + "°C = " + MathUtil.CelsiusToF(x).ToString() + "°F");
 
-        // TODO accept multiple arguments for math commands
-
         [Command("add"), Summary("Adds two doubles together.")]
         [Name("add `<num>` `<num>`")]
-        public async Task Add(double x, double y)
-        {
-            var sum = MathUtil.Add(x, y);
-            await ReplyAsync(":grey_exclamation:" + x.ToString() + " + " + y.ToString() + " = " + sum.ToString());
-        }
+        public async Task Add(params double[] nums)
+            => await ReplyAsync($":grey_exclamation: Result: `{nums.Sum().ToString()}`");
 
-        [Command("sub"), Summary("Subtracts a double from a double")]
-        [Name("sub `<num>` `<num>`")]
-        public async Task Sub(double x, double y)
-        {
-            var sum = MathUtil.Sub(x, y);
-            await ReplyAsync(":grey_exclamation:" + x.ToString() + " - " + y.ToString() + " = " + sum.ToString());
-        }
+        [Command("subtract"), Alias("sub"), Summary("Subtracts a double from a double")]
+        [Name("subtract `<num>` `<num>`")]
+        public async Task Subtract(params double[] nums)
+            => await ReplyAsync($":grey_exclamation: Result: {nums.Aggregate((a, x) => a - x).ToString()}");
 
-        [Command("mul"), Summary("Multiplys a double by a double.")]
-        [Name("mul `<num>` `<num>`")]
-        public async Task Mul(double x, double y)
-        {
-            var sum = MathUtil.Multiply(x, y);
-            await ReplyAsync(":grey_exclamation:" + x.ToString() + " * " + y.ToString() + " = " + sum.ToString());
-        }
+        [Command("multiply"), Alias("mul"), Summary("Multiplys a double by a double.")]
+        [Name("multiply `<num>` `<num>`")]
+        public async Task Multiply(params double[] nums)
+            => await ReplyAsync($":grey_exclamation: Result: `{nums.Aggregate((a, x) => a * x).ToString()}`");
 
-        [Command("div"), Summary("Divides a double by a double.")]
-        [Name("div `<num>` `<num>`")]
-        public async Task Div(double x, double y)
-        {
-            var sum = MathUtil.Divide(x, y);
-            await ReplyAsync(":grey_exclamation:" + x.ToString() + " / " + y.ToString() + " = " + sum.ToString());
-        }
+        [Command("divide"), Alias("div"), Summary("Divides a double by a double.")]
+        [Name("divide `<num>` `<num>`")]
+        public async Task Divide(params double[] nums)
+            => await ReplyAsync($":grey_exclamation: Result: `{nums.Aggregate((a, x) => a / x).ToString()}`");
     }
 }
