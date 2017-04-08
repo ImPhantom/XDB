@@ -1,16 +1,9 @@
-﻿using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 using Discord.WebSocket;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
 using XDB.Common.Enums;
-using XDB.Common.Types;
+using XDB.Utilities;
 
 namespace XDB.Modules
 {
@@ -22,169 +15,29 @@ namespace XDB.Modules
         [Command, Summary("Displays your reputation.")]
         [Name("rep")]
         public async Task MyRep()
-        {
-            Config.RepCheck();
-            var filetext = File.ReadAllText(Strings.RepPath);
-            var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
-            try
-            {
-                if(!json.Any(x => x.Id == Context.User.Id))
-                {
-                    var defrep = new UserRep() { Id = Context.User.Id, Rep = 0 };
-                    json.Add(defrep);
-                    var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.RepPath, outjson);
-                }
-                var rep = json.First(x => x.Id == Context.User.Id).Rep;
-                if (rep < 0)
-                    await ReplyAsync($":red_circle: **{Context.User.Username}'s** reputation: {rep}");
-                else
-                    await ReplyAsync($":white_circle: **{Context.User.Username}'s** reputation: {rep}");
-                await Context.Message.DeleteAsync();
-            }
-            catch(Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
-        }
+            => await Reputation.CheckReputationAsync(Context, Context.User as SocketGuildUser);
 
         [Command("user"), Summary("Displays a specified users reputation.")]
         [Name("rep user `<@user>`")]
-        public async Task CheckRep(SocketUser user)
-        {
-            Config.RepCheck();
-            var filetext = File.ReadAllText(Strings.RepPath);
-            var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
-            try
-            {
-                if (!json.Any(x => x.Id == user.Id))
-                {
-                    var defrep = new UserRep() { Id = user.Id, Rep = 0 };
-                    json.Add(defrep);
-                    var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.RepPath, outjson);
-                }
-                var rep = json.First(x => x.Id == user.Id).Rep;
-                if (rep < 0)
-                    await ReplyAsync($":red_circle: **{user.Username}'s** reputation: {rep}");
-                else
-                    await ReplyAsync($":white_circle: **{user.Username}'s** reputation: {rep}");
-
-                await Context.Message.DeleteAsync();
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
-        }
+        public async Task CheckRep(SocketGuildUser user)
+            => await Reputation.CheckReputationAsync(Context, user);
 
         [Command("top"), Summary("Displays the users with the highest reputation.")]
         [Name("rep top")]
         [Alias("leaderboard")]
         public async Task Leaderboard()
-        {
-            Config.RepCheck();
-            var read = File.ReadAllText(Strings.RepPath);
-            var json = JsonConvert.DeserializeObject<List<UserRep>>(read);
-
-            var topreps = json.OrderByDescending(x => x.Rep).Take(10);
-            var embed = new EmbedBuilder() { Color = new Color(21, 144, 232) };
-            var str = new StringBuilder();
-            foreach (var rep in topreps)
-            {
-                var user = await Context.Client.GetUserAsync(rep.Id);
-                if (user == null)
-                {
-                    embed.AddField(x => {
-                        x.Name = "**unknown_user**";
-                        x.Value = $"Reputation: {rep.Rep}";
-                        x.IsInline = false;
-                    });
-                }
-                else
-                {
-                    embed.AddField(x => {
-                        x.Name = $"**{user.Username}**";
-                        x.Value = $"Reputation: {rep.Rep}";
-                        x.IsInline = false;
-                    });
-                }
-            }
-            await ReplyAsync(":star: **Top 10 Reputations:**");
-            await ReplyAsync("", false, embed.Build());
-        }
+            => await Reputation.GetLeaderboardAsync(Context);
 
         [Command("add"), Summary("Adds reputation to a user.")]
         [Name("rep add `<@user>`")]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task AddRep(SocketUser user)
-        {
-            Config.RepCheck();
-            var filetext = File.ReadAllText(Strings.RepPath);
-            var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
-            try
-            {
-                if (!json.Any(x => x.Id == user.Id))
-                {
-                    var defrep = new UserRep() { Id = user.Id, Rep = 1 };
-                    json.Add(defrep);
-                    await ReplyAsync($":white_circle: **{user.Username}'s** reputation: 1");
-                    var defout = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.RepPath, defout);
-                } else
-                {
-                    json.First(x => x.Id == user.Id).Rep++;
-                    var rep = json.First(x => x.Id == user.Id).Rep;
-                    if (rep < 0)
-                        await ReplyAsync($":red_circle: **{user.Username}'s** reputation: {rep}");
-                    else
-                        await ReplyAsync($":white_circle: **{user.Username}'s** reputation: {rep}");
-                    var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.RepPath, outjson);
-                }
-                await Context.Message.DeleteAsync();
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
-        }
+        public async Task AddRep(SocketGuildUser user)
+            => await Reputation.AddReputationAsync(Context, user);
 
         [Command("del"), Summary("Deletes reputation from a user.")]
         [Name("rep del `<@user>`")]
         [Permissions(AccessLevel.ServerAdmin)]
-        public async Task DelRep(SocketUser user)
-        {
-            Config.RepCheck();
-            var filetext = File.ReadAllText(Strings.RepPath);
-            var json = JsonConvert.DeserializeObject<List<UserRep>>(filetext);
-            try
-            {
-                if (!json.Any(x => x.Id == user.Id))
-                {
-                    var defrep = new UserRep() { Id = user.Id, Rep = -1 };
-                    json.Add(defrep);
-                    await ReplyAsync($":red_circle: **{user.Username}'s** reputation: -1");
-                    var defout = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.RepPath, defout);
-                }
-                else
-                {
-                    json.First(x => x.Id == user.Id).Rep--;
-                    var rep = json.First(x => x.Id == user.Id).Rep;
-                    if (rep < 0)
-                        await ReplyAsync($":red_circle: **{user.Username}'s** reputation: {rep}");
-                    else
-                        await ReplyAsync($":white_circle: **{user.Username}'s** reputation: {rep}");
-                    var outjson = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.RepPath, outjson);
-                }
-                await Context.Message.DeleteAsync();
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(e.Message);
-            }
-        }
+        public async Task DelRep(SocketGuildUser user)
+            => await Reputation.RemoveReputationAsync(Context, user);
     }
 }
