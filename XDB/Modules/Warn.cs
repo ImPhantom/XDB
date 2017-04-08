@@ -1,15 +1,8 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
 using XDB.Common.Enums;
-using XDB.Common.Types;
 using XDB.Utilities;
 
 namespace XDB.Modules
