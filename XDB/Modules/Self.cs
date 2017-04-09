@@ -23,7 +23,7 @@ namespace XDB.Modules
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Changelog()
         {
-            var log = $"I've been updated to `v{Strings.ReleaseVersion}`\n\n**Changes:**\n~ Major cleanup on todo/warn/rep\n~ Improved welcome module\n~";
+            var log = $"I've been updated to `v{Strings.ReleaseVersion}`\n\n**Changes:**\n~ Cleaned up todo/warn/rep\n~ Improved welcome/info modules\n~ Much needed asthetic changes";
             await ReplyAsync(log);
         }
 
@@ -34,7 +34,7 @@ namespace XDB.Modules
         {
             var bot = await Context.Guild.GetCurrentUserAsync();
             await bot.ModifyAsync(x => x.Nickname = str);
-            await ReplyAsync(":grey_exclamation: You set the bots nickname to: `" + str + "`");
+            await ReplyAsync(":heavy_check_mark:  You set the bots nickname to: `" + str + "`");
         }
 
         [Command("status"), Summary("Sets the bots status.")]
@@ -43,7 +43,7 @@ namespace XDB.Modules
         public async Task SetGame([Remainder] string str)
         {
             await Program.client.SetGameAsync(str);
-            await ReplyAsync(":grey_exclamation: You set the bots status to: `" + str + "`");
+            await ReplyAsync(":heavy_check_mark:  You set the bots status to: `" + str + "`");
         }
 
         [Command("pres"), Summary("Sets the bots presence.")]
@@ -55,22 +55,22 @@ namespace XDB.Modules
             if(str == "online")
             {
                 await client.SetStatusAsync(UserStatus.Online);
-                await ReplyAsync($":grey_exclamation: You set the bots presence to `{str}`");
+                await ReplyAsync($":heavy_check_mark:  You set the bots presence to `{str}`");
             } else if(str == "idle")
             {
                 await client.SetStatusAsync(UserStatus.Idle);
-                await ReplyAsync($":grey_exclamation: You set the bots presence to `{str}`");
+                await ReplyAsync($":heavy_check_mark:  You set the bots presence to `{str}`");
             } else if(str == "dnd" || str == "do not disturb")
             {
                 await client.SetStatusAsync(UserStatus.DoNotDisturb);
-                await ReplyAsync($":grey_exclamation: You set the bots presence to `{str}`");
+                await ReplyAsync($":heavy_check_mark:  You set the bots presence to `{str}`");
             } else if(str == "invis" || str == "invisible")
             {
                 await client.SetStatusAsync(UserStatus.Invisible);
-                await ReplyAsync($":grey_exclamation: You set the bots presence to `{str}`");
+                await ReplyAsync($":heavy_check_mark:  You set the bots presence to `{str}`");
             } else
             {
-                await ReplyAsync(":anger: **Invalid presence** \n(`online`, `idle`, `do not disturb`, `invisible`)");
+                await ReplyAsync(":black_medium_small_square:  **Invalid presence** \n(`online`, `idle`, `do not disturb`, `invisible`)");
             }
         }
 
@@ -88,7 +88,7 @@ namespace XDB.Modules
                     imgStream.Position = 0;
 
                     await Program.client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(imgStream));
-                    await ReplyAsync(":grey_exclamation: You set the bots avatar!");
+                    await ReplyAsync(":heavy_check_mark:  You set the bots avatar!");
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace XDB.Modules
         public async Task SetUsername([Remainder] string str)
         {
             await Program.client.CurrentUser.ModifyAsync(x => x.Username = str);
-            await ReplyAsync($":grey_exclamation: You set the bots username to: `{str}`");
+            await ReplyAsync($":heavy_check_mark:  You set the bots username to: `{str}`");
         }
 
         [Command("leave"), Summary("Forces the bot to leave its current guild.")]
@@ -117,7 +117,7 @@ namespace XDB.Modules
         public async Task LogChannel(ulong channelid)
         {
             var cfg = Config.Load();
-            if (cfg.LogChannel == channelid) { await ReplyAsync($":anger: That is already the logging channel."); return; }
+            if (cfg.LogChannel == channelid) { await ReplyAsync($":black_medium_small_square:  That already is the logging channel."); return; }
             cfg.LogChannel = channelid;
             cfg.Save();
             await ReplyAsync($":heavy_check_mark:  You set the logging channel to: `{channelid.ToString()}`");
@@ -128,7 +128,7 @@ namespace XDB.Modules
         public async Task FilterWords()
         {
             var words = new StringBuilder();
-            if (!Config.Load().Words.Any()) { await ReplyAsync(":anger: There are no words in the word filter."); return; }
+            if (!Config.Load().Words.Any()) { await ReplyAsync(":black_medium_small_square:  There are no words in the word filter."); return; }
             foreach(var word in Config.Load().Words)
             {
                 words.AppendLine(word);
@@ -142,7 +142,7 @@ namespace XDB.Modules
         public async Task FilterAdd([Remainder] string str)
         {
             var cfg = Config.Load();
-            if (cfg.Words.Contains(str)) { await ReplyAsync($":anger: There is already a string matching `{str}` in the word filter."); return; }
+            if (cfg.Words.Contains(str)) { await ReplyAsync($":black_medium_small_square:  There is already a string matching `{str}` in the word filter."); return; }
             cfg.Words.Add(str.ToLower());
             cfg.Save();
             await ReplyAsync($":heavy_check_mark:  You added `{str}` to the word filter!");
@@ -154,7 +154,7 @@ namespace XDB.Modules
         public async Task FilterDel([Remainder] string str)
         {
             var cfg = Config.Load();
-            if (!cfg.Words.Contains(str)) { await ReplyAsync($":anger: There is no string matching `{str}` in the word filter."); return; }
+            if (!cfg.Words.Contains(str)) { await ReplyAsync($":black_medium_small_square:  There is no string matching `{str}` in the word filter."); return; }
             cfg.Words.Remove(str.ToLower());
             cfg.Save();
             await ReplyAsync($":heavy_multiplication_x:  You removed `{str}` from the word filter!");
@@ -166,7 +166,7 @@ namespace XDB.Modules
         public async Task Ignore(ulong channelid)
         {
             var cfg = Config.Load();
-            if (cfg.IgnoredChannels.Contains(channelid)) { await ReplyAsync(":anger: That channel is already ignored."); return; }
+            if (cfg.IgnoredChannels.Contains(channelid)) { await ReplyAsync(":black_medium_small_square:  That channel is already ignored."); return; }
             cfg.IgnoredChannels.Add(channelid);
             cfg.Save();
             var channel = await Context.Guild.GetTextChannelAsync(channelid);
@@ -179,7 +179,7 @@ namespace XDB.Modules
         public async Task Ignored()
         {
             var ignored = new StringBuilder();
-            if (!Config.Load().IgnoredChannels.Any()) { await ReplyAsync(":anger: There are no ignored channels!"); return; }
+            if (!Config.Load().IgnoredChannels.Any()) { await ReplyAsync(":black_medium_small_square:  There are no ignored channels!"); return; }
             foreach(var channel in Config.Load().IgnoredChannels)
             {
                 var chan = await Context.Guild.GetChannelAsync(channel);
@@ -194,7 +194,7 @@ namespace XDB.Modules
         public async Task DelIgnore(ulong channelid)
         {
             var cfg = Config.Load();
-            if(!cfg.IgnoredChannels.Contains(channelid)) { await ReplyAsync(":anger: That channel is not ignored."); return; }
+            if(!cfg.IgnoredChannels.Contains(channelid)) { await ReplyAsync(":black_medium_small_square:  That channel is not ignored."); return; }
             cfg.IgnoredChannels.Remove(channelid);
             cfg.Save();
             var channel = await Context.Guild.GetTextChannelAsync(channelid);
@@ -235,7 +235,7 @@ namespace XDB.Modules
             var application = await Context.Client.GetApplicationInfoAsync();
             var avatar = Context.Client.CurrentUser.GetAvatarUrl();
             var author = new EmbedAuthorBuilder().WithName(Context.Client.CurrentUser.Username).WithIconUrl(avatar);
-            var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(author);
+            var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(author).WithCurrentTimestamp();
             embed.AddField(x =>
             {
                 x.Name = "Author:";
