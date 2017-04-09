@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.WebSocket;
 using System;
 using System.IO;
 
@@ -38,5 +39,26 @@ Please fill in all your info and restart the bot.";
       #                                 #
       #---------------------------------#
  ";
+
+        public static string GetUserGame(SocketGuildUser user)
+        {
+            if (!user.Game.HasValue)
+                return $"`N/A`";
+            else
+                return $"`{user.Game}`";
+        }
+
+        public static string GetVoiceState(SocketGuildUser user)
+        {
+            var channel = user.VoiceState;
+            if (user.IsMuted && user.IsDeafened || user.IsSelfMuted && user.IsSelfDeafened)
+                return $"`{channel}` (Muted/Deafened)";
+            else if (user.IsSelfMuted || user.IsMuted)
+                return $"`{channel}` (Muted)";
+            else if (user.IsSelfDeafened || user.IsDeafened)
+                return $"`{channel}` (Deafened)";
+            else
+                return $"`{channel}`";
+        }
     }
 }
