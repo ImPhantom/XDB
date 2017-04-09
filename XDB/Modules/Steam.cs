@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.IO;
 using System.Text.RegularExpressions;
 using Discord;
+using System.Diagnostics;
 
 namespace XDB.Modules
 {
@@ -16,6 +17,8 @@ namespace XDB.Modules
         [Name("query `<ip:port>`")]
         public async Task Query(string info)
         {
+            var sw = new Stopwatch();
+            sw.Start();
             var ip = info.Split(':');
             if (ip.Length != 2)
                 return;
@@ -33,7 +36,9 @@ namespace XDB.Modules
                     line = Regex.Replace(line, "<br />", Environment.NewLine);
                     string[] lines = line.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
                     if (lines[6] == "1") { vac = "Yes"; } else { vac = "No"; }
-                    var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209));
+                    sw.Stop();
+                    var footer = new EmbedFooterBuilder().WithText($"Generated in: {sw.ElapsedMilliseconds}ms");
+                    var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithFooter(footer);
                     embed.AddField(x =>
                     {
                         x.Name = "Game:";
@@ -80,6 +85,8 @@ namespace XDB.Modules
         [RequireContext(ContextType.Guild)]
         public async Task Players(string info)
         {
+            var sw = new Stopwatch();
+            sw.Start();
             var ip = info.Split(':');
             if (ip.Length != 2)
                 return;
@@ -95,8 +102,10 @@ namespace XDB.Modules
                 {
                     line = Regex.Replace(line, "<br />", Environment.NewLine);
                     string[] lines = line.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+                    sw.Stop();
                     var field = new EmbedFieldBuilder().WithName($"Players ({lines[0]}/{lines[1]}):").WithValue($"{line.Replace(lines[1], null).Replace(lines[0], null)}").WithIsInline(false);
-                    var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).AddField(field);
+                    var footer = new EmbedFooterBuilder().WithText($"Generated in: {sw.ElapsedMilliseconds}ms");
+                    var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).AddField(field).WithFooter(footer);
                     await ReplyAsync("", false, embed.Build());
                 }
             }
