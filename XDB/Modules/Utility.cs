@@ -21,7 +21,7 @@ namespace XDB.Modules
         {
             if(!url.Contains("http"))
             {
-                await ReplyAsync(":anger: Please provide a valid link.");
+                await ReplyAsync(":heavy_multiplication_x:  Please provide a valid link.");
                 return;
             }
             var request = (HttpWebRequest)WebRequest.Create($"https://www.googleapis.com/urlshortener/v1/url?key={Config.Load().GoogleKey}");
@@ -41,12 +41,13 @@ namespace XDB.Modules
                 using (var reader = new StreamReader(response.GetResponseStream()))
                 {
                     var shorturl = Regex.Match(reader.ReadToEnd(), @"""id"": ?""(?<id>.+)""").Groups["id"].Value;
-                    await ReplyAsync($":white_check_mark: Shortened: {shorturl}");
+                    await ReplyAsync($":heavy_check_mark:  Shortened: {shorturl}");
                 }
                 await Context.Message.DeleteAsync();
-            } catch (Exception ex)
+            } catch (Exception e)
             {
-                await ReplyAsync($"**Error:** Shortener is down.\n**Exception: **{ex.Message}");
+                await ReplyAsync($"**Error:** Shortener is down.");
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -77,7 +78,7 @@ namespace XDB.Modules
                     await ReplyAsync("", false, embed.Build());
                 } catch
                 {
-                    await ReplyAsync(":anger: Could not find a definition for that word!");
+                    await ReplyAsync(":heavy_multiplication_x:  Could not find a definition for that word!");
                 }
             }
         }
