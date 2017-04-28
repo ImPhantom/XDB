@@ -14,7 +14,7 @@ namespace XDB.Utilities
 {
     public class Reputation
     {
-        public static async Task CheckReputationAsync(CommandContext context, SocketGuildUser user)
+        public static async Task CheckReputationAsync(SocketCommandContext context, SocketGuildUser user)
         {
             Config.RepCheck();
             var reputations = File.ReadAllText(Strings.RepPath);
@@ -41,7 +41,7 @@ namespace XDB.Utilities
             }
         }
 
-        public static async Task GetLeaderboardAsync(CommandContext context)
+        public static async Task GetLeaderboardAsync(SocketCommandContext context)
         {
             // TODO remove users from leaderboard that are not in the guild/unknown
             Config.RepCheck();
@@ -52,7 +52,7 @@ namespace XDB.Utilities
             var embed = new EmbedBuilder().WithColor(new Color(21, 144, 232));
             foreach (var rep in topreps)
             {
-                var user = await context.Client.GetUserAsync(rep.Id);
+                var user = context.Client.GetUser(rep.Id);
                 if (user == null)
                 {
                     embed.AddField(x => {
@@ -73,7 +73,7 @@ namespace XDB.Utilities
             await context.Channel.SendMessageAsync(":star: **Top 10 Reputations:**", false, embed.Build());
         }
 
-        public static async Task AddReputationAsync(CommandContext context, SocketGuildUser user)
+        public static async Task AddReputationAsync(SocketCommandContext context, SocketGuildUser user)
         {
             Config.RepCheck();
             var reputations = File.ReadAllText(Strings.RepPath);
@@ -105,7 +105,7 @@ namespace XDB.Utilities
             }
         }
 
-        public static async Task RemoveReputationAsync(CommandContext context, SocketGuildUser user)
+        public static async Task RemoveReputationAsync(SocketCommandContext context, SocketGuildUser user)
         {
             Config.RepCheck();
             var reputations = File.ReadAllText(Strings.RepPath);

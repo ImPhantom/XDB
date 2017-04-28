@@ -7,7 +7,7 @@ using XDB.Common.Types;
 namespace XDB.Modules
 {
     [Summary("Help")]
-    public class Help : ModuleBase<CommandContext>
+    public class Help : ModuleBase<SocketCommandContext>
     {
         private CommandService serv;
 

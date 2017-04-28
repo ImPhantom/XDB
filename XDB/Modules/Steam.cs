@@ -11,7 +11,7 @@ namespace XDB.Modules
 {
     [Summary("Steam")]
     [RequireContext(ContextType.Guild)]
-    public class Steam : ModuleBase
+    public class Steam : ModuleBase<SocketCommandContext>
     {
         [Command("query"), Summary("Querys a source server for information about itself.")]
         [Name("query `<ip:port>`")]

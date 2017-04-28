@@ -13,7 +13,7 @@ namespace XDB.Utilities
 {
     public class Todo
     {
-        public static async Task CheckTodoListAsync(CommandContext context)
+        public static async Task CheckTodoListAsync(SocketCommandContext context)
         {
             Config.TodoCheck();
             var todolists = File.ReadAllText(Strings.TodoPath);
@@ -31,7 +31,7 @@ namespace XDB.Utilities
                     {
                         list.AppendLine($"~ {item}");
                     }
-                    await context.Channel.SendMessageAsync($@":small_blue_diamond: **Your Todo List:**\n```{list.ToString()}```");
+                    await context.Channel.SendMessageAsync($@":small_blue_diamond: **Your Todo List:**```{list.ToString()}```");
                 }
             }
             catch (Exception e)
@@ -40,7 +40,7 @@ namespace XDB.Utilities
             }
         }
 
-        public static async Task AddListItemAsync(CommandContext context, string item)
+        public static async Task AddListItemAsync(SocketCommandContext context, string item)
         {
             Config.TodoCheck();
             var todolists = File.ReadAllText(Strings.TodoPath);
@@ -67,7 +67,7 @@ namespace XDB.Utilities
             }
         }
 
-        public static async Task RemoveListItemAsync(CommandContext context, int index)
+        public static async Task RemoveListItemAsync(SocketCommandContext context, int index)
         {
             Config.TodoCheck();
             var todolists = File.ReadAllText(Strings.TodoPath);
@@ -98,7 +98,7 @@ namespace XDB.Utilities
             }
         }
 
-        public static async Task ClearListAsync(CommandContext context)
+        public static async Task ClearListAsync(SocketCommandContext context)
         {
             Config.TodoCheck();
             var todolists = File.ReadAllText(Strings.TodoPath);

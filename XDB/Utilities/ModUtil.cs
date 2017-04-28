@@ -7,7 +7,7 @@ namespace XDB.Utilities
 {
     public class ModUtil
     {
-        public static async Task KickUserAsync(SocketGuildUser user, CommandContext context, string reason)
+        public static async Task KickUserAsync(SocketGuildUser user, SocketCommandContext context, string reason)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace XDB.Utilities
             }
         }
 
-        public static async Task BanUserAsync(SocketGuildUser user, CommandContext context, string reason)
+        public static async Task BanUserAsync(SocketGuildUser user, SocketCommandContext context, string reason)
         {
             var dm = await user.CreateDMChannelAsync();
             try

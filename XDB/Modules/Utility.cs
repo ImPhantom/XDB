@@ -13,7 +13,7 @@ namespace XDB.Modules
 {
     [Summary("Utility")]
     [RequireContext(ContextType.Guild)]
-    public class Utility : ModuleBase
+    public class Utility : ModuleBase<SocketCommandContext>
     {
         [Command("shorten"), Summary("Shortens a link.")]
         [Name("shorten `<url>`")]

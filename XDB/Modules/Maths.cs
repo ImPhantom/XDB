@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace XDB.Modules
 {
     [Summary("Maths")]
-    public class Maths : ModuleBase
+    public class Maths : ModuleBase<SocketCommandContext>
     {
         [Command("ftc"), Summary("Converts fahrenheit to celsius.")]
         [Name("ftc `<num>`")]

@@ -2,7 +2,6 @@
 using Discord.WebSocket;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
-using XDB.Common.Enums;
 using XDB.Utilities;
 
 namespace XDB.Modules
@@ -10,7 +9,7 @@ namespace XDB.Modules
     [Summary("Reputation")]
     [Group("rep")]
     [RequireContext(ContextType.Guild)]
-    public class Rep : ModuleBase
+    public class Rep : ModuleBase<SocketCommandContext>
     {
         [Command, Summary("Displays your reputation.")]
         [Name("rep")]

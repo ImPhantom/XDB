@@ -1,37 +1,33 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using XDB.Common.Types;
+using XDB.Readers;
 
 namespace XDB
 {
     public class Handler
     {
         private DiscordSocketClient _client;
+        private IDependencyMap _map;
         private CommandService _cmds;
 
-        public async Task Install(DiscordSocketClient c)
+        public Handler(IDependencyMap map)
         {
-            _client = c;
-            _cmds = new CommandService();                          
+            _client = map.Get<DiscordSocketClient>();
+            _cmds = new CommandService();
+            _map = map;
+        }
 
+        public async Task Install()
+        {
+            _cmds.AddTypeReader<TimeSpan>(new TimeStringTypeReader());
             await _cmds.AddModulesAsync(Assembly.GetEntryAssembly());
-
-            //Module Config Shit
-            if (!ModuleConfig.Load().ChatModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Summary == "Chat"));  }
-            if (!ModuleConfig.Load().AdminModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Summary == "Admin")); }
-            if (!ModuleConfig.Load().MathModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Summary == "Maths")); }
-            if (!ModuleConfig.Load().UtilModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Summary == "Utility")); }
-            if (!ModuleConfig.Load().WarnModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Summary == "Warn")); }
-            if (!ModuleConfig.Load().RepModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Summary == "Rep")); }
-            if (!ModuleConfig.Load().TodoModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Summary == "Todo")); }
-            if (!ModuleConfig.Load().SteamModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Summary == "Steam")); }
-            if (!ModuleConfig.Load().RemindModule) { await _cmds.RemoveModuleAsync(_cmds.Modules.First(x => x.Summary == "Remind")); }
-
-
+            await ModuleConfig.RemoveDisabledModulesAsync(_cmds);
             _client.MessageReceived += HandleCommand;
         }
 
@@ -42,7 +38,7 @@ namespace XDB
                 return;
 
             var map = new DependencyMap();
-            var context = new CommandContext(_client, msg);
+            var context = new SocketCommandContext(_client, msg);
 
             int argPos = 0;
             if (msg.HasStringPrefix(Config.Load().Prefix, ref argPos))

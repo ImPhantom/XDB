@@ -6,7 +6,7 @@ namespace XDB.Modules
 {
     [Summary("Todo")]
     [Group("todo")]
-    public class TodoList : ModuleBase
+    public class TodoList : ModuleBase<SocketCommandContext>
     {
         [Command, Summary("Displays your todo list.")]
         [Name("todo")]

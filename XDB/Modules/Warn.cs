@@ -2,14 +2,13 @@
 using Discord.WebSocket;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
-using XDB.Common.Enums;
 using XDB.Utilities;
 
 namespace XDB.Modules
 {
     [Summary("Warn")]
     [RequireContext(ContextType.Guild)]
-    public class Warn : ModuleBase
+    public class Warn : ModuleBase<SocketCommandContext>
     {
         [Command("warns"), Summary("Views your personal warns.")]
         public async Task Warns()

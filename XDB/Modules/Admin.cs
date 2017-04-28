@@ -4,7 +4,6 @@ using Discord.WebSocket;
 using System.Linq;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
-using XDB.Common.Enums;
 using XDB.Utilities;
 
 namespace XDB.Modules
@@ -12,7 +11,7 @@ namespace XDB.Modules
     [Summary("Admin")]
     [RequireContext(ContextType.Guild)]
     [Permissions(AccessLevel.ServerAdmin)]
-    public class Admin : ModuleBase
+    public class Admin : ModuleBase<SocketCommandContext>
     {
         [Command("kick"), Summary("Kicks a user from a guild.")]
         [Name("kick `<@user>` `<reason>` <(opt)")]
@@ -38,7 +37,7 @@ namespace XDB.Modules
     [Group("clean"), Summary("Clean")]
     [Permissions(AccessLevel.ServerAdmin)]
     [RequireContext(ContextType.Guild)]
-    public class Cleanup : ModuleBase
+    public class Cleanup : ModuleBase<SocketCommandContext>
     {
         [Command, Summary("Cleans all user messages from a channel")]
         [Name("clean `<num>` (limit 100)")]

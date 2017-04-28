@@ -14,7 +14,7 @@ namespace XDB.Utilities
 {
     public class Warning
     {
-        public static async Task WarnUserAsync(CommandContext context, SocketGuildUser user, string reason)
+        public static async Task WarnUserAsync(SocketCommandContext context, SocketGuildUser user, string reason)
         {
             Config.WarnCheck();
             var warns = File.ReadAllText(Strings.WarnPath);
@@ -50,7 +50,7 @@ namespace XDB.Utilities
             }
         }
 
-        public static async Task RemoveWarnAsync(CommandContext context, SocketGuildUser user, int index)
+        public static async Task RemoveWarnAsync(SocketCommandContext context, SocketGuildUser user, int index)
         {
             Config.WarnCheck();
             var warns = File.ReadAllText(Strings.WarnPath);
@@ -80,7 +80,7 @@ namespace XDB.Utilities
             }
         }
 
-        public static async Task GetUserWarns(CommandContext context, SocketGuildUser user)
+        public static async Task GetUserWarns(SocketCommandContext context, SocketGuildUser user)
         {
             Config.WarnCheck();
             var allwarns = File.ReadAllText(Strings.WarnPath);

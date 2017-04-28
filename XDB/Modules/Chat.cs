@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using XDB.Common.Types;
 
@@ -9,7 +10,7 @@ namespace XDB.Modules
 {
     [Summary("Chat")]
     [RequireContext(ContextType.Guild)]
-    public class Chat : ModuleBase
+    public class Chat : ModuleBase<SocketCommandContext>
     {
         [Command("8ball"), Summary("Asks the magic 8 ball a question.")]
         public async Task EightBall([Remainder] string question)
@@ -85,9 +86,7 @@ namespace XDB.Modules
             await ReplyAsync("", false, embed.Build());
         }
 
-
-
-        private async Task GetUserInfo(CommandContext context, SocketGuildUser user)
+        private async Task GetUserInfo(SocketCommandContext context, SocketGuildUser user)
         {
             var author = new EmbedAuthorBuilder().WithName(Context.User.Username).WithIconUrl(Context.User.GetAvatarUrl());
             var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(author).WithCurrentTimestamp();

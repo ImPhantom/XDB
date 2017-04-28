@@ -10,14 +10,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
-using XDB.Common.Enums;
 using XDB.Common.Types;
 using XDB.Utilities;
 
 namespace XDB.Modules
 {
     [Summary("Self")]
-    public class Self : ModuleBase
+    public class Self : ModuleBase<SocketCommandContext>
     {
         [Command("changelog"), Summary("Displays the XDB Changelog for this version.")]
         [Permissions(AccessLevel.ServerAdmin)]
@@ -32,8 +31,8 @@ namespace XDB.Modules
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task SetNick([Remainder] string str)
         {
-            var bot = await Context.Guild.GetCurrentUserAsync();
-            await bot.ModifyAsync(x => x.Nickname = str);
+            var current = Context.Guild.CurrentUser;
+            await current.ModifyAsync(x => x.Nickname = str);
             await ReplyAsync(":heavy_check_mark:  You set the bots nickname to: `" + str + "`");
         }
 
@@ -42,7 +41,7 @@ namespace XDB.Modules
         [Permissions(AccessLevel.BotOwner)]
         public async Task SetGame([Remainder] string str)
         {
-            await Program.client.SetGameAsync(str);
+            await (Context.Client as DiscordSocketClient).SetGameAsync(str);
             await ReplyAsync(":heavy_check_mark:  You set the bots status to: `" + str + "`");
         }
 
@@ -51,7 +50,7 @@ namespace XDB.Modules
         [Permissions(AccessLevel.BotOwner)]
         public async Task SetStatus([Remainder] string str)
         {
-            var client = Program.client;
+            var client = Context.Client as DiscordSocketClient;
             if(str == "online")
             {
                 await client.SetStatusAsync(UserStatus.Online);
@@ -69,9 +68,7 @@ namespace XDB.Modules
                 await client.SetStatusAsync(UserStatus.Invisible);
                 await ReplyAsync($":heavy_check_mark:  You set the bots presence to `{str}`");
             } else
-            {
                 await ReplyAsync(":black_medium_small_square:  **Invalid presence** \n(`online`, `idle`, `do not disturb`, `invisible`)");
-            }
         }
 
         [Command("avatar"), Summary("Sets the bots avatar.")]
@@ -98,17 +95,14 @@ namespace XDB.Modules
         [Permissions(AccessLevel.BotOwner)]
         public async Task SetUsername([Remainder] string str)
         {
-            await Program.client.CurrentUser.ModifyAsync(x => x.Username = str);
+            await Context.Client.CurrentUser.ModifyAsync(x => x.Username = str);
             await ReplyAsync($":heavy_check_mark:  You set the bots username to: `{str}`");
         }
 
         [Command("leave"), Summary("Forces the bot to leave its current guild.")]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task Leave()
-        {
-            var current = await Context.Guild.GetCurrentUserAsync();
-            await current.Guild.LeaveAsync();
-        }
+            => await Context.Guild.LeaveAsync();
 
         [Command("logchannel"), Summary("Sets the logging channel.")]
         [Alias("log")]
@@ -169,7 +163,7 @@ namespace XDB.Modules
             if (cfg.IgnoredChannels.Contains(channelid)) { await ReplyAsync(":black_medium_small_square:  That channel is already ignored."); return; }
             cfg.IgnoredChannels.Add(channelid);
             cfg.Save();
-            var channel = await Context.Guild.GetTextChannelAsync(channelid);
+            var channel = Context.Guild.GetTextChannel(channelid);
             await Logging.TryLoggingAsync($":heavy_check_mark:  **{Context.User.Username}#{Context.User.Discriminator}** added {channel.Mention} (`{channelid}`) to the ignored channels list.");
         }
 
@@ -182,7 +176,7 @@ namespace XDB.Modules
             if (!Config.Load().IgnoredChannels.Any()) { await ReplyAsync(":black_medium_small_square:  There are no ignored channels!"); return; }
             foreach(var channel in Config.Load().IgnoredChannels)
             {
-                var chan = await Context.Guild.GetChannelAsync(channel);
+                var chan = Context.Guild.GetTextChannel(channel);
                 ignored.AppendLine($"**#{chan.Name}** -- `{chan.Id}`");
             }
             await ReplyAsync($":heavy_check_mark:  Currently ignored channels:\n{ignored.ToString()}");
@@ -197,7 +191,7 @@ namespace XDB.Modules
             if(!cfg.IgnoredChannels.Contains(channelid)) { await ReplyAsync(":black_medium_small_square:  That channel is not ignored."); return; }
             cfg.IgnoredChannels.Remove(channelid);
             cfg.Save();
-            var channel = await Context.Guild.GetTextChannelAsync(channelid);
+            var channel = Context.Guild.GetTextChannel(channelid);
             await Logging.TryLoggingAsync($":heavy_multiplication_x:  **{Context.User.Username}#{Context.User.Discriminator}** removed {channel.Mention} (`{channelid}`) from the ignored channels list.");
         }
 
