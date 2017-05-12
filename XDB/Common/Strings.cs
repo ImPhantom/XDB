@@ -11,7 +11,6 @@ namespace XDB.Common.Types
 
         // Common Strings
         public static string XDB_Title = $"XDB (rel: {ReleaseVersion})(api: {DiscordConfig.Version})";
-        public static string XDB_ConfigLoaded = "[XDB] [Info] Configuration Successfully Loaded!";
         public static string XDB_ConfigCreated = @"After you input your token, a config will be generated at 'cfg\\config.json'.
 Please fill in all your info and restart the bot.";
         public static string XDB_LoggingFailed = "[Logging] [Error] Log message failed to send! Either set your Logging Channel ID in cfg/config.json or use the '~log <channel-id>' command.";
@@ -20,6 +19,7 @@ Please fill in all your info and restart the bot.";
         public static string ConfigPath = Path.Combine(AppContext.BaseDirectory, "cfg/config.json");
         public static string ModulePath = Path.Combine(AppContext.BaseDirectory, "cfg/modules.json");
         public static string TodoPath = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
+        public static string TagsPath = Path.Combine(AppContext.BaseDirectory, $"tags/tags.json");
         public static string RepPath = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
         public static string WarnPath = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
 

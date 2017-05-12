@@ -55,6 +55,22 @@ namespace XDB.Common.Types
                 return;
         }
 
+        public static void TagsCheck()
+        {
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "tags")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "tags"));
+
+            if (!File.Exists(Strings.TagsPath))
+            {
+                List<Tag> tags = new List<Tag>();
+                var json = JsonConvert.SerializeObject(tags);
+                using (var file = new FileStream(Strings.TagsPath, FileMode.Create)) { }
+                File.WriteAllText(Strings.TagsPath, json);
+            }
+            else
+                return;
+        }
+
         public static void RepCheck()
         {
             var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
@@ -103,7 +119,7 @@ namespace XDB.Common.Types
                 cfg.Save();
             }
             if (!File.Exists(Strings.ModulePath)) { var mdls = new ModuleConfig(); mdls.Save(); }
-            Console.WriteLine(Strings.XDB_ConfigLoaded);
+            BetterConsole.Log("Info", "XDB", "Configuration successfully loaded!");
         }
     }
 }
