@@ -3,7 +3,6 @@ using Discord.WebSocket;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using XDB.Common.Enums;
 using XDB.Common.Types;
 
 namespace XDB.Common.Attributes
@@ -18,7 +17,7 @@ namespace XDB.Common.Attributes
             Level = level;
         }
 
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
+        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider provider)
         {
             var access = GetPermission(context);
 

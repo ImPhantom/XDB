@@ -1,9 +1,12 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using XDB.Common.Types;
+using XDB.Services;
 
 namespace XDB
 {
@@ -16,21 +19,30 @@ namespace XDB
 
         public async Task Run()
         {
-            Console.WriteLine(Strings.XDB_Header);
+            BetterConsole.AppendText(Strings.XDB_Header);
             Console.Title = Strings.XDB_Title;
 
             Config.CheckExistence();
 
             client = new DiscordSocketClient(new DiscordSocketConfig()
             {
+#if RELEASE
                 LogLevel = LogSeverity.Verbose,
+#else
+                LogLevel = LogSeverity.Debug,
+#endif
                 AlwaysDownloadUsers = true,
                 MessageCacheSize = 1000
             });
 
+            var serviceProvider = ConfigureServices();
+
+            cmds = new Handler(serviceProvider);
+            await cmds.Install();
+
             client.Log += (l)
                 => Task.Run(()
-                => Console.WriteLine($"[{l.Severity}] {l.Source}: {l.Exception?.ToString() ?? l.Message}"));
+                => BetterConsole.Log(l.Severity, l.Source, l.Message));
 
             await client.LoginAsync(TokenType.Bot, Config.Load().Token);
             await client.StartAsync();
@@ -40,10 +52,20 @@ namespace XDB
 
             Events.Listen();
 
-            cmds = new Handler();
-            await cmds.Install(client);
 
             await Task.Delay(-1);
+        }
+
+        private IServiceProvider ConfigureServices()
+        {
+            var services = new ServiceCollection()
+                .AddSingleton(client)
+                .AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false }))
+                .AddSingleton<HelpService>();
+
+            var provider = new DefaultServiceProviderFactory().CreateServiceProvider(services);
+            provider.GetService<HelpService>();
+            return provider;
         }
     }
 }

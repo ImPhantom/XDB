@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using XDB.Common.Types;
 using XDB.Readers;
 
@@ -13,14 +14,14 @@ namespace XDB
     public class Handler
     {
         private DiscordSocketClient _client;
-        private IDependencyMap _map;
+        private IServiceProvider _provider;
         private CommandService _cmds;
 
-        public Handler(IDependencyMap map)
+        public Handler(IServiceProvider provider)
         {
-            _client = map.Get<DiscordSocketClient>();
-            _cmds = new CommandService();
-            _map = map;
+            _provider = provider;
+            _client = _provider.GetService<DiscordSocketClient>();
+            _cmds = _provider.GetService<CommandService>();
         }
 
         public async Task Install()
@@ -37,7 +38,6 @@ namespace XDB
             if (msg == null)
                 return;
 
-            var map = new DependencyMap();
             var context = new SocketCommandContext(_client, msg);
 
             int argPos = 0;
@@ -45,7 +45,7 @@ namespace XDB
             {
                 if (s.Author.IsBot)
                     return;
-                var result = await _cmds.ExecuteAsync(context, argPos, map);
+                var result = await _cmds.ExecuteAsync(context, argPos, _provider);
 
                 if (!result.IsSuccess)
                 {
