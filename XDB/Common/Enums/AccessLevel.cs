@@ -1,4 +1,4 @@
-﻿namespace XDB.Common.Enums
+﻿namespace XDB.Common.Attributes
 {
     public enum AccessLevel
     {
