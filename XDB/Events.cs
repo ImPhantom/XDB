@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using System.Linq;
 using XDB.Common.Types;
 using XDB.Utilities;
@@ -28,6 +29,8 @@ namespace XDB
                         return;
                     await Logging.TryLoggingAsync($":white_check_mark:  `{user.Username}#{user.Discriminator}` has joined the server!");
                 }
+
+                await client.SetGameAsync($"{Config.Load().Prefix}help | Users: {client.Guilds.Sum(x => x.Users.Count())}");
             };
 
 
@@ -37,27 +40,34 @@ namespace XDB
                     return;
                 if (Config.Load().ExtraLogging)
                     await Logging.TryLoggingAsync($":x:  `{user.Username}#{user.Discriminator}` has left the server!");
+                await client.SetGameAsync($"{Config.Load().Prefix}help | Users: {client.Guilds.Sum(x => x.Users.Count())}");
             };
 
-            client.MessageReceived += async (s) =>
+            client.MessageReceived += async (message) =>
             {
+                if (message.Channel is IDMChannel)
+                    BetterConsole.LogDM(message);
+
                 if (Config.Load().WordFilter == true)
                 {
-                    if (s.Author.IsBot)
+                    if (message.Author.IsBot)
                         return;
-                    if (Config.Load().IgnoredChannels.Contains(s.Channel.Id))
+                    if (Config.Load().IgnoredChannels.Contains(message.Channel.Id) || message.Channel is IDMChannel)
                         return;
                     var words = Config.Load().Words;
-                    if (words.Any(s.Content.ToLower().Contains))
+                    if (words.Any(message.Content.ToLower().Contains))
                     {
                         var log = client.GetChannel(Config.Load().LogChannel) as SocketTextChannel;
                         if (log == null)
-                            await s.DeleteAsync();
+                            await message.DeleteAsync();
                         else
-                            await log.SendMessageAsync($":anger: {s.Author.Mention} violated the word filter. **Message Deleted**");
-                        await s.DeleteAsync();
+                            await log.SendMessageAsync($":anger: {message.Author.Mention} violated the word filter. **Message Deleted**");
+                        await message.DeleteAsync();
                     }
                 }
+
+
+
             };
 
             client.MessageDeleted += async (message, channel) =>
@@ -91,7 +101,7 @@ namespace XDB
                             return;
                         if (Config.Load().IgnoredChannels.Contains(channel.Id))
                             return;
-                        await Logging.TryLoggingAsync($":heavy_plus_sign: **{after.Author.Username}** edited their message:\n**Before:** {old.Content}\n**After:** {after.Content}");
+                        await Logging.TryLoggingAsync($":heavy_plus_sign: **{after.Author.Username}** edited their message:\n**Before:** {old.Content}\n**After:** {after}");
                     }
                 }
             };
