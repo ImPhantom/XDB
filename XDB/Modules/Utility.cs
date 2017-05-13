@@ -7,12 +7,8 @@ using Google.Apis.Services;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using XDB.Common.Types;
 using Google.Apis.Urlshortener.v1.Data;
@@ -29,7 +25,7 @@ namespace XDB.Modules
         protected override void BeforeExecute()
         {
             if (string.IsNullOrEmpty(Config.Load().GoogleKey))
-                throw new InvalidOperationException("Google API Key is not set in config!");
+                throw new InvalidOperationException("Google API Key is not set, Google Query failed.");
 
             _search = new CustomsearchService(new BaseClientService.Initializer()
             {
