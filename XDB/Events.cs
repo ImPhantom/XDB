@@ -84,9 +84,9 @@ namespace XDB
                     if (Config.Load().IgnoredChannels.Contains(channel.Id))
                         return;
                     if (!msg.Attachments.Any())
-                        await Logging.TryLoggingAsync($":heavy_multiplication_x: (`#{channel.Name}`) **{msg.Author.Username}** deleted their message:\n{msg.Content}");
+                        await Logging.TryLoggingAsync($":heavy_multiplication_x: (`#{channel.Name}`) **{msg.Author.Username}** deleted their message:\n{msg.Content.Replace("@", "@\u200B")}");
                     else
-                        await Logging.TryLoggingAsync($":heavy_multiplication_x: (`#{channel.Name}`) **{msg.Author.Username}** deleted their message:\n{msg.Content}\n{msg.Attachments.FirstOrDefault().Url}");
+                        await Logging.TryLoggingAsync($":heavy_multiplication_x: (`#{channel.Name}`) **{msg.Author.Username}** deleted their message:\n{msg.Content.Replace("@", "@\u200B")}\n{msg.Attachments.FirstOrDefault().Url}");
                 }
             };
 
@@ -101,7 +101,7 @@ namespace XDB
                             return;
                         if (Config.Load().IgnoredChannels.Contains(channel.Id))
                             return;
-                        await Logging.TryLoggingAsync($":heavy_plus_sign: **{after.Author.Username}** edited their message:\n**Before:** {old.Content}\n**After:** {after}");
+                        await Logging.TryLoggingAsync($":heavy_plus_sign: **{after.Author.Username}** edited their message:\n**Before:** {old.Content.Replace("@", "@\u200B")}\n**After:** {after.Content.Replace("@", "@\u200B")}");
                     }
                 }
             };
