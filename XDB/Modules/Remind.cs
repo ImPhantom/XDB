@@ -12,7 +12,6 @@ namespace XDB.Modules
         // UNDONE
         // SERIOUSLY UNDONE
         [Command("remind"), Summary("Sets a reminder for you.")]
-        [Name("remind `<1s/1m/1h/1d>` `<reminder>`")]
         public async Task RemindMe(TimeSpan time, [Remainder] string reminder = "")
         {
             var serv = new TimerService(time, reminder, Context.User.Id, Context.Channel.Id);

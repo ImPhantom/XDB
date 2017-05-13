@@ -16,7 +16,6 @@ namespace XDB.Modules
     public class Utility : ModuleBase<SocketCommandContext>
     {
         [Command("shorten"), Summary("Shortens a link.")]
-        [Name("shorten `<url>`")]
         public async Task Shorten([Remainder] string url)
         {
             if(!url.Contains("http"))
@@ -52,7 +51,6 @@ namespace XDB.Modules
         }
 
         [Command("urban"), Summary("Retrieves a definition from UrbanDictionary.")]
-        [Name("urban `<string>`")]
         public async Task Urban([Remainder]string define)
         {
             using (var client = new HttpClient())

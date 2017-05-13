@@ -14,10 +14,10 @@ using Discord;
 namespace XDB.Modules
 {
     [Summary("tags")]
+    [RequireContext(ContextType.Guild)]
     public class Tags : ModuleBase
     {
         [Command("tag")]
-        [RequireContext(ContextType.Guild)]
         public async Task GetTag(string keyword)
         {
             Config.TagsCheck();
@@ -44,7 +44,6 @@ namespace XDB.Modules
         }
 
         [Command("tags")]
-        [RequireContext(ContextType.Guild)]
         public async Task ListTags()
         {
             Config.TagsCheck();
@@ -68,7 +67,6 @@ namespace XDB.Modules
         }
 
         [Command("addtag")]
-        [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task AddTag(string name, [Remainder] string content)
         {
@@ -89,7 +87,6 @@ namespace XDB.Modules
         }
 
         [Command("removetag"), Alias("deltag", "deletetag", "remtag")]
-        [RequireContext(ContextType.Guild)]
         [Permissions(AccessLevel.ServerAdmin)]
         public async Task RemoveTag(string name)
         {

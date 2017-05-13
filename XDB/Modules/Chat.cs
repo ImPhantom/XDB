@@ -20,12 +20,11 @@ namespace XDB.Modules
             await ReplyAsync($":8ball: {response}");
         }
 
-        [Command("userinfo"), Summary("Displays your user information.")]
+        [Command("user"), Summary("Displays your user information.")]
         public async Task UserInfo()
             => await GetUserInfo(Context, Context.User as SocketGuildUser);
 
-        [Command("userinfo"), Summary("Displays a specified users information.")]
-        [Name("userinfo `<user>`")]
+        [Command("user"), Summary("Displays a specified users information.")]
         public async Task UserInfo(SocketGuildUser user)
             => await GetUserInfo(Context, user);
 

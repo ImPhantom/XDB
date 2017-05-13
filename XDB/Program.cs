@@ -60,11 +60,9 @@ namespace XDB
         {
             var services = new ServiceCollection()
                 .AddSingleton(client)
-                .AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false }))
-                .AddSingleton<HelpService>();
+                .AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false }));
 
             var provider = new DefaultServiceProviderFactory().CreateServiceProvider(services);
-            provider.GetService<HelpService>();
             return provider;
         }
     }

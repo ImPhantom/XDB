@@ -14,7 +14,6 @@ namespace XDB.Modules
     public class Steam : ModuleBase<SocketCommandContext>
     {
         [Command("query"), Summary("Querys a source server for information about itself.")]
-        [Name("query `<ip:port>`")]
         public async Task Query(string info)
         {
             var sw = new Stopwatch();
@@ -81,7 +80,6 @@ namespace XDB.Modules
         }
 
         [Command("players"), Summary("Retrives the playerlist from a source server.")]
-        [Name("players `<ip:port>`")]
         [RequireContext(ContextType.Guild)]
         public async Task Players(string info)
         {
