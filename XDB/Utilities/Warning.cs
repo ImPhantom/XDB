@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Newtonsoft.Json;
 using System;
@@ -32,16 +33,20 @@ namespace XDB.Utilities
                     json.Add(newwarn);
                     var _json = JsonConvert.SerializeObject(json);
                     File.WriteAllText(Strings.WarnPath, _json);
-                    await Logging.TryLoggingAsync($":heavy_check_mark: {user.Username} has been warned by {context.User.Username} for:\n`{reason}`");
-                    await dm.SendMessageAsync($":heavy_multiplication_x: You have been warned by **{context.User.Username}** in **{context.Guild.Name}** for:\n\n`{reason}`");
+                    var reply = await context.Channel.SendMessageAsync(":ok_hand:");
+                    await TimedMessage(reply);
+                    await Logging.TryLoggingAsync($":heavy_check_mark: `{user.Username}#{user.Discriminator}` has been warned by `{context.User.Username}#{context.User.Discriminator}` for:\n`{reason}`");
+                    await dm.SendMessageAsync($":heavy_multiplication_x: You have been warned by **{context.User.Username}#{context.User.Discriminator}** in **{context.Guild.Name}** for:\n\n`{reason}`");
                 }
                 else
                 {
                     json.First(x => x.WarnedUser == user.Id).WarnReason.Add(reason);
                     var _json = JsonConvert.SerializeObject(json);
                     File.WriteAllText(Strings.WarnPath, _json);
-                    await Logging.TryLoggingAsync($":heavy_check_mark: {user.Username} has been warned by {context.User.Username} for:\n`{reason}`");
-                    await dm.SendMessageAsync($":heavy_multiplication_x: You have been warned by **{context.User.Username}** in **{context.Guild.Name}** for:\n\n`{reason}`");
+                    var reply = await context.Channel.SendMessageAsync(":ok_hand:");
+                    await TimedMessage(reply);
+                    await Logging.TryLoggingAsync($":heavy_check_mark: `{user.Username}#{user.Discriminator}` has been warned by `{context.User.Username}#{context.User.Discriminator}` for:\n`{reason}`");
+                    await dm.SendMessageAsync($":heavy_multiplication_x: You have been warned by **{context.User.Username}#{context.User.Discriminator}** in **{context.Guild.Name}** for:\n\n`{reason}`");
                 }
             }
             catch (Exception e)
@@ -58,6 +63,11 @@ namespace XDB.Utilities
             try
             {
                 index--;
+                if (context.User.Id == user.Id && !Config.Load().Owners.Contains(context.User.Id))
+                {
+                    await context.Channel.SendMessageAsync(":heavy_multiplication_x:  You cannot remove warns from yourself.");
+                    return;
+                }
                 if (!json.Any(x => x.WarnedUser == user.Id))
                     await context.Channel.SendMessageAsync(":small_blue_diamond: That user does not have any warns.");
                 else
@@ -68,7 +78,9 @@ namespace XDB.Utilities
                         json.First(x => x.WarnedUser == user.Id).WarnReason.RemoveAt(index);
                         var _json = JsonConvert.SerializeObject(json);
                         File.WriteAllText(Strings.WarnPath, _json);
-                        await Logging.TryLoggingAsync($":heavy_check_mark: {context.User.Username} has removed {user.Username}'s warn for:\n`{reason}`");
+                        var reply = await context.Channel.SendMessageAsync(":ok_hand:");
+                        await TimedMessage(reply);
+                        await Logging.TryLoggingAsync($":heavy_check_mark: `{context.User.Username}#{context.User.Discriminator}` has removed `{user.Username}#{user.Discriminator}`'s warn for:\n`{reason}`");
                     }
                     else
                         await context.Channel.SendMessageAsync($":small_blue_diamond: There are no warns at index[`{index}`]");
@@ -88,23 +100,29 @@ namespace XDB.Utilities
             try
             {
                 if (!json.Any(x => x.WarnedUser == user.Id))
-                    await context.Channel.SendMessageAsync($":small_blue_diamond: {user.Username}'s warns: **0**");
+                    await context.Channel.SendMessageAsync($":small_blue_diamond: `{user.Username}#{user.Discriminator}`'s warns: **0**");
                 else
                 {
                     var warns = json.Find(x => x.WarnedUser == user.Id);
-                    if (!warns.WarnReason.Any()) { await context.Channel.SendMessageAsync($":small_blue_diamond: {user.Username}'s warns: **0**"); return; }
+                    if (!warns.WarnReason.Any()) { await context.Channel.SendMessageAsync($":small_blue_diamond: `{user.Username}#{user.Discriminator}`'s warns: **0**"); return; }
                     var _warns = new StringBuilder();
                     foreach (var warn in warns.WarnReason)
                     {
                         _warns.AppendLine($"~ {warn}");
                     }
-                    await context.Channel.SendMessageAsync($"{user.Username} currently has **{warns.WarnReason.Count}** warns.\n```{_warns.ToString()}```");
+                    await context.Channel.SendMessageAsync($":small_blue_diamond: `{user.Username}#{user.Discriminator}` currently has **{warns.WarnReason.Count}** warns.\n```{_warns.ToString()}```");
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        private static async Task TimedMessage(IMessage message, int ms = 2500)
+        {
+            await Task.Delay(ms);
+            await message.DeleteAsync();
         }
     }
 }

@@ -112,6 +112,15 @@ namespace XDB.Modules
             cfg.Save();
             await ReplyAsync($":heavy_check_mark:  You changed the welcome message to: \n\n{message}");
         }
+
+        [Command("addmod"), Summary("Adds a moderator to your config.")]
+        public async Task AddModerator(SocketGuildUser user)
+        {
+            var cfg = Config.Load();
+            cfg.Moderators.Add(user.Id);
+            cfg.Save();
+            await Logging.TryLoggingAsync($":diamond_shape_with_a_dot_inside:  `{Context.User.Username}#{Context.User.Discriminator}` has added `{user.Username}#{user.Discriminator}` as a moderator.");
+        }
     }
 
     [Group("clean"), Summary("Clean")]
@@ -152,7 +161,7 @@ namespace XDB.Modules
             await TimedMessage(reply);
         }
 
-        private async Task TimedMessage(IMessage message, int ms = 5000)
+        private async Task TimedMessage(IMessage message, int ms = 3000)
         {
             await Task.Delay(ms);
             await message.DeleteAsync();

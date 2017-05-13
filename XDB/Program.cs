@@ -52,7 +52,6 @@ namespace XDB
 
             Events.Listen();
 
-
             await Task.Delay(-1);
         }
 

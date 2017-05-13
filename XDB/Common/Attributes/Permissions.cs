@@ -46,7 +46,7 @@ namespace XDB.Common.Attributes
 
                 if (user.GuildPermissions.ManageMessages ||
                     user.GuildPermissions.BanMembers ||
-                    user.GuildPermissions.KickMembers)
+                    user.GuildPermissions.KickMembers || Config.Load().Moderators.Contains(user.Id))
                     return AccessLevel.ServerMod;
             }
 
