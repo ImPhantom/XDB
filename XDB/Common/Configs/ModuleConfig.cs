@@ -13,7 +13,7 @@ namespace XDB.Common.Types
         public static readonly string appdir = AppContext.BaseDirectory;
 
         public bool ChatModule { get; set; }
-        public bool AdminModule { get; set; }
+        public bool ModerationModule { get; set; }
         public bool MathModule { get; set; }
         public bool UtilModule { get; set; }
         public bool WarnModule { get; set; }
@@ -26,7 +26,7 @@ namespace XDB.Common.Types
         public ModuleConfig()
         {
             ChatModule = true;
-            AdminModule = true;
+            ModerationModule = true;
             MathModule = true;
             UtilModule = true;
             WarnModule = true;
@@ -55,7 +55,7 @@ namespace XDB.Common.Types
         public static async Task RemoveDisabledModulesAsync(CommandService _commands)
         {
             if (!ModuleConfig.Load().ChatModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Chat")); }
-            if (!ModuleConfig.Load().AdminModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Admin")); }
+            if (!ModuleConfig.Load().ModerationModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Moderation")); }
             if (!ModuleConfig.Load().MathModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Maths")); }
             if (!ModuleConfig.Load().UtilModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Utility")); }
             if (!ModuleConfig.Load().WarnModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Warn")); }
