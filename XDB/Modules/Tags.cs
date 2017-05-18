@@ -31,8 +31,7 @@ namespace XDB.Modules
                 else
                 {
                     var tag = _json.First(x => x.TagName == term);
-                    var embed = new EmbedBuilder().WithColor(new Color(39, 217, 196));
-                    embed.AddField(tag.TagName, tag.TagContent);
+                    var embed = new EmbedBuilder().WithColor(new Color(39, 217, 196)).WithDescription(tag.TagContent);
                     await ReplyAsync("", embed: embed.Build());
                 }
                     

@@ -17,7 +17,6 @@ namespace XDB.Modules
     public class Self : ModuleBase<SocketCommandContext>
     {
         [Command("help"), Summary("Displays the XDB Changelog for this version.")]
-        [Permissions(AccessLevel.ServerAdmin)]
         public async Task Help()
         {
             await ReplyAsync("You can find a command list here:\n https://github.com/ImPhantom/XDB/wiki/Command-List");
