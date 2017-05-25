@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,14 +13,14 @@ namespace XDB.Modules
 {
     [Summary("Moderation")]
     [RequireContext(ContextType.Guild)]
-    [Permissions(AccessLevel.ServerAdmin)]
+    [Permissions(AccessLevel.Administrator)]
     public class Moderation : ModuleBase<SocketCommandContext>
     {
         [Command("leave"), Summary("Forces the bot to leave its current guild.")]
         public async Task Leave()
             => await Context.Guild.LeaveAsync();
 
-        [Command("kick"), Summary("Kicks a user from a guild.")]
+        [Command("kick", RunMode = RunMode.Async), Summary("Kicks a user from a guild.")]
         public async Task Kick(SocketGuildUser user, [Remainder] string reason = "")
         {
             if (string.IsNullOrEmpty(reason))
@@ -28,7 +29,7 @@ namespace XDB.Modules
                 await ModUtil.KickUserAsync(user, Context, reason);
         }
 
-        [Command("ban"), Summary("Bans a user from a guild.")]
+        [Command("ban", RunMode = RunMode.Async), Summary("Bans a user from a guild.")]
         public async Task Ban(SocketGuildUser user, [Remainder] string reason = "")
         {
             if (string.IsNullOrEmpty(reason))
@@ -123,48 +124,31 @@ namespace XDB.Modules
         }
     }
 
-    [Group("clean"), Summary("Clean")]
-    [Permissions(AccessLevel.ServerAdmin)]
+    [Summary("Clean")]
+    [Permissions(AccessLevel.Administrator)]
     [RequireContext(ContextType.Guild)]
     public class Cleanup : ModuleBase<SocketCommandContext>
     {
-        [Command, Summary("Cleans all user messages from a channel")]
-        public async Task AllClean(int amt = 5)
+        [Command("clean", RunMode = RunMode.Async), Summary("Cleans all user messages from a channel")]
+        public async Task Clean(int amount = 5)
         {
-            amt++;
-            await Context.Message.DeleteAsync();
-            var _messages = await Context.Channel.GetMessagesAsync(amt).Flatten().ConfigureAwait(false);
-            await Context.Channel.DeleteMessagesAsync(_messages).ConfigureAwait(false);
-            var reply = await ReplyAsync($":grey_exclamation: Deleted {amt} messages.");
-            await TimedMessage(reply);
-        }
+            amount++;
+            var channel = Context.Channel as SocketTextChannel;
+            var messages = channel.GetMessagesAsync(amount);
 
-        [Command("user"), Summary("Cleans a specified users messages from the channel.")]
-        public async Task UserClean(SocketGuildUser user, int amt = 5)
-        {
-            amt++;
+            await messages.ForEachAsync(async m =>
+            {
+                try
+                {
+                    await channel.DeleteMessagesAsync(m);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    await ReplyAsync(":small_blue_diamond: Some messages older than 2 weeks, Try cleaning a lesser amount.");
+                    return;
+                }
+            });
             await Context.Message.DeleteAsync();
-            var _messages = (await Context.Channel.GetMessagesAsync(amt).Flatten()).Where(x => x.Author.Id == user.Id);
-            await Context.Channel.DeleteMessagesAsync(_messages).ConfigureAwait(false);
-            var reply = await ReplyAsync($":grey_exclamation: Deleted {user.Username}'s last {amt} messages.");
-            await TimedMessage(reply);
-        }
-
-        [Command("bot"), Summary("Cleans bot messages from a channel.")]
-        public async Task BotClean(int amt = 5)
-        {
-            amt++;
-            await Context.Message.DeleteAsync();
-            var _messages = (await Context.Channel.GetMessagesAsync(amt).Flatten()).Where(x => x.Author.IsBot);
-            await Context.Channel.DeleteMessagesAsync(_messages).ConfigureAwait(false);
-            var reply = await ReplyAsync($":grey_exclamation: Deleted the last {amt} bot messages.");
-            await TimedMessage(reply);
-        }
-
-        private async Task TimedMessage(IMessage message, int ms = 3000)
-        {
-            await Task.Delay(ms);
-            await message.DeleteAsync();
         }
     }
 }
