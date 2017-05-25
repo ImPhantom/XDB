@@ -43,7 +43,6 @@ namespace XDB.Utilities
 
         public static async Task GetLeaderboardAsync(SocketCommandContext context)
         {
-            // TODO remove users from leaderboard that are not in the guild/unknown
             Config.RepCheck();
             var reputations = File.ReadAllText(Strings.RepPath);
             var json = JsonConvert.DeserializeObject<List<UserRep>>(reputations);
@@ -54,13 +53,7 @@ namespace XDB.Utilities
             {
                 var user = context.Client.GetUser(rep.Id);
                 if (user == null)
-                {
-                    embed.AddField(x => {
-                        x.Name = "**unknown_user**";
-                        x.Value = $"Reputation: {rep.Rep}";
-                        x.IsInline = false;
-                    });
-                }
+                    json.Remove(json.First(x => x.Id == rep.Id));
                 else
                 {
                     embed.AddField(x => {
