@@ -66,7 +66,7 @@ namespace XDB.Modules
         }
 
         [Command("addtag")]
-        [Permissions(AccessLevel.ServerAdmin)]
+        [Permissions(AccessLevel.Administrator)]
         public async Task AddTag(string name, [Remainder] string content)
         {
             Config.TagsCheck();
@@ -86,7 +86,7 @@ namespace XDB.Modules
         }
 
         [Command("removetag"), Alias("deltag", "deletetag", "remtag")]
-        [Permissions(AccessLevel.ServerAdmin)]
+        [Permissions(AccessLevel.Administrator)]
         public async Task RemoveTag(string name)
         {
             Config.TagsCheck();

@@ -39,15 +39,13 @@ namespace XDB.Common.Attributes
             if (user != null)
             {
                 if (c.Guild.OwnerId == user.Id)
-                    return AccessLevel.ServerOwner;
+                    return AccessLevel.GuildOwner;
 
                 if (user.GuildPermissions.Administrator)
-                    return AccessLevel.ServerAdmin;
+                    return AccessLevel.Administrator;
 
-                if (user.GuildPermissions.ManageMessages ||
-                    user.GuildPermissions.BanMembers ||
-                    user.GuildPermissions.KickMembers || Config.Load().Moderators.Contains(user.Id))
-                    return AccessLevel.ServerMod;
+                if (Config.Load().Moderators.Contains(user.Id))
+                    return AccessLevel.Moderator;
             }
 
             return AccessLevel.User;

@@ -13,7 +13,7 @@ namespace XDB.Common.Types
 
         public string Prefix { get; set; } = "~";
         public ulong[] Owners { get; set; } = new ulong[] { 0 };
-        public List<ulong> Moderators { get; set; } = new List<ulong> { 0 };
+        public List<ulong> Moderators { get; set; } = new List<ulong> { };
         public string Token { get; set; } = "";
         public string GoogleKey { get; set; } = "";
         public ulong LogChannel { get; set; } = 0;

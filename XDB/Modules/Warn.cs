@@ -18,13 +18,13 @@ namespace XDB.Modules
         public async Task Warns(SocketGuildUser user)
             => await Warning.GetUserWarns(Context, user);
 
-        [Command("warn"), Summary("Warns a specified user.")]
-        [Permissions(AccessLevel.ServerMod)]
+        [Command("warn", RunMode = RunMode.Async), Summary("Warns a specified user.")]
+        [Permissions(AccessLevel.Moderator)]
         public async Task AddWarn(SocketGuildUser user, [Remainder] string reason)
             => await Warning.WarnUserAsync(Context, user, reason);
 
-        [Command("removewarn"), Summary("Removes a warn from a specified user by index.")]
-        [Permissions(AccessLevel.ServerMod)]
+        [Command("removewarn", RunMode = RunMode.Async), Summary("Removes a warn from a specified user by index.")]
+        [Permissions(AccessLevel.Moderator)]
         public async Task RemoveWarn(SocketGuildUser user, int index)
             => await Warning.RemoveWarnAsync(Context, user, index);
     }

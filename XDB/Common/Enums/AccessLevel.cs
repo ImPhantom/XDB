@@ -4,9 +4,10 @@
     {
         Blocked,
         User,
-        ServerMod,
-        ServerAdmin,
-        ServerOwner,
+        ChannelMod,
+        Administrator,
+        Moderator,
+        GuildOwner,
         BotOwner
     }
 }

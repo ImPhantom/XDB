@@ -25,12 +25,12 @@ namespace XDB.Modules
             => await Reputation.GetLeaderboardAsync(Context);
 
         [Command("add"), Summary("Adds reputation to a user.")]
-        [Permissions(AccessLevel.ServerAdmin)]
+        [Permissions(AccessLevel.Moderator)]
         public async Task AddRep(SocketGuildUser user)
             => await Reputation.AddReputationAsync(Context, user);
 
         [Command("del"), Summary("Deletes reputation from a user.")]
-        [Permissions(AccessLevel.ServerAdmin)]
+        [Permissions(AccessLevel.Moderator)]
         public async Task DelRep(SocketGuildUser user)
             => await Reputation.RemoveReputationAsync(Context, user);
     }
