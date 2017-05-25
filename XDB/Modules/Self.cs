@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
 using XDB.Common.Types;
@@ -18,12 +20,64 @@ namespace XDB.Modules
     {
         [Command("help"), Summary("Displays the XDB Changelog for this version.")]
         public async Task Help()
+            => await ReplyAsync("You can find a command list here:\n https://github.com/ImPhantom/XDB/wiki/XDB-Command-List");
+
+        [Command("mods"), Alias("moderators")]
+        public async Task Moderators()
         {
-            await ReplyAsync("You can find a command list here:\n https://github.com/ImPhantom/XDB/wiki/Command-List");
+            var moderators = Config.Load().Moderators;
+            var list = new StringBuilder();
+            foreach (var mod in moderators)
+            {
+                var user = Context.Client.GetUser(mod);
+                list.AppendLine($"{user.Username}#{user.Discriminator}");
+            }
+            var embed = new EmbedBuilder().WithTitle("XDB Moderators").WithDescription(list.ToString()).WithColor(new Color(28, 156, 199));
+            await ReplyAsync("", embed: embed.Build());
+        }
+
+        [Command("ping", RunMode = RunMode.Async), Alias("rtt"), Summary("Returns the estimated round-trip latency over the WebSocket.")]
+        public async Task Ping()
+        {
+            ulong target = 0;
+            CancellationTokenSource source = new CancellationTokenSource();
+
+            Task WaitTarget(SocketMessage message)
+            {
+                if (message.Id != target) return Task.CompletedTask;
+                source.Cancel();
+                return Task.CompletedTask;
+            }
+
+            var latency = Context.Client.Latency;
+            var sw = Stopwatch.StartNew();
+            var reply = await ReplyAsync($"**=>** heartbeat: {latency}ms, init: ---, rtt: ---");
+            var init = sw.ElapsedMilliseconds;
+            target = reply.Id;
+            sw.Restart();
+            Context.Client.MessageReceived += WaitTarget;
+
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(30), source.Token);
+            }
+            catch (TaskCanceledException)
+            {
+                var rtt = sw.ElapsedMilliseconds;
+                sw.Stop();
+                await reply.ModifyAsync(x => x.Content = $"**=>** heartbeat: {latency}ms, init: {init}, rtt: {rtt}");
+                return;
+            }
+            finally
+            {
+                Context.Client.MessageReceived -= WaitTarget;
+            }
+            sw.Stop();
+            await reply.ModifyAsync(x => x.Content = $"**=>** heartbeat: {latency}ms, init: {init}, rtt: timeout");
         }
 
         [Command("nick"), Summary("Sets the bots nickname.")]
-        [Permissions(AccessLevel.ServerAdmin)]
+        [Permissions(AccessLevel.Administrator)]
         public async Task SetNick([Remainder] string str)
         {
             var current = Context.Guild.CurrentUser;
