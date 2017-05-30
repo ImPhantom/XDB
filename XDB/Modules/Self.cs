@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Humanizer;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -197,7 +198,7 @@ namespace XDB.Modules
             embed.AddField(x =>
             {
                 x.Name = "Uptime:";
-                x.Value = $"`{GetUptime()}`";
+                x.Value = $"`{GetUptime().Humanize()}`";
                 x.IsInline = true;
             });
             embed.AddField(x =>
@@ -215,8 +216,7 @@ namespace XDB.Modules
 
             await ReplyAsync("", false, embed.Build());
         }
-        private static string GetUptime()
-            => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
+        private static TimeSpan GetUptime() => DateTime.Now - Process.GetCurrentProcess().StartTime;
         private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
     }
 }
