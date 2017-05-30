@@ -98,6 +98,31 @@ namespace XDB.Utilities
             }
         }
 
+        public static async Task EditListItemAsync(SocketCommandContext context, int index, string edit)
+        {
+            Config.TodoCheck();
+            var todolists = File.ReadAllText(Strings.TodoPath);
+            var json = JsonConvert.DeserializeObject<List<UserTodo>>(todolists);
+            try
+            {
+                index--;
+                if (!json.Any(x => x.Id == context.User.Id))
+                    await context.Channel.SendMessageAsync(":eight_pointed_black_star:  You do not have a todo list...");
+                else
+                {
+                    var list = json.First(x => x.Id == context.User.Id);
+                    list.ListItems[index] = edit;
+                    var _json = JsonConvert.SerializeObject(json);
+                    File.WriteAllText(Strings.TodoPath, _json);
+                    await context.Channel.SendMessageAsync(":heavy_check_mark:  Edited specified list item!");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
         public static async Task ClearListAsync(SocketCommandContext context)
         {
             Config.TodoCheck();

@@ -23,5 +23,9 @@ namespace XDB.Modules
         [Command("clear"), Summary("Clears your todo list.")]
         public async Task ClearTodo()
             => await Todo.ClearListAsync(Context);
+
+        [Command("edit"), Summary("Edits an item on your todo list.")]
+        public async Task EditTodo(int index, [Remainder] string edit)
+            => await Todo.EditListItemAsync(Context, index, edit);
     }
 }
