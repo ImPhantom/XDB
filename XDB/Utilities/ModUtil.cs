@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
@@ -22,10 +23,17 @@ namespace XDB.Utilities
                     await dm.SendMessageAsync($":small_blue_diamond: You were kicked from **{context.Guild.Name}**\n**Reason:** `{reason}`");
                 }
                 await user.KickAsync().ConfigureAwait(false);
+                
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Moderation", e.Message);
+            }
+            finally
+            {
+                await context.Message.DeleteAsync();
+                var reply = await context.Channel.SendMessageAsync(":ok_hand:");
+                await TimedMessage(reply);
             }
         }
 
@@ -46,8 +54,20 @@ namespace XDB.Utilities
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Moderation", e.Message);
             }
+            finally
+            {
+                await context.Message.DeleteAsync();
+                var reply = await context.Channel.SendMessageAsync(":ok_hand:");
+                await TimedMessage(reply);
+            }
+        }
+
+        private static async Task TimedMessage(IMessage message, int ms = 2500)
+        {
+            await Task.Delay(ms);
+            await message.DeleteAsync();
         }
     }
 }

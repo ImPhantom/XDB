@@ -39,6 +39,14 @@ namespace XDB
             BetterConsole.AppendText(message, ConsoleColor.White);
         }
 
+        public static void LogError(string source, string error)
+        {
+            BetterConsole.AppendLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
+            BetterConsole.AppendText($"[Error] ", ConsoleColor.Red);
+            BetterConsole.AppendText($"[{source}]: ", ConsoleColor.Cyan);
+            BetterConsole.AppendText(error, ConsoleColor.White);
+        }
+
         public static void LogDM(SocketMessage message)
         {
             BetterConsole.AppendLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
