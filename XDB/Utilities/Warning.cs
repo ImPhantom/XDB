@@ -51,7 +51,7 @@ namespace XDB.Utilities
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Warning", e.ToString());
             }
         }
 
@@ -88,7 +88,7 @@ namespace XDB.Utilities
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Warning", e.ToString());
             }
         }
 
@@ -115,7 +115,7 @@ namespace XDB.Utilities
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Warning", e.ToString());
             }
         }
 

@@ -16,7 +16,7 @@ namespace XDB
 
         public static DiscordSocketClient client;
         private Handler cmds;
-        private RatelimitService _rate;
+        //private RatelimitService _rate;
         private MutingService _muting;
         private RemindService _remind;
         private CheckingService _checking;

@@ -37,7 +37,7 @@ namespace XDB.Utilities
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Reputation", e.ToString());
             }
         }
 
@@ -94,7 +94,7 @@ namespace XDB.Utilities
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Reputation", e.ToString());
             }
         }
 
@@ -126,7 +126,7 @@ namespace XDB.Utilities
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Reputation", e.ToString());
             }
         }
     }
