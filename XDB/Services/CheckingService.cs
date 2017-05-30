@@ -17,11 +17,14 @@ namespace XDB.Services
 
         private DiscordSocketClient _client;
         private MutingService _muting;
+        private RemindService _remind;
         public static List<Mute> Mutes { get; set; }
+        public static List<Reminder> Reminders { get; set; }
 
         public Task FetchChecksAsync()
         {
             Mutes = new List<Mute>(_muting.GetActiveMutes());
+            Reminders = new List<Reminder>(_remind.GetActiveReminders());
             return Task.CompletedTask;
         }
 
@@ -43,17 +46,40 @@ namespace XDB.Services
                 Mutes.Remove(mute);
         }
 
-        public CheckingService(DiscordSocketClient client, MutingService muting)
+        public async Task CheckForExpiredRemindersAsync()
+        {
+            var reminders = new List<Reminder>();
+            foreach (var reminder in Reminders.Where(x => DateTime.Compare(DateTime.UtcNow, x.RemindTime) > 0))
+            {
+                var guild = _client.GetGuild(reminder.GuildId);
+                var channel = guild.GetChannel(reminder.ChannelId) as SocketTextChannel;
+                var user = guild.GetUser(reminder.UserId);
+
+                if (string.IsNullOrEmpty(reminder.Reason))
+                    await channel?.SendMessageAsync($":mega: {user?.Mention} Timer is up!");
+                else
+                    await channel?.SendMessageAsync($":mega: {user?.Mention} Timer is up! You need to: `{reminder.Reason}`");
+                RemindService.RemoveReminder(reminder);
+                reminders.Add(reminder);
+            }
+            foreach (var reminder in reminders)
+                Reminders.Remove(reminder);
+        }
+
+        public CheckingService(DiscordSocketClient client, MutingService muting, RemindService remind)
         {
             _client = client;
             _muting = muting;
+            _remind = remind;
             Mutes = new List<Mute>();
+            Reminders = new List<Reminder>();
 
             // Start the timer
             _timer = new Timer(async _ =>
             {
                 await CheckForExpiredMutesAsync();
-            }, null, TimeSpan.FromMinutes(1), TimeSpan.FromSeconds(45));
+                await CheckForExpiredRemindersAsync();
+            }, null, TimeSpan.FromSeconds(45), TimeSpan.FromSeconds(30));
         }
     }
 }

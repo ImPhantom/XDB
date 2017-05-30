@@ -33,6 +33,12 @@ namespace XDB.Readers
             {
                 switch (range.Key)
                 {
+                    case "y":
+                        finalTime = finalTime.Add(new TimeSpan(range.Value * 365, 0, 0, 0));
+                        break;
+                    case "w":
+                        finalTime = finalTime.Add(new TimeSpan(range.Value*7, 0, 0, 0));
+                        break;
                     case "d":
                         finalTime = finalTime.Add(new TimeSpan(range.Value, 0, 0, 0));
                         break;
@@ -45,6 +51,7 @@ namespace XDB.Readers
                     case "s":
                         finalTime = finalTime.Add(new TimeSpan(0, 0, range.Value));
                         break;
+                    
                     default:
                         return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed, $"Unknown timestring! {range.Key}"));
                 }

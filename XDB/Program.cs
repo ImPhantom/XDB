@@ -18,6 +18,7 @@ namespace XDB
         private Handler cmds;
         private RatelimitService _rate;
         private MutingService _muting;
+        private RemindService _remind;
         private CheckingService _checking;
 
         public async Task Run()
@@ -48,7 +49,10 @@ namespace XDB
             _muting = new MutingService();
             _muting.InitializeMutes();
 
-            _checking = new CheckingService(client, _muting);
+            _remind = new RemindService();
+            _remind.Initialize();
+
+            _checking = new CheckingService(client, _muting, _remind);
             await _checking.FetchChecksAsync();
 
             var serviceProvider = ConfigureServices();
@@ -78,6 +82,7 @@ namespace XDB
                 .AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false }))
                 //.AddSingleton<RatelimitService>()
                 .AddSingleton<MutingService>()
+                .AddSingleton<RemindService>()
                 .AddSingleton<CheckingService>();
 
             return new DefaultServiceProviderFactory().CreateServiceProvider(services);
