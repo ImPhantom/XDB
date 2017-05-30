@@ -1,12 +1,15 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Humanizer;
 using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
+using XDB.Common.Models;
 using XDB.Common.Types;
+using XDB.Services;
 using XDB.Utilities;
 
 namespace XDB.Modules
@@ -36,6 +39,49 @@ namespace XDB.Modules
                 await ModUtil.BanUserAsync(user, Context, "");
             else
                 await ModUtil.BanUserAsync(user, Context, reason);
+        }
+
+        [Command("mute", RunMode = RunMode.Async), Summary("Mutes a user")]
+        public async Task Mute(SocketGuildUser user, TimeSpan unmuteTime, [Remainder] string reason = "n/a")
+        {
+            var muteRole = user.Guild.GetRole(Config.Load().MutedRoleId);
+            await user.AddRoleAsync(muteRole);
+
+            var mute = new Mute()
+            {
+                GuildId = Context.Guild.Id,
+                UserId = user.Id,
+                Reason = reason,
+                Timestamp = DateTime.UtcNow,
+                UnmuteTime = DateTime.UtcNow.Add(unmuteTime),
+                IsActive = true
+            };
+            MutingService.AddMute(mute);
+            CheckingService.Mutes.Add(mute);
+            await Logging.TryLoggingAsync($":mute: **{user.Username}#{user.Discriminator}** has been muted by {Context.User.Username} for:\n `{mute.Reason}`");
+            var reply = await ReplyAsync(":ok_hand:");
+            await TimedMessage(reply);
+        }
+
+        [Command("unmute", RunMode = RunMode.Async), Summary("Un-mutes a user")]
+        public async Task UnMute(SocketGuildUser user)
+        {
+            var muteRole = user.Guild.GetRole(Config.Load().MutedRoleId);
+            await user.RemoveRoleAsync(muteRole);
+
+            var mutes = MutingService.FetchMutes();
+            foreach (var mute in mutes)
+            {
+                if(mute.UserId == user.Id)
+                {
+                    MutingService.RemoveMute(mute);
+                    if(CheckingService.Mutes.Contains(mute))
+                        CheckingService.Mutes.Remove(mute);
+                }
+            }
+            await Logging.TryLoggingAsync($":loud_sound: **{user.Username}#{user.Discriminator}** has been unmuted by {Context.User.Username}.");
+            var reply = await ReplyAsync(":ok_hand:");
+            await TimedMessage(reply);
         }
 
         [Command("filters"), Summary("Displays all words in the word filter.")]
@@ -121,6 +167,12 @@ namespace XDB.Modules
             cfg.Moderators.Add(user.Id);
             cfg.Save();
             await Logging.TryLoggingAsync($":diamond_shape_with_a_dot_inside:  `{Context.User.Username}#{Context.User.Discriminator}` has added `{user.Username}#{user.Discriminator}` as a moderator.");
+        }
+
+        private static async Task TimedMessage(IMessage message, int ms = 2500)
+        {
+            await Task.Delay(ms);
+            await message.DeleteAsync();
         }
     }
 
