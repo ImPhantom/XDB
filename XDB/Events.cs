@@ -1,6 +1,9 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using Humanizer;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using XDB.Common.Types;
 using XDB.Utilities;
 
@@ -27,7 +30,11 @@ namespace XDB
                 {
                     if (user.IsBot)
                         return;
-                    await Logging.TryLoggingAsync($":white_check_mark:  `{user.Username}#{user.Discriminator}` has joined the server!");
+                    
+                    if(AccountAge(user) > TimeSpan.FromDays(1))
+                        await Logging.TryLoggingAsync($":white_check_mark: (**New Account**) `{user.Username}#{user.Discriminator}` has joined the server! (Age: {AccountAge(user).Humanize()})");
+                    else
+                        await Logging.TryLoggingAsync($":white_check_mark:  `{user.Username}#{user.Discriminator}` has joined the server!");
                 }
 
                 await client.SetGameAsync($"{Config.Load().Prefix}help | Users: {client.Guilds.Sum(x => x.Users.Count())}");
@@ -39,13 +46,19 @@ namespace XDB
                 if (user.IsBot)
                     return;
                 if (Config.Load().ExtraLogging)
+                {
+                    var bans = await user.Guild.GetBansAsync();
+                    if (bans.Any(x => x.User.Id == user.Id))
+                        return;
                     await Logging.TryLoggingAsync($":x:  `{user.Username}#{user.Discriminator}` has left the server!");
+                }
+                    
                 await client.SetGameAsync($"{Config.Load().Prefix}help | Users: {client.Guilds.Sum(x => x.Users.Count())}");
             };
 
             client.MessageReceived += async (message) =>
             {
-                if (message.Channel is IDMChannel)
+                if (message.Channel is IDMChannel && message.Author != client.CurrentUser)
                     BetterConsole.LogDM(message);
 
                 if (Config.Load().WordFilter == true)
@@ -77,7 +90,7 @@ namespace XDB
                     if (!message.HasValue)
                         return;
                     var msg = await message.GetOrDownloadAsync();
-                    if (msg.Content.Contains("~clean"))
+                    if (msg.Content.Contains("~"))
                         return;
                     if (msg.Author.IsBot)
                         return;
@@ -119,6 +132,13 @@ namespace XDB
                     if (before.Username != after.Username)
                         await Logging.TryLoggingAsync($":white_small_square: `{before.Username}#{before.Discriminator}` has changed their username to `{after.Username}#{after.Discriminator}`");
             };
+        }
+
+        private static TimeSpan AccountAge(SocketUser user)
+        {
+            var created = user.CreatedAt;
+            var today = DateTimeOffset.Now;
+            return today - created;
         }
     }
 }
