@@ -5,8 +5,8 @@
         Blocked,
         User,
         ChannelMod,
-        Administrator,
         Moderator,
+        Administrator,
         GuildOwner,
         BotOwner
     }

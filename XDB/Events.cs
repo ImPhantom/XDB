@@ -3,7 +3,6 @@ using Discord.WebSocket;
 using Humanizer;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using XDB.Common.Types;
 using XDB.Utilities;
 
@@ -31,7 +30,7 @@ namespace XDB
                     if (user.IsBot)
                         return;
                     
-                    if(AccountAge(user) > TimeSpan.FromDays(1))
+                    if(AccountAge(user) < TimeSpan.FromDays(1))
                         await Logging.TryLoggingAsync($":white_check_mark: (**New Account**) `{user.Username}#{user.Discriminator}` has joined the server! (Age: {AccountAge(user).Humanize()})");
                     else
                         await Logging.TryLoggingAsync($":white_check_mark:  `{user.Username}#{user.Discriminator}` has joined the server!");
