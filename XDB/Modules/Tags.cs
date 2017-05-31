@@ -37,7 +37,7 @@ namespace XDB.Modules
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Tags", e.ToString());
             }
         }
 
@@ -60,7 +60,7 @@ namespace XDB.Modules
                 }
             } catch(Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Tags", e.ToString());
             }
         }
 
@@ -80,7 +80,7 @@ namespace XDB.Modules
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Tags", e.ToString());
             }
         }
 
@@ -106,7 +106,33 @@ namespace XDB.Modules
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                BetterConsole.LogError("Tags", e.ToString());
+            }
+        }
+
+        [Command("edittag"), Alias("tagedit")]
+        [Permissions(AccessLevel.Administrator)]
+        public async Task EditTag(string name, [Remainder] string newtag)
+        {
+            Config.TagsCheck();
+            var tags = File.ReadAllText(Strings.TagsPath);
+            var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
+            try
+            {
+                var lower = name.ToLower();
+                if (!_json.Any(x => x.TagName == lower))
+                    await ReplyAsync(":heavy_multiplication_x:  There are no tags matching that keyword!");
+                else
+                {
+                    var tag = _json.First(x => x.TagName == lower);
+                    tag.TagContent = newtag;
+                    File.WriteAllText(Strings.TagsPath, JsonConvert.SerializeObject(_json));
+                    await ReplyAsync($":heavy_check_mark:  You have successfully modified the `{lower}` tag.");
+                }
+            }
+            catch (Exception e)
+            {
+                BetterConsole.LogError("Tags", e.ToString());
             }
         }
     }
