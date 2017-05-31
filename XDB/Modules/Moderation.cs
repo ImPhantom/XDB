@@ -32,6 +32,10 @@ namespace XDB.Modules
                 await ModUtil.KickUserAsync(user, Context, reason);
         }
 
+        [Command("tempban", RunMode = RunMode.Async), Summary("Temporarily bans a user from a guild.")]
+        public async Task TempBan(SocketGuildUser user, TimeSpan length, [Remainder] string reason = "n/a")
+            => await ModUtil.TempBanUserAsync(user, Context, length, reason);
+
         [Command("ban", RunMode = RunMode.Async), Summary("Bans a user from a guild.")]
         public async Task Ban(SocketGuildUser user, [Remainder] string reason = "")
         {

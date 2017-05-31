@@ -7,6 +7,7 @@ using XDB.Common.Models;
 using XDB.Common.Types;
 using XDB.Utilities;
 using System.Threading;
+using Humanizer;
 
 namespace XDB.Services
 {
@@ -17,13 +18,16 @@ namespace XDB.Services
         private DiscordSocketClient _client;
         private MutingService _muting;
         private RemindService _remind;
+        private TempBanService _tempbans;
         public static List<Mute> Mutes { get; set; }
         public static List<Reminder> Reminders { get; set; }
+        public static List<TempBan> TempBans { get; set; }
 
         public Task FetchChecksAsync()
         {
             Mutes = new List<Mute>(_muting.GetActiveMutes());
             Reminders = new List<Reminder>(_remind.GetActiveReminders());
+            TempBans = new List<TempBan>(_tempbans.GetActiveBans());
             return Task.CompletedTask;
         }
 
@@ -65,19 +69,39 @@ namespace XDB.Services
                 Reminders.Remove(reminder);
         }
 
-        public CheckingService(DiscordSocketClient client, MutingService muting, RemindService remind)
+        public async Task CheckForExpiredBansAsync()
+        {
+            var bans = new List<TempBan>();
+            foreach (var ban in TempBans.Where(x => DateTime.Compare(DateTime.UtcNow, x.UnbanTime) > 0))
+            {
+                var guild = _client.GetGuild(ban.GuildId);
+                var user = _client.GetUser(ban.BannedUserId);
+
+                await guild.RemoveBanAsync(ban.BannedUserId);
+                await Logging.TryLoggingAsync($":clock3:  **{user.Username}#{user.Discriminator}**'s `{(ban.UnbanTime-ban.Timestamp).Humanize().Singularize()}` ban has expired.");
+                TempBanService.RemoveTemporaryBan(ban);
+                bans.Add(ban);
+            }
+            foreach (var ban in bans)
+                TempBans.Remove(ban);
+        }
+
+        public CheckingService(DiscordSocketClient client, MutingService muting, RemindService remind, TempBanService tempbans)
         {
             _client = client;
             _muting = muting;
             _remind = remind;
+            _tempbans = tempbans;
             Mutes = new List<Mute>();
             Reminders = new List<Reminder>();
+            TempBans = new List<TempBan>();
 
             // Start the timer
             _timer = new Timer(async _ =>
             {
                 await CheckForExpiredMutesAsync();
                 await CheckForExpiredRemindersAsync();
+                await CheckForExpiredBansAsync();
             }, null, TimeSpan.FromSeconds(45), TimeSpan.FromSeconds(30));
         }
     }

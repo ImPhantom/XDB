@@ -31,7 +31,7 @@ namespace XDB.Modules
             foreach (var mod in moderators)
             {
                 var user = Context.Client.GetUser(mod);
-                list.AppendLine($"{user.Username}#{user.Discriminator}");
+                list.AppendLine($"> `{user.Username}#{user.Discriminator}`");
             }
             var embed = new EmbedBuilder().WithTitle("XDB Moderators").WithDescription(list.ToString()).WithColor(new Color(28, 156, 199));
             await ReplyAsync("", embed: embed.Build());

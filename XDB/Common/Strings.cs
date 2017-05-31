@@ -25,6 +25,7 @@ Please fill in all your info and restart the bot.";
         //public static string RatePath = Path.Combine(AppContext.BaseDirectory, $"cfg/ratelimit.json");
         public static string MutesPath = Path.Combine(AppContext.BaseDirectory, $"mutes.json");
         public static string RemindPath = Path.Combine(AppContext.BaseDirectory, $"reminders.json");
+        public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"tempbans.json");
 
 
         // 8-Ball Strings

@@ -19,6 +19,7 @@ namespace XDB
         //private RatelimitService _rate;
         private MutingService _muting;
         private RemindService _remind;
+        private TempBanService _tempbans;
         private CheckingService _checking;
 
         public async Task Run()
@@ -52,7 +53,10 @@ namespace XDB
             _remind = new RemindService();
             _remind.Initialize();
 
-            _checking = new CheckingService(client, _muting, _remind);
+            _tempbans = new TempBanService();
+            _tempbans.Initialize();
+
+            _checking = new CheckingService(client, _muting, _remind, _tempbans);
             await _checking.FetchChecksAsync();
 
             var serviceProvider = ConfigureServices();
@@ -83,6 +87,7 @@ namespace XDB
                 //.AddSingleton<RatelimitService>()
                 .AddSingleton<MutingService>()
                 .AddSingleton<RemindService>()
+                .AddSingleton<TempBanService>()
                 .AddSingleton<CheckingService>();
 
             return new DefaultServiceProviderFactory().CreateServiceProvider(services);
