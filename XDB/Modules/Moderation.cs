@@ -141,6 +141,7 @@ namespace XDB.Modules
         {
             var muteRole = user.Guild.GetRole(Config.Load().MutedRoleId);
             await user.AddRoleAsync(muteRole);
+            await user.ModifyAsync(x => x.Mute = true);
 
             var mute = new Mute()
             {
@@ -165,6 +166,7 @@ namespace XDB.Modules
         {
             var muteRole = user.Guild.GetRole(Config.Load().MutedRoleId);
             await user.RemoveRoleAsync(muteRole);
+            await user.ModifyAsync(x => x.Mute = false);
 
             var mutes = MutingService.FetchMutes();
             foreach (var mute in mutes)
