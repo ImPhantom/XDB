@@ -21,6 +21,7 @@ namespace XDB
         private RemindService _remind;
         private TempBanService _tempbans;
         private CheckingService _checking;
+        private BoardService _board;
 
         public async Task Run()
         {
@@ -59,6 +60,9 @@ namespace XDB
             _checking = new CheckingService(client, _muting, _remind, _tempbans);
             await _checking.FetchChecksAsync();
 
+            _board = new BoardService(client);
+            _board.Initialize();
+
             var serviceProvider = ConfigureServices();
 
             cmds = new Handler(serviceProvider);
@@ -71,7 +75,7 @@ namespace XDB
             await client.LoginAsync(TokenType.Bot, Config.Load().Token);
             await client.StartAsync();
 
-            await Task.Delay(3000);
+            await Task.Delay(6000);
             await client.SetGameAsync($"{Config.Load().Prefix}help | Users: {client.Guilds.Sum(x => x.Users.Count())}");
 
             Events.Listen();

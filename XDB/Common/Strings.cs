@@ -7,7 +7,7 @@ namespace XDB.Common.Types
 {
     public class Strings
     {
-        public static readonly string ReleaseVersion = "1.2.5";
+        public static readonly string ReleaseVersion = "1.2.7rc1";
 
         // Common Strings
         public static string XDB_Title = $"XDB (rel: {ReleaseVersion})(api: {DiscordConfig.Version})";
@@ -26,6 +26,8 @@ Please fill in all your info and restart the bot.";
         public static string MutesPath = Path.Combine(AppContext.BaseDirectory, $"mutes.json");
         public static string RemindPath = Path.Combine(AppContext.BaseDirectory, $"reminders.json");
         public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"tempbans.json");
+        public static string CringePath = Path.Combine(AppContext.BaseDirectory, $"boardmessages.json");
+
 
 
         // 8-Ball Strings
@@ -44,6 +46,7 @@ Please fill in all your info and restart the bot.";
       #                                 #
       #---------------------------------#
  ";
+
 
         public static string GetUserGame(SocketGuildUser user)
         {

@@ -12,7 +12,7 @@ namespace XDB.Common.Types
         public static readonly string appdir = AppContext.BaseDirectory;
 
         public string Prefix { get; set; } = "~";
-        public ulong[] Owners { get; set; } = new ulong[] { 0 };
+        public List<ulong> Owners { get; set; } = new List<ulong> { };
         public List<ulong> Moderators { get; set; } = new List<ulong> { };
         public ulong MutedRoleId { get; set; } = 0;
         public string Token { get; set; } = "";
@@ -24,6 +24,7 @@ namespace XDB.Common.Types
         public List<string> Words { get; set; } = new List<string> { };
         public bool Welcome { get; set; } = false;
         public string WelcomeMessage { get; set; } = "**Welcome to the server, **{mention}";
+        public string Rules { get; set; } = "1. Don't be disrespectful\n2. Don't insult other guild members";
 
         public void Save(string dir = "cfg/config.json")
         {

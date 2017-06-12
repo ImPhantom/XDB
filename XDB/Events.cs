@@ -3,7 +3,9 @@ using Discord.WebSocket;
 using Humanizer;
 using System;
 using System.Linq;
+using XDB.Common.Models;
 using XDB.Common.Types;
+using XDB.Services;
 using XDB.Utilities;
 
 namespace XDB
@@ -23,6 +25,9 @@ namespace XDB
                     var def = user.Guild.DefaultChannel;
                     var message = Config.Load().WelcomeMessage.Replace("{mention}", user.Mention).Replace("{username}", user.Username);
                     await def.SendMessageAsync(message);
+
+                    var dm = await user.CreateDMChannelAsync();
+                    await dm.SendMessageAsync(Config.Load().Rules);
                 }
 
                 if (Config.Load().ExtraLogging)
@@ -130,6 +135,29 @@ namespace XDB
                 if (Config.Load().ExtraLogging)
                     if (before.Username != after.Username)
                         await Logging.TryLoggingAsync($":white_small_square: `{before.Username}#{before.Discriminator}` has changed their username to `{after.Username}#{after.Discriminator}`");
+            };
+
+            client.ReactionAdded += async (_message, channel, reaction) =>
+            {
+                if(Config.Load().Owners.Contains(reaction.User.Value.Id))
+                {
+                    if (!_message.HasValue)
+                        return;
+                    var message = await _message.GetOrDownloadAsync();
+                    var _board = new BoardService(client);
+                    await _board.CheckChannelExistence();
+                    if (reaction.Emote.Name == "🚫")
+                    {
+                        var board = new BoardMessage()
+                        {
+                            Message = message.Content,
+                            UserId = message.Author.Id,
+                            Timestamp = message.Timestamp
+                        };
+                        await _board.AddBoardMessageAsync(board);
+                        await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
+                    }
+                }
             };
         }
 

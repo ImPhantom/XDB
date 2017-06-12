@@ -41,6 +41,7 @@ namespace XDB.Services
 
                 var role = guild.GetRole(Config.Load().MutedRoleId);
                 await user.RemoveRolesAsync(new SocketRole[] { role });
+                await user.ModifyAsync(x => x.Mute = false);
                 await Logging.TryLoggingAsync($":alarm_clock: `{user.Username}#{user.Discriminator}`'s mute for `{mute.Reason}` has expired.");
                 MutingService.RemoveMute(mute);
                 mutes.Add(mute);
