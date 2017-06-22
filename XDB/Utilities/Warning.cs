@@ -18,9 +18,9 @@ namespace XDB.Utilities
         public static async Task WarnUserAsync(SocketCommandContext context, SocketGuildUser user, string reason)
         {
             Config.WarnCheck();
-            var warns = File.ReadAllText(Strings.WarnPath);
+            var warns = File.ReadAllText(Xeno.WarnPath);
             var json = JsonConvert.DeserializeObject<List<UserWarn>>(warns);
-            var dm = await user.CreateDMChannelAsync();
+            var dm = await user.GetOrCreateDMChannelAsync();
             try
             {
                 if (!json.Any(x => x.WarnedUser == user.Id))
@@ -32,7 +32,7 @@ namespace XDB.Utilities
                     };
                     json.Add(newwarn);
                     var _json = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.WarnPath, _json);
+                    File.WriteAllText(Xeno.WarnPath, _json);
                     var reply = await context.Channel.SendMessageAsync(":ok_hand:");
                     await TimedMessage(reply);
                     await Logging.TryLoggingAsync($":heavy_check_mark: `{user.Username}#{user.Discriminator}` has been warned by `{context.User.Username}#{context.User.Discriminator}` for:\n`{reason}`");
@@ -42,7 +42,7 @@ namespace XDB.Utilities
                 {
                     json.First(x => x.WarnedUser == user.Id).WarnReason.Add(reason);
                     var _json = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.WarnPath, _json);
+                    File.WriteAllText(Xeno.WarnPath, _json);
                     var reply = await context.Channel.SendMessageAsync(":ok_hand:");
                     await TimedMessage(reply);
                     await Logging.TryLoggingAsync($":heavy_check_mark: `{user.Username}#{user.Discriminator}` has been warned by `{context.User.Username}#{context.User.Discriminator}` for:\n`{reason}`");
@@ -58,7 +58,7 @@ namespace XDB.Utilities
         public static async Task RemoveWarnAsync(SocketCommandContext context, SocketGuildUser user, int index)
         {
             Config.WarnCheck();
-            var warns = File.ReadAllText(Strings.WarnPath);
+            var warns = File.ReadAllText(Xeno.WarnPath);
             var json = JsonConvert.DeserializeObject<List<UserWarn>>(warns);
             try
             {
@@ -77,7 +77,7 @@ namespace XDB.Utilities
                         var reason = json.First(x => x.WarnedUser == user.Id).WarnReason[index];
                         json.First(x => x.WarnedUser == user.Id).WarnReason.RemoveAt(index);
                         var _json = JsonConvert.SerializeObject(json);
-                        File.WriteAllText(Strings.WarnPath, _json);
+                        File.WriteAllText(Xeno.WarnPath, _json);
                         var reply = await context.Channel.SendMessageAsync(":ok_hand:");
                         await TimedMessage(reply);
                         await Logging.TryLoggingAsync($":heavy_check_mark: `{context.User.Username}#{context.User.Discriminator}` has removed `{user.Username}#{user.Discriminator}`'s warn for:\n`{reason}`");
@@ -95,7 +95,7 @@ namespace XDB.Utilities
         public static async Task GetUserWarns(SocketCommandContext context, SocketGuildUser user)
         {
             Config.WarnCheck();
-            var allwarns = File.ReadAllText(Strings.WarnPath);
+            var allwarns = File.ReadAllText(Xeno.WarnPath);
             var json = JsonConvert.DeserializeObject<List<UserWarn>>(allwarns);
             try
             {

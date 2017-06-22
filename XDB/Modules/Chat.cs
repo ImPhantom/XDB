@@ -15,7 +15,7 @@ namespace XDB.Modules
         public async Task EightBall([Remainder] string question)
         {
             Random random = new Random();
-            var response = Strings.EightBallResponses[random.Next(Strings.EightBallResponses.Length)];
+            var response = Xeno.EightBallResponses[random.Next(Xeno.EightBallResponses.Length)];
             await ReplyAsync($":8ball: {response}");
         }
 
@@ -122,7 +122,7 @@ namespace XDB.Modules
             embed.AddField(x =>
             {
                 x.Name = "Game:";
-                x.Value = $"{Strings.GetUserGame(user)}";
+                x.Value = $"{Xeno.GetUserGame(user)}";
                 x.IsInline = true;
             });
             if (user.VoiceChannel != null)
@@ -130,7 +130,7 @@ namespace XDB.Modules
                 embed.AddField(x =>
                 {
                     x.Name = "Voice State: ";
-                    x.Value = $"{Strings.GetVoiceState(user)}";
+                    x.Value = $"{Xeno.GetVoiceState(user)}";
                     x.IsInline = true;
                 });
             }

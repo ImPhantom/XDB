@@ -14,6 +14,7 @@ namespace XDB.Common.Types
         public string Prefix { get; set; } = "~";
         public List<ulong> Owners { get; set; } = new List<ulong> { };
         public List<ulong> Moderators { get; set; } = new List<ulong> { };
+        public List<ulong> Administrators { get; set; } = new List<ulong> { };
         public ulong MutedRoleId { get; set; } = 0;
         public string Token { get; set; } = "";
         public string GoogleKey { get; set; } = "";
@@ -63,12 +64,12 @@ namespace XDB.Common.Types
             if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "tags")))
                 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "tags"));
 
-            if (!File.Exists(Strings.TagsPath))
+            if (!File.Exists(Xeno.TagsPath))
             {
                 List<Tag> tags = new List<Tag>();
                 var json = JsonConvert.SerializeObject(tags);
-                using (var file = new FileStream(Strings.TagsPath, FileMode.Create)) { }
-                File.WriteAllText(Strings.TagsPath, json);
+                using (var file = new FileStream(Xeno.TagsPath, FileMode.Create)) { }
+                File.WriteAllText(Xeno.TagsPath, json);
             }
             else
                 return;
@@ -113,15 +114,15 @@ namespace XDB.Common.Types
             if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "cfg")))
                 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "cfg"));
 
-            if (!File.Exists(Strings.ConfigPath))
+            if (!File.Exists(Xeno.ConfigPath))
             {
                 var cfg = new Config();
-                Console.WriteLine(Strings.XDB_ConfigCreated);
+                Console.WriteLine(Xeno.ConfigCreated);
                 Console.Write("Token: ");
                 cfg.Token = Console.ReadLine();
                 cfg.Save();
             }
-            if (!File.Exists(Strings.ModulePath)) { var mdls = new ModuleConfig(); mdls.Save(); }
+            if (!File.Exists(Xeno.ModulePath)) { var mdls = new ModuleConfig(); mdls.Save(); }
             BetterConsole.Log("Info", "XDB", "Configuration successfully loaded!");
         }
     }

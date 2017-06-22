@@ -17,7 +17,7 @@ namespace XDB.Utilities
         public static async Task CheckReputationAsync(SocketCommandContext context, SocketGuildUser user)
         {
             Config.RepCheck();
-            var reputations = File.ReadAllText(Strings.RepPath);
+            var reputations = File.ReadAllText(Xeno.RepPath);
             var json = JsonConvert.DeserializeObject<List<UserRep>>(reputations);
             try
             {
@@ -25,7 +25,7 @@ namespace XDB.Utilities
                 {
                     json.Add(new UserRep() { Id = user.Id, Rep = 0 });
                     var _json = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.RepPath, _json);
+                    File.WriteAllText(Xeno.RepPath, _json);
                 }
                 var rep = json.First(x => x.Id == user.Id).Rep;
                 if (rep < 0)
@@ -44,7 +44,7 @@ namespace XDB.Utilities
         public static async Task GetLeaderboardAsync(SocketCommandContext context)
         {
             Config.RepCheck();
-            var reputations = File.ReadAllText(Strings.RepPath);
+            var reputations = File.ReadAllText(Xeno.RepPath);
             var json = JsonConvert.DeserializeObject<List<UserRep>>(reputations);
 
             var topreps = json.OrderByDescending(x => x.Rep).Take(10);
@@ -69,7 +69,7 @@ namespace XDB.Utilities
         public static async Task AddReputationAsync(SocketCommandContext context, SocketGuildUser user)
         {
             Config.RepCheck();
-            var reputations = File.ReadAllText(Strings.RepPath);
+            var reputations = File.ReadAllText(Xeno.RepPath);
             var json = JsonConvert.DeserializeObject<List<UserRep>>(reputations);
             try
             {
@@ -77,7 +77,7 @@ namespace XDB.Utilities
                 {
                     json.Add(new UserRep() { Id = user.Id, Rep = 1 });
                     await context.Channel.SendMessageAsync($":white_medium_small_square: **{user.Username}'s** reputation: 1");
-                    File.WriteAllText(Strings.RepPath, JsonConvert.SerializeObject(json));
+                    File.WriteAllText(Xeno.RepPath, JsonConvert.SerializeObject(json));
                 }
                 else
                 {
@@ -88,7 +88,7 @@ namespace XDB.Utilities
                     else
                         await context.Channel.SendMessageAsync($":white_medium_small_square: **{user.Username}'s** reputation: {rep}");
                     var _json = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.RepPath, _json);
+                    File.WriteAllText(Xeno.RepPath, _json);
                 }
                 await context.Message.DeleteAsync();
             }
@@ -101,7 +101,7 @@ namespace XDB.Utilities
         public static async Task RemoveReputationAsync(SocketCommandContext context, SocketGuildUser user)
         {
             Config.RepCheck();
-            var reputations = File.ReadAllText(Strings.RepPath);
+            var reputations = File.ReadAllText(Xeno.RepPath);
             var json = JsonConvert.DeserializeObject<List<UserRep>>(reputations);
             try
             {
@@ -109,7 +109,7 @@ namespace XDB.Utilities
                 {
                     json.Add(new UserRep() { Id = user.Id, Rep = -1 });
                     await context.Channel.SendMessageAsync($":black_medium_small_square: **{user.Username}'s** reputation: -1");
-                    File.WriteAllText(Strings.RepPath, JsonConvert.SerializeObject(json));
+                    File.WriteAllText(Xeno.RepPath, JsonConvert.SerializeObject(json));
                 }
                 else
                 {
@@ -120,7 +120,7 @@ namespace XDB.Utilities
                     else
                         await context.Channel.SendMessageAsync($":white_medium_small_square: **{user.Username}'s** reputation: {rep}");
                     var _json = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.RepPath, _json);
+                    File.WriteAllText(Xeno.RepPath, _json);
                 }
                 await context.Message.DeleteAsync();
             }

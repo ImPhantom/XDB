@@ -25,8 +25,8 @@ namespace XDB
 
         public async Task Run()
         {
-            BetterConsole.AppendText(Strings.XDB_Header);
-            Console.Title = Strings.XDB_Title;
+            BetterConsole.AppendText(Xeno.Masthead);
+            Console.Title = Xeno.Status;
 
             Config.CheckExistence();
 

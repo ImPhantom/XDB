@@ -26,7 +26,7 @@ namespace XDB
                     var message = Config.Load().WelcomeMessage.Replace("{mention}", user.Mention).Replace("{username}", user.Username);
                     await def.SendMessageAsync(message);
 
-                    var dm = await user.CreateDMChannelAsync();
+                    var dm = await user.GetOrCreateDMChannelAsync();
                     await dm.SendMessageAsync(Config.Load().Rules);
                 }
 
@@ -82,9 +82,6 @@ namespace XDB
                         await message.DeleteAsync();
                     }
                 }
-
-
-
             };
 
             client.MessageDeleted += async (message, channel) =>

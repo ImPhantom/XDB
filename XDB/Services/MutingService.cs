@@ -11,21 +11,21 @@ namespace XDB.Services
     public class MutingService
     {
         public static List<Mute> FetchMutes()
-            => JsonConvert.DeserializeObject<List<Mute>>(File.ReadAllText(Strings.MutesPath));
+            => JsonConvert.DeserializeObject<List<Mute>>(File.ReadAllText(Xeno.MutesPath));
 
         public IEnumerable<Mute> GetActiveMutes()
             => FetchMutes().Where(x => DateTime.Compare(DateTime.UtcNow, x.UnmuteTime) > 0 && x.IsActive);
 
         public void InitializeMutes()
         {
-            if (File.Exists(Strings.MutesPath))
+            if (File.Exists(Xeno.MutesPath))
                 return;
             else
             {
                 List<Mute> mutes = new List<Mute>();
                 var json = JsonConvert.SerializeObject(mutes);
-                using (var file = new FileStream(Strings.MutesPath, FileMode.Create)) { }
-                File.WriteAllText(Strings.MutesPath, json);
+                using (var file = new FileStream(Xeno.MutesPath, FileMode.Create)) { }
+                File.WriteAllText(Xeno.MutesPath, json);
             }
         }
 
@@ -36,7 +36,7 @@ namespace XDB.Services
             {
                 _in.Add(mute);
                 var _out = JsonConvert.SerializeObject(_in);
-                using (var stream = new FileStream(Strings.MutesPath, FileMode.Truncate))
+                using (var stream = new FileStream(Xeno.MutesPath, FileMode.Truncate))
                 {
                     using (var writer = new StreamWriter(stream))
                     {
@@ -57,7 +57,7 @@ namespace XDB.Services
                 var mute = _in.Find(x => x.UserId == _mute.UserId);
                 _in.Remove(mute);
                 var _out = JsonConvert.SerializeObject(_in);
-                using (var stream = new FileStream(Strings.MutesPath, FileMode.Truncate))
+                using (var stream = new FileStream(Xeno.MutesPath, FileMode.Truncate))
                 {
                     using (var writer = new StreamWriter(stream))
                     {

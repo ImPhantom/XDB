@@ -20,7 +20,7 @@ namespace XDB.Modules
         public async Task GetTag(string keyword)
         {
             Config.TagsCheck();
-            var tags = File.ReadAllText(Strings.TagsPath);
+            var tags = File.ReadAllText(Xeno.TagsPath);
             var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
             try
             {
@@ -45,7 +45,7 @@ namespace XDB.Modules
         public async Task ListTags()
         {
             Config.TagsCheck();
-            var tags = File.ReadAllText(Strings.TagsPath);
+            var tags = File.ReadAllText(Xeno.TagsPath);
             var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
             try
             {
@@ -65,17 +65,17 @@ namespace XDB.Modules
         }
 
         [Command("addtag")]
-        [Permissions(AccessLevel.Administrator)]
+        [Permissions(AccessLevel.FullAdmin)]
         public async Task AddTag(string name, [Remainder] string content)
         {
             Config.TagsCheck();
-            var tags = File.ReadAllText(Strings.TagsPath);
+            var tags = File.ReadAllText(Xeno.TagsPath);
             var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
             try
             {
                 var lower = name.ToLower();
                 _json.Add(new Tag() { TagName = lower, TagContent = content });
-                File.WriteAllText(Strings.TagsPath, JsonConvert.SerializeObject(_json));
+                File.WriteAllText(Xeno.TagsPath, JsonConvert.SerializeObject(_json));
                 await ReplyAsync($":heavy_check_mark:  You have added the `{lower}` tag.");
             }
             catch (Exception e)
@@ -85,11 +85,11 @@ namespace XDB.Modules
         }
 
         [Command("removetag"), Alias("deltag", "deletetag", "remtag")]
-        [Permissions(AccessLevel.Administrator)]
+        [Permissions(AccessLevel.FullAdmin)]
         public async Task RemoveTag(string name)
         {
             Config.TagsCheck();
-            var tags = File.ReadAllText(Strings.TagsPath);
+            var tags = File.ReadAllText(Xeno.TagsPath);
             var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
             try
             {
@@ -100,7 +100,7 @@ namespace XDB.Modules
                 {
                     var tag = _json.First(x => x.TagName == lower);
                     _json.Remove(tag);
-                    File.WriteAllText(Strings.TagsPath, JsonConvert.SerializeObject(_json));
+                    File.WriteAllText(Xeno.TagsPath, JsonConvert.SerializeObject(_json));
                     await ReplyAsync($":heavy_check_mark:  You have removed the `{lower}` tag.");
                 }
             }
@@ -111,11 +111,11 @@ namespace XDB.Modules
         }
 
         [Command("edittag"), Alias("tagedit")]
-        [Permissions(AccessLevel.Administrator)]
+        [Permissions(AccessLevel.FullAdmin)]
         public async Task EditTag(string name, [Remainder] string newtag)
         {
             Config.TagsCheck();
-            var tags = File.ReadAllText(Strings.TagsPath);
+            var tags = File.ReadAllText(Xeno.TagsPath);
             var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
             try
             {
@@ -126,7 +126,7 @@ namespace XDB.Modules
                 {
                     var tag = _json.First(x => x.TagName == lower);
                     tag.TagContent = newtag;
-                    File.WriteAllText(Strings.TagsPath, JsonConvert.SerializeObject(_json));
+                    File.WriteAllText(Xeno.TagsPath, JsonConvert.SerializeObject(_json));
                     await ReplyAsync($":heavy_check_mark:  You have successfully modified the `{lower}` tag.");
                 }
             }

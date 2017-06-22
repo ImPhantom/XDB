@@ -11,7 +11,7 @@ namespace XDB.Services
     public class RemindService
     {
         public static List<Reminder> FetchReminders()
-            => JsonConvert.DeserializeObject<List<Reminder>>(File.ReadAllText(Strings.RemindPath));
+            => JsonConvert.DeserializeObject<List<Reminder>>(File.ReadAllText(Xeno.RemindPath));
 
         public IEnumerable<Reminder> GetActiveReminders()
             => FetchReminders().Where(x => DateTime.Compare(DateTime.UtcNow, x.RemindTime) > 0);
@@ -23,7 +23,7 @@ namespace XDB.Services
             {
                 _in.Add(reminder);
                 var _out = JsonConvert.SerializeObject(_in);
-                using (var stream = new FileStream(Strings.RemindPath, FileMode.Truncate))
+                using (var stream = new FileStream(Xeno.RemindPath, FileMode.Truncate))
                 {
                     using (var writer = new StreamWriter(stream))
                     {
@@ -45,7 +45,7 @@ namespace XDB.Services
                 var reminder = _in.Find(x => x.Timestamp == _reminder.Timestamp);
                 _in.Remove(reminder);
                 var _out = JsonConvert.SerializeObject(_in);
-                using (var stream = new FileStream(Strings.RemindPath, FileMode.Truncate))
+                using (var stream = new FileStream(Xeno.RemindPath, FileMode.Truncate))
                 {
                     using (var writer = new StreamWriter(stream))
                     {
@@ -61,14 +61,14 @@ namespace XDB.Services
 
         public void Initialize()
         {
-            if (File.Exists(Strings.RemindPath))
+            if (File.Exists(Xeno.RemindPath))
                 return;
             else
             {
                 List<Reminder> reminders = new List<Reminder>();
                 var json = JsonConvert.SerializeObject(reminders);
-                using (var file = new FileStream(Strings.RemindPath, FileMode.Create)) { }
-                File.WriteAllText(Strings.RemindPath, json);
+                using (var file = new FileStream(Xeno.RemindPath, FileMode.Create)) { }
+                File.WriteAllText(Xeno.RemindPath, json);
             }
         }
     }

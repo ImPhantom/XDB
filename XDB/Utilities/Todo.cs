@@ -16,7 +16,7 @@ namespace XDB.Utilities
         public static async Task CheckTodoListAsync(SocketCommandContext context)
         {
             Config.TodoCheck();
-            var todolists = File.ReadAllText(Strings.TodoPath);
+            var todolists = File.ReadAllText(Xeno.TodoPath);
             var json = JsonConvert.DeserializeObject<List<UserTodo>>(todolists);
             try
             {
@@ -43,21 +43,21 @@ namespace XDB.Utilities
         public static async Task AddListItemAsync(SocketCommandContext context, string item)
         {
             Config.TodoCheck();
-            var todolists = File.ReadAllText(Strings.TodoPath);
+            var todolists = File.ReadAllText(Xeno.TodoPath);
             var json = JsonConvert.DeserializeObject<List<UserTodo>>(todolists);
             try
             {
                 if (!json.Any(x => x.Id == context.User.Id))
                 {
                     json.Add(new UserTodo() { Id = context.User.Id, ListItems = new List<string> { item } });
-                    File.WriteAllText(Strings.TodoPath, JsonConvert.SerializeObject(json));
+                    File.WriteAllText(Xeno.TodoPath, JsonConvert.SerializeObject(json));
                     await context.Channel.SendMessageAsync(":heavy_check_mark:  Added item to your Todo List.");
                 }
                 else
                 {
                     json.First(x => x.Id == context.User.Id).ListItems.Add(item);
                     var _json = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.TodoPath, _json);
+                    File.WriteAllText(Xeno.TodoPath, _json);
                     await context.Channel.SendMessageAsync(":heavy_check_mark:  Added item to your Todo List.");
                 }
             }
@@ -70,7 +70,7 @@ namespace XDB.Utilities
         public static async Task RemoveListItemAsync(SocketCommandContext context, int index)
         {
             Config.TodoCheck();
-            var todolists = File.ReadAllText(Strings.TodoPath);
+            var todolists = File.ReadAllText(Xeno.TodoPath);
             var json = JsonConvert.DeserializeObject<List<UserTodo>>(todolists);
             try
             {
@@ -83,7 +83,7 @@ namespace XDB.Utilities
                     {
                         json.First(x => x.Id == context.User.Id).ListItems.RemoveAt(index);
                         var _json = JsonConvert.SerializeObject(json);
-                        File.WriteAllText(Strings.TodoPath, _json);
+                        File.WriteAllText(Xeno.TodoPath, _json);
                         await context.Channel.SendMessageAsync(":heavy_check_mark:  Removed item from your Todo List.");
                     }
                     else
@@ -101,7 +101,7 @@ namespace XDB.Utilities
         public static async Task EditListItemAsync(SocketCommandContext context, int index, string edit)
         {
             Config.TodoCheck();
-            var todolists = File.ReadAllText(Strings.TodoPath);
+            var todolists = File.ReadAllText(Xeno.TodoPath);
             var json = JsonConvert.DeserializeObject<List<UserTodo>>(todolists);
             try
             {
@@ -113,7 +113,7 @@ namespace XDB.Utilities
                     var list = json.First(x => x.Id == context.User.Id);
                     list.ListItems[index] = edit;
                     var _json = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.TodoPath, _json);
+                    File.WriteAllText(Xeno.TodoPath, _json);
                     await context.Channel.SendMessageAsync(":heavy_check_mark:  Edited specified list item!");
                 }
             }
@@ -126,7 +126,7 @@ namespace XDB.Utilities
         public static async Task ClearListAsync(SocketCommandContext context)
         {
             Config.TodoCheck();
-            var todolists = File.ReadAllText(Strings.TodoPath);
+            var todolists = File.ReadAllText(Xeno.TodoPath);
             var json = JsonConvert.DeserializeObject<List<UserTodo>>(todolists);
             try
             {
@@ -138,7 +138,7 @@ namespace XDB.Utilities
                     if (!list.ListItems.Any()) { await context.Channel.SendMessageAsync(":heavy_multiplication_x:  Your todo list is already empty."); return; } 
                     list.ListItems.Clear();
                     var _json = JsonConvert.SerializeObject(json);
-                    File.WriteAllText(Strings.TodoPath, _json);
+                    File.WriteAllText(Xeno.TodoPath, _json);
                     await context.Channel.SendMessageAsync(":heavy_check_mark:  Cleared your todo list!");
                 }
             }

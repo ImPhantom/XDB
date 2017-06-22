@@ -17,7 +17,7 @@ namespace XDB.Utilities
                 await log.SendMessageAsync(message);
             }
             else
-                Console.WriteLine(Strings.XDB_LoggingFailed);
+                Console.WriteLine(Xeno.LoggerFailed);
         }
 
         private static bool LogChannelExists()
