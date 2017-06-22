@@ -15,7 +15,7 @@ namespace XDB.Utilities
         {
             try
             {
-                var dm = await user.CreateDMChannelAsync();
+                var dm = await user.GetOrCreateDMChannelAsync();
                 await Logging.TryLoggingAsync($":hammer:  **{context.User.Username}#{context.User.Discriminator}** has banned `{user.Username}#{user.Discriminator}` for __{length.Humanize()}__\n**Reason:** `{reason}`");
                 await dm.SendMessageAsync($":hammer:  You have been temporarily banned from **{context.Guild.Name}** for: `{length.Humanize()}`\n**Reason:** {reason}");
                 var ban = new TempBan()
@@ -46,16 +46,9 @@ namespace XDB.Utilities
         {
             try
             {
-                var dm = await user.CreateDMChannelAsync();
-                if (string.IsNullOrEmpty(reason))
-                {
-                    await Logging.TryLoggingAsync($":heavy_check_mark:  **{context.User.Username}** has kicked {user.Mention}\n**Reason:** `N/A`");
-                    await dm.SendMessageAsync($":small_blue_diamond: You were kicked from **{context.Guild.Name}**\n**Reason:** `N/A`");
-                } else
-                {
-                    await Logging.TryLoggingAsync($":heavy_check_mark:  **{context.User.Username}** has kicked {user.Mention}\n**Reason:** `{reason}`");
-                    await dm.SendMessageAsync($":small_blue_diamond: You were kicked from **{context.Guild.Name}**\n**Reason:** `{reason}`");
-                }
+                var dm = await user.GetOrCreateDMChannelAsync();
+                await Logging.TryLoggingAsync($":heavy_check_mark:  **{context.User.Username}** has kicked {user.Mention}\n**Reason:** `{reason}`");
+                await dm.SendMessageAsync($":small_blue_diamond: You were kicked from **{context.Guild.Name}**\n**Reason:** `{reason}`");
                 await user.KickAsync().ConfigureAwait(false);
                 
             }
@@ -73,7 +66,7 @@ namespace XDB.Utilities
 
         public static async Task BanUserAsync(SocketGuildUser user, SocketCommandContext context, string reason)
         {
-            var dm = await user.CreateDMChannelAsync();
+            var dm = await user.GetOrCreateDMChannelAsync();
             try
             {
                 if (string.IsNullOrEmpty(reason))

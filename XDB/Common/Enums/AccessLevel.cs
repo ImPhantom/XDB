@@ -6,7 +6,8 @@
         User,
         ChannelMod,
         Moderator,
-        Administrator,
+        Administrators,
+        FullAdmin,
         GuildOwner,
         BotOwner
     }

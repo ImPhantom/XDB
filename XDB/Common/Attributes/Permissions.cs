@@ -32,6 +32,12 @@ namespace XDB.Common.Attributes
             if (c.User.IsBot)
                 return AccessLevel.Blocked;
 
+            if (Config.Load().Moderators.Contains(c.User.Id))
+                return AccessLevel.Moderator;
+
+            if (Config.Load().Administrators.Contains(c.User.Id))
+                return AccessLevel.Administrators;
+
             if (Config.Load().Owners.Contains(c.User.Id))
                 return AccessLevel.BotOwner;
 
@@ -42,10 +48,7 @@ namespace XDB.Common.Attributes
                     return AccessLevel.GuildOwner;
 
                 if (user.GuildPermissions.Administrator)
-                    return AccessLevel.Administrator;
-
-                if (Config.Load().Moderators.Contains(user.Id))
-                    return AccessLevel.Moderator;
+                    return AccessLevel.FullAdmin;
             }
 
             return AccessLevel.User;

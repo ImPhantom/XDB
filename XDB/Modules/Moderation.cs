@@ -16,25 +16,12 @@ namespace XDB.Modules
 {
     [Summary("Moderation")]
     [RequireContext(ContextType.Guild)]
-    [Permissions(AccessLevel.Administrator)]
+    [Permissions(AccessLevel.FullAdmin)]
     public class Moderation : ModuleBase<SocketCommandContext>
     {
         [Command("leave"), Summary("Forces the bot to leave its current guild.")]
         public async Task Leave()
             => await Context.Guild.LeaveAsync();
-
-        [Command("kick", RunMode = RunMode.Async), Summary("Kicks a user from a guild.")]
-        public async Task Kick(SocketGuildUser user, [Remainder] string reason = "")
-        {
-            if (string.IsNullOrEmpty(reason))
-                await ModUtil.KickUserAsync(user, Context, "");
-            else
-                await ModUtil.KickUserAsync(user, Context, reason);
-        }
-
-        [Command("tempban", RunMode = RunMode.Async), Summary("Temporarily bans a user from a guild.")]
-        public async Task TempBan(SocketGuildUser user, TimeSpan length, [Remainder] string reason = "n/a")
-            => await ModUtil.TempBanUserAsync(user, Context, length, reason);
 
         [Command("ban", RunMode = RunMode.Async), Summary("Bans a user from a guild.")]
         public async Task Ban(SocketGuildUser user, [Remainder] string reason = "")
@@ -121,13 +108,36 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  You changed the welcome message to: \n\n{message}");
         }
 
-        [Command("addmod"), Summary("Adds a moderator to your config.")]
-        public async Task AddModerator(SocketGuildUser user)
+        /*public async Task LockChannel()
         {
-            var cfg = Config.Load();
-            cfg.Moderators.Add(user.Id);
-            cfg.Save();
-            await Logging.TryLoggingAsync($":diamond_shape_with_a_dot_inside:  `{Context.User.Username}#{Context.User.Discriminator}` has added `{user.Username}#{user.Discriminator}` as a moderator.");
+            var permissions = new OverwritePermissions(66560, 456768);
+            var users = Context.Channel.GetUsersAsync().ToEnumerable();
+            var channel = Context.Channel as SocketTextChannel;
+            channel.AddPermissionOverwriteAsync()
+        }*/
+    }
+
+    [Summary("Administration")]
+    [Permissions(AccessLevel.Administrators)]
+    [RequireContext(ContextType.Guild)]
+    public class Administration : ModuleBase<SocketCommandContext>
+    {
+        [Command("kick", RunMode = RunMode.Async), Summary("Kicks a user from a guild.")]
+        public async Task Kick(SocketGuildUser user, [Remainder] string reason = "")
+        {
+            if (string.IsNullOrEmpty(reason))
+                await ReplyAsync(":heavy_multiplication_x:  **A reason is required.**");
+            else
+                await ModUtil.KickUserAsync(user, Context, reason);
+        }
+
+        [Command("tempban", RunMode = RunMode.Async), Summary("Temporarily bans a user from a guild.")]
+        public async Task TempBan(SocketGuildUser user, TimeSpan length, [Remainder] string reason = "")
+        {
+            if (string.IsNullOrEmpty(reason))
+                await ReplyAsync(":heavy_multiplication_x: **A reason is required.**");
+            else
+                await ModUtil.TempBanUserAsync(user, Context, length, reason);
         }
     }
 
@@ -154,7 +164,7 @@ namespace XDB.Modules
             };
             MutingService.AddMute(mute);
             CheckingService.Mutes.Add(mute);
-            var dm = await user.CreateDMChannelAsync();
+            var dm = await user.GetOrCreateDMChannelAsync();
             await dm.SendMessageAsync($":mute: You have been muted for **{unmuteTime.Humanize()}** due to: \n`{reason}`");
             await Logging.TryLoggingAsync($":mute: **{user.Username}#{user.Discriminator}** has been muted by {Context.User.Username} for:\n `{mute.Reason}`");
             var reply = await ReplyAsync(":ok_hand:");
@@ -178,7 +188,7 @@ namespace XDB.Modules
                         CheckingService.Mutes.Remove(mute);
                 }
             }
-            var dm = await user.CreateDMChannelAsync();
+            var dm = await user.GetOrCreateDMChannelAsync();
             await dm.SendMessageAsync($":loud_sound: You have been unmuted by **{Context.User.Username}**!");
             await Logging.TryLoggingAsync($":loud_sound: **{user.Username}#{user.Discriminator}** has been unmuted by {Context.User.Username}.");
             var reply = await ReplyAsync(":ok_hand:");
@@ -193,7 +203,7 @@ namespace XDB.Modules
     }
 
     [Summary("Clean")]
-    [Permissions(AccessLevel.Administrator)]
+    [Permissions(AccessLevel.FullAdmin)]
     [RequireContext(ContextType.Guild)]
     public class Cleanup : ModuleBase<SocketCommandContext>
     {

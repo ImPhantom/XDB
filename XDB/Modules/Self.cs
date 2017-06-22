@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
 using XDB.Common.Types;
+using XDB.Utilities;
 
 namespace XDB.Modules
 {
@@ -34,6 +35,20 @@ namespace XDB.Modules
                 list.AppendLine($"> `{user.Username}#{user.Discriminator}`");
             }
             var embed = new EmbedBuilder().WithTitle("XDB Moderators").WithDescription(list.ToString()).WithColor(new Color(28, 156, 199));
+            await ReplyAsync("", embed: embed.Build());
+        }
+
+        [Command("admins")]
+        public async Task Administrators()
+        {
+            var administrators = Config.Load().Administrators;
+            var list = new StringBuilder();
+            foreach (var admin in administrators)
+            {
+                var user = Context.Client.GetUser(admin);
+                list.AppendLine($"> `{user.Username}#{user.Discriminator}`");
+            }
+            var embed = new EmbedBuilder().WithTitle("XDB Administrators").WithDescription(list.ToString()).WithColor(new Color(28, 156, 199));
             await ReplyAsync("", embed: embed.Build());
         }
 
@@ -78,12 +93,33 @@ namespace XDB.Modules
         }
 
         [Command("nick"), Summary("Sets the bots nickname.")]
-        [Permissions(AccessLevel.Administrator)]
+        [Permissions(AccessLevel.FullAdmin)]
         public async Task SetNick([Remainder] string str)
         {
             var current = Context.Guild.CurrentUser;
             await current.ModifyAsync(x => x.Nickname = str);
             await ReplyAsync(":heavy_check_mark:  You set the bots nickname to: `" + str + "`");
+        }
+
+        [Command("addadmin"), Summary("Adds an administrator.")]
+        [Permissions(AccessLevel.FullAdmin)]
+        public async Task AddAdministrator(SocketGuildUser user)
+        {
+            var cfg = Config.Load();
+            cfg.Administrators.Add(user.Id);
+            cfg.Save();
+            await Logging.TryLoggingAsync($":diamond_shape_with_a_dot_inside:  `{Context.User.Username}#{Context.User.Discriminator}` has added `{user.Username}#{user.Discriminator}` as an administrator.");
+        }
+
+
+        [Command("addmod"), Summary("Adds a moderator to your config.")]
+        [Permissions(AccessLevel.FullAdmin)]
+        public async Task AddModerator(SocketGuildUser user)
+        {
+            var cfg = Config.Load();
+            cfg.Moderators.Add(user.Id);
+            cfg.Save();
+            await Logging.TryLoggingAsync($":diamond_shape_with_a_dot_inside:  `{Context.User.Username}#{Context.User.Discriminator}` has added `{user.Username}#{user.Discriminator}` as a moderator.");
         }
 
         [Command("status"), Summary("Sets the bots status.")]
@@ -174,7 +210,7 @@ namespace XDB.Modules
             embed.AddField(x =>
             {
                 x.Name = "Version:";
-                x.Value = $"`XDB v{Strings.ReleaseVersion}`";
+                x.Value = $"`XDB v{Xeno.Version}`";
                 x.IsInline = false;
             });
             embed.AddField(x =>
