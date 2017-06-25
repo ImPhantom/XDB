@@ -26,8 +26,9 @@ namespace XDB
                     var message = Config.Load().WelcomeMessage.Replace("{mention}", user.Mention).Replace("{username}", user.Username);
                     await def.SendMessageAsync(message);
 
-                    var dm = await user.GetOrCreateDMChannelAsync();
-                    await dm.SendMessageAsync(Config.Load().Rules);
+                    // Disabled temporarily
+                    //var dm = await user.GetOrCreateDMChannelAsync();
+                    //await dm.SendMessageAsync(Config.Load().Rules);
                 }
 
                 if (Config.Load().ExtraLogging)
@@ -85,7 +86,8 @@ namespace XDB
             };
 
             client.MessageDeleted += async (message, channel) =>
-            {
+            { 
+                // Fix ratelimit issue when using the ~clean command
                 if (Config.Load().ExtraLogging)
                 {
                     if (!message.HasValue)

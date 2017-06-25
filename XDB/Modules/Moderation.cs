@@ -203,7 +203,7 @@ namespace XDB.Modules
     }
 
     [Summary("Clean")]
-    [Permissions(AccessLevel.FullAdmin)]
+    [Permissions(AccessLevel.Administrators)]
     [RequireContext(ContextType.Guild)]
     public class Cleanup : ModuleBase<SocketCommandContext>
     {
