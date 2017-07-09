@@ -22,7 +22,7 @@ namespace XDB.Modules
         private CustomsearchService _search;
         private UrlshortenerService _shortener;
 
-        protected override void BeforeExecute()
+        protected override void BeforeExecute(CommandInfo command)
         {
             if (string.IsNullOrEmpty(Config.Load().GoogleKey))
                 throw new InvalidOperationException("Google API Key is not set, Google Query failed.");
