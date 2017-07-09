@@ -65,6 +65,7 @@ namespace XDB.Services
                 var guild = _client.GetGuild(reminder.GuildId);
                 var channel = guild.GetChannel(reminder.ChannelId) as SocketTextChannel;
                 var user = guild.GetUser(reminder.UserId);
+                if(user == null)
                 {
                     RemindService.RemoveReminder(reminder);
                     Reminders.Remove(reminder);
