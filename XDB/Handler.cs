@@ -2,7 +2,6 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,6 +42,9 @@ namespace XDB
             int argPos = 0;
             if (msg.HasStringPrefix(Config.Load().Prefix, ref argPos))
             {
+                if (Config.Load().BotChannelWhitelist)
+                    if (!Config.Load().WhitelistedChannels.Contains(s.Channel.Id))
+                        return;
                 if (s.Author.IsBot)
                     return;
                 var result = await _cmds.ExecuteAsync(context, argPos, _provider);
@@ -52,7 +54,7 @@ namespace XDB
                     if (result.Error == CommandError.UnknownCommand)
                         return;
 
-                    var embed = new EmbedBuilder().WithColor(new Color(255, 0, 0)).WithTitle("**Error:**").WithDescription(result.ErrorReason);
+                    var embed = new EmbedBuilder().WithColor(new Color(255, 0, 0)).WithTitle("Error:").WithDescription(result.ErrorReason);
                     await context.Channel.SendMessageAsync("", false, embed.Build());
                 }
             }
