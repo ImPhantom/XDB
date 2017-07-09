@@ -16,7 +16,7 @@ namespace XDB.Modules
         [Command("query"), Summary("Querys a source server for information about itself.")]
         public async Task Query(string info)
         {
-            var sw = new Stopwatch();
+            /*var sw = new Stopwatch();
             sw.Start();
             var ip = info.Split(':');
             if (ip.Length != 2)
@@ -76,14 +76,16 @@ namespace XDB.Modules
                     });
                     await ReplyAsync("", false, embed.Build());
                 }
-            }
+            }*/
+            var embed = new EmbedBuilder().WithColor(new Color(255, 0, 0)).WithTitle("Error:").WithDescription("Module disabled while the API endpoint is being rewritten.");
+            await ReplyAsync("", embed: embed);
         }
 
         [Command("players"), Summary("Retrives the playerlist from a source server.")]
         [RequireContext(ContextType.Guild)]
         public async Task Players(string info)
         {
-            var sw = new Stopwatch();
+            /*var sw = new Stopwatch();
             sw.Start();
             var ip = info.Split(':');
             if (ip.Length != 2)
@@ -106,7 +108,9 @@ namespace XDB.Modules
                     var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).AddField(field).WithFooter(footer);
                     await ReplyAsync("", false, embed.Build());
                 }
-            }
+            }*/
+            var embed = new EmbedBuilder().WithColor(new Color(255, 0, 0)).WithTitle("Error:").WithDescription("Module disabled while the API endpoint is being rewritten.");
+            await ReplyAsync("", embed: embed);
         }
     }
 }
