@@ -108,13 +108,28 @@ namespace XDB.Modules
             await ReplyAsync($":heavy_check_mark:  You changed the welcome message to: \n\n{message}");
         }
 
-        /*public async Task LockChannel()
+        [Command("lock"), Summary("Locks a channel to disallow messages being sent.")]
+        [Permissions(AccessLevel.BotOwner)]
+        public async Task LockChannel()
         {
-            var permissions = new OverwritePermissions(66560, 456768);
-            var users = Context.Channel.GetUsersAsync().ToEnumerable();
             var channel = Context.Channel as SocketTextChannel;
-            channel.AddPermissionOverwriteAsync()
-        }*/
+            var ow = new OverwritePermissions(addReactions: PermValue.Deny, sendMessages: PermValue.Deny, embedLinks: PermValue.Deny, attachFiles: PermValue.Deny);
+            var everyone = Context.Guild.Roles.First(x => x.IsEveryone);
+            await channel.AddPermissionOverwriteAsync(everyone, ow);
+            await Context.Message.DeleteAsync();
+            await ReplyAsync(":lock: Channel Locked.");
+        }
+
+        [Command("unlock"), Summary("Unlocks a channel to allow messages being sent.")]
+        [Permissions(AccessLevel.BotOwner)]
+        public async Task UnlockChannel()
+        {
+            var channel = Context.Channel as SocketTextChannel;
+            var everyone = Context.Guild.Roles.First(x => x.IsEveryone);
+            await channel.RemovePermissionOverwriteAsync(everyone);
+            await Context.Message.DeleteAsync();
+            await ReplyAsync(":unlock: Channel Unlocked.");
+        }
     }
 
     [Summary("Administration")]
