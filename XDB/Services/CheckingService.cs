@@ -38,6 +38,13 @@ namespace XDB.Services
             {
                 var guild = _client.GetGuild(mute.GuildId);
                 var user = guild.GetUser(mute.UserId);
+                if (user == null)
+                {
+                    MutingService.RemoveMute(mute);
+                    Mutes.Remove(mute);
+                    BetterConsole.LogError("Muting", "Error trying to unmute unknown user, mute removed.");
+                    return;
+                }
 
                 var role = guild.GetRole(Config.Load().MutedRoleId);
                 await user.RemoveRolesAsync(new SocketRole[] { role });
@@ -58,6 +65,12 @@ namespace XDB.Services
                 var guild = _client.GetGuild(reminder.GuildId);
                 var channel = guild.GetChannel(reminder.ChannelId) as SocketTextChannel;
                 var user = guild.GetUser(reminder.UserId);
+                {
+                    RemindService.RemoveReminder(reminder);
+                    Reminders.Remove(reminder);
+                    BetterConsole.LogError("Remind", "Error trying to remind an unknown user, reminder deleted.");
+                    return;
+                }
 
                 if (string.IsNullOrEmpty(reminder.Reason))
                     await channel?.SendMessageAsync($":mega: {user?.Mention} Timer is up!");

@@ -32,7 +32,10 @@ namespace XDB.Modules
             foreach (var mod in moderators)
             {
                 var user = Context.Client.GetUser(mod);
-                list.AppendLine($"> `{user.Username}#{user.Discriminator}`");
+                if (user == null)
+                    list.AppendLine($"> `{mod}`");
+                else
+                    list.AppendLine($"> `{user.Username}#{user.Discriminator}`");
             }
             var embed = new EmbedBuilder().WithTitle("XDB Moderators").WithDescription(list.ToString()).WithColor(new Color(28, 156, 199));
             await ReplyAsync("", embed: embed.Build());
@@ -46,7 +49,10 @@ namespace XDB.Modules
             foreach (var admin in administrators)
             {
                 var user = Context.Client.GetUser(admin);
-                list.AppendLine($"> `{user.Username}#{user.Discriminator}`");
+                if (user == null)
+                    list.AppendLine($"> `{admin}`");
+                else
+                    list.AppendLine($"> `{user.Username}#{user.Discriminator}`");
             }
             var embed = new EmbedBuilder().WithTitle("XDB Administrators").WithDescription(list.ToString()).WithColor(new Color(28, 156, 199));
             await ReplyAsync("", embed: embed.Build());
