@@ -18,6 +18,13 @@ namespace XDB
 
             client.UserJoined += async (user) =>
             {
+                if(CheckingService.Mutes.Any(x => x.UserId == user.Id))
+                {
+                    var muteRole = user.Guild.GetRole(Config.Load().MutedRoleId);
+                    await user.AddRoleAsync(muteRole);
+                    await user.ModifyAsync(x => x.Mute = true);
+                }
+
                 if (Config.Load().Welcome == true)
                 {
                     if (user.IsBot)
