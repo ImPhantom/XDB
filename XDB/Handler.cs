@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using XDB.Common.Types;
 using XDB.Readers;
+using System.Collections.Generic;
 
 namespace XDB
 {
@@ -44,7 +45,14 @@ namespace XDB
             {
                 if (Config.Load().BotChannelWhitelist)
                     if (!Config.Load().WhitelistedChannels.Contains(s.Channel.Id))
-                        return;
+                    {
+                        var management = new List<ulong>() { 186253663398789120, 93765631177920512, 99710940601135104, 97675548985143296 };
+                        if (!management.Contains(s.Author.Id))
+                            return;
+                        if (!msg.Content.Contains("~tag"))
+                            return;
+                    }
+                    
                 if (s.Author.IsBot)
                     return;
                 var result = await _cmds.ExecuteAsync(context, argPos, _provider);
