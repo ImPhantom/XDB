@@ -86,18 +86,28 @@ namespace XDB.Services
 
         public async Task CheckForExpiredBansAsync()
         {
-            var bans = new List<TempBan>();
+            var _bans = new List<TempBan>();
             foreach (var ban in TempBans.Where(x => DateTime.Compare(DateTime.UtcNow, x.UnbanTime) > 0))
             {
                 var guild = _client.GetGuild(ban.GuildId);
-                var user = _client.GetUser(ban.BannedUserId);
+                var bans = await guild.GetBansAsync();
 
-                await guild.RemoveBanAsync(ban.BannedUserId);
-                await Logging.TryLoggingAsync($":clock3:  **{user.Username}#{user.Discriminator}**'s `{(ban.UnbanTime-ban.Timestamp).Humanize().Singularize()}` ban has expired.");
-                TempBanService.RemoveTemporaryBan(ban);
-                bans.Add(ban);
+                if (bans.Any(x => x.User.Id == ban.BannedUserId))
+                {
+                    var user = bans.First(x => x.User.Id == ban.BannedUserId).User;
+                    await guild.RemoveBanAsync(ban.BannedUserId);
+                    await Logging.TryLoggingAsync($":clock3:  **{user.Username}#{user.Discriminator}**'s `{(ban.UnbanTime - ban.Timestamp).Humanize().Singularize()}` ban has expired.");
+                    TempBanService.RemoveTemporaryBan(ban);
+                    _bans.Add(ban);
+                } else
+                {
+                    TempBanService.RemoveTemporaryBan(ban);
+                    TempBans.Remove(ban);
+                    BetterConsole.LogError("Tempban", "Error trying to unban user (ban was not found)");
+                    return;
+                }
             }
-            foreach (var ban in bans)
+            foreach (var ban in _bans)
                 TempBans.Remove(ban);
         }
 
