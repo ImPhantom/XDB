@@ -47,10 +47,10 @@ namespace XDB
                     if (!Config.Load().WhitelistedChannels.Contains(s.Channel.Id))
                     {
                         var management = new List<ulong>() { 186253663398789120, 93765631177920512, 99710940601135104, 97675548985143296 };
+
                         if (!management.Contains(s.Author.Id))
-                            return;
-                        if (!msg.Content.Contains("~tag"))
-                            return;
+                            if(!msg.Content.StartsWith("~tag"))
+                                return;
                     }
                     
                 if (s.Author.IsBot)
