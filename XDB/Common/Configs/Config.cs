@@ -18,6 +18,7 @@ namespace XDB.Common.Types
         public ulong MutedRoleId { get; set; } = 0;
         public string Token { get; set; } = "";
         public string GoogleKey { get; set; } = "";
+        public string SteamApiKey { get; set; } = "";
         public ulong LogChannel { get; set; } = 0;
         public bool BotChannelWhitelist { get; set; } = false;
         public List<ulong> WhitelistedChannels { get; set; } = new List<ulong> { };

@@ -11,6 +11,7 @@
     <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.25.0.466" />
     <PackageReference Include="Google.Apis.Urlshortener.v1" Version="1.25.0.138" />
     <PackageReference Include="Humanizer.Core" Version="2.2.0" />
+    <PackageReference Include="SteamWebAPI2" Version="4.0.1" />
   </ItemGroup>
 
 </Project>
