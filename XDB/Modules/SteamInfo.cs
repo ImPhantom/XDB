@@ -6,6 +6,10 @@ using System.Linq;
 using SteamWebAPI2.Interfaces;
 using XDB.Common.Types;
 using XDB.Common;
+using System.Diagnostics;
+using System.Net.Http;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace XDB.Modules
 {
@@ -13,6 +17,43 @@ namespace XDB.Modules
     [RequireContext(ContextType.Guild)]
     public class SteamInfo : ModuleBase<SocketCommandContext>
     {
+        [Command("query"), Summary("Querys a source server for its public information.")]
+        public async Task QuerySourceServer(string queryIp)
+        {
+            var sw = Stopwatch.StartNew();
+            var ip = queryIp.Split(':');
+            if (ip.Length != 2)
+                return;
+
+            var url = $"http://45.63.78.183/query.php?ip={ip[0]}&port={ip[1]}";
+            using (HttpClient client = new HttpClient())
+            using (HttpResponseMessage response = await client.GetAsync(url))
+            using (HttpContent content = response.Content)
+            {
+                var stream = await content.ReadAsStreamAsync();
+                var reader = new StreamReader(stream);
+                string _streamContent;
+                while ((_streamContent = reader.ReadLine()) != null)
+                {
+                    string vac;
+                    _streamContent = Regex.Replace(_streamContent, "<br />", Environment.NewLine);
+                    string[] _content = _streamContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+                    if (_content[6] == "1") vac = "Yes"; else vac = "No";
+                    sw.Stop();
+                    var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithDescription($"__**{_content[1]}**__\n\n").WithFooter($"Generated in: {sw.ElapsedMilliseconds}ms");
+                    //embed.AddField("Hostname:", $"`{_content[1]}`");
+                    embed.AddInlineField("Map:", $"`{_content[4]}`");
+                    embed.AddInlineField("Players:", $"{_content[2]}/{_content[3]}");
+                    embed.AddInlineField("Game:", _content[0]);
+                    embed.AddInlineField("Gamemode:", $"`{_content[5]}`");
+                    embed.AddInlineField("OS:", GetServerOS(_content[7]));
+                    embed.AddInlineField("VAC Secure:", vac);
+
+                    await ReplyAsync("" , embed: embed);
+                }
+            }
+        }
+
         [Command("steamuser"), Summary("Provides all information about a steam user.")]
         public async Task FetchSteamUser(ulong id)
         {
@@ -71,6 +112,24 @@ namespace XDB.Modules
                return new Color(83, 164, 196);
             else
                 return new Color(86, 86, 86);
+        }
+
+        private string GetServerOS(string os)
+        {
+            switch(os)
+            {
+                case "l":
+                    return "Linux";
+                case "w":
+                    return "Windows";
+                case "m":
+                    return "Mac";
+                case "o":
+                    return "Mac";
+                default:
+                    return "Invalid OS Code";
+            }
+
         }
     }
 }
