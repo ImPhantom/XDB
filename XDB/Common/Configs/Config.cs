@@ -45,6 +45,25 @@ namespace XDB.Common.Types
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
 
+
+        public static void CheckExistence()
+        {
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "cfg")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "cfg"));
+
+            if (!File.Exists(Xeno.ConfigPath))
+            {
+                var cfg = new Config();
+                Console.WriteLine(Xeno.ConfigCreated);
+                Console.Write("Token: ");
+                cfg.Token = Console.ReadLine();
+                cfg.Save();
+            }
+            if (!File.Exists(Xeno.ModulePath)) { var mdls = new ModuleConfig(); mdls.Save(); }
+            BetterConsole.Log("Info", "XDB", "Configuration successfully loaded!");
+        }
+
+        #region annoying config checks
         public static void TodoCheck()
         {
             var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
@@ -112,21 +131,6 @@ namespace XDB.Common.Types
                 return;
         }
 
-        public static void CheckExistence()
-        {
-            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "cfg")))
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "cfg"));
-
-            if (!File.Exists(Xeno.ConfigPath))
-            {
-                var cfg = new Config();
-                Console.WriteLine(Xeno.ConfigCreated);
-                Console.Write("Token: ");
-                cfg.Token = Console.ReadLine();
-                cfg.Save();
-            }
-            if (!File.Exists(Xeno.ModulePath)) { var mdls = new ModuleConfig(); mdls.Save(); }
-            BetterConsole.Log("Info", "XDB", "Configuration successfully loaded!");
-        }
+#endregion
     }
 }

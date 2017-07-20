@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using XDB.Common.Models;
-using XDB.Common.Types;
 
 namespace XDB.Services
 {

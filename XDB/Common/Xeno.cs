@@ -3,11 +3,11 @@ using Discord.WebSocket;
 using System;
 using System.IO;
 
-namespace XDB.Common.Types
+namespace XDB
 {
     public class Xeno
     {
-        public static readonly string Version = "1.2.8";
+        public static readonly string Version = "1.2.9rc1";
         public static string Status = $"XDB (rel: {Version})(api: {DiscordConfig.Version})";
 
         // Default Messages
@@ -42,6 +42,12 @@ Please fill in all your info and restart the bot.";
         public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"tempbans.json");
         public static string CringePath = Path.Combine(AppContext.BaseDirectory, $"boardmessages.json");
         #endregion
+
+        public static Embed ErrorEmbed(string error)
+        {
+            var embed = new EmbedBuilder().WithColor(new Color(255, 0, 0)).WithTitle("Error:").WithDescription(error);
+            return embed;
+        }
 
         public static string GetUserGame(SocketGuildUser user)
         {

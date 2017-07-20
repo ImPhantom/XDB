@@ -4,7 +4,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using XDB.Common.Models;
 using System.IO;
-using XDB.Common.Types;
 
 namespace XDB.Services
 {

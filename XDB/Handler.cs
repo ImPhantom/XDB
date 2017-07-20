@@ -1,5 +1,4 @@
-﻿using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Reflection;
@@ -62,8 +61,7 @@ namespace XDB
                     if (result.Error == CommandError.UnknownCommand)
                         return;
 
-                    var embed = new EmbedBuilder().WithColor(new Color(255, 0, 0)).WithTitle("Error:").WithDescription(result.ErrorReason);
-                    await context.Channel.SendMessageAsync("", false, embed.Build());
+                    await context.Channel.SendMessageAsync("", false, Xeno.ErrorEmbed(result.ErrorReason));
                 }
             }
         }
