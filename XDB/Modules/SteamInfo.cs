@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.IO;
 using System.Text.RegularExpressions;
+using XDB.Utilities;
 
 namespace XDB.Modules
 {
@@ -41,12 +42,11 @@ namespace XDB.Modules
                     if (_content[6] == "1") vac = "Yes"; else vac = "No";
                     sw.Stop();
                     var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithDescription($"__**{_content[1]}**__\n\n").WithFooter($"Generated in: {sw.ElapsedMilliseconds}ms");
-                    //embed.AddField("Hostname:", $"`{_content[1]}`");
                     embed.AddInlineField("Map:", $"`{_content[4]}`");
                     embed.AddInlineField("Players:", $"{_content[2]}/{_content[3]}");
                     embed.AddInlineField("Game:", _content[0]);
                     embed.AddInlineField("Gamemode:", $"`{_content[5]}`");
-                    embed.AddInlineField("OS:", GetServerOS(_content[7]));
+                    embed.AddInlineField("OS:", SteamUtil.GetServerOS(_content[7]));
                     embed.AddInlineField("VAC Secure:", vac);
 
                     await ReplyAsync("" , embed: embed);
@@ -55,9 +55,16 @@ namespace XDB.Modules
         }
 
         [Command("steamuser"), Summary("Provides all information about a steam user.")]
-        public async Task FetchSteamUser(ulong id)
+        public async Task FetchSteamUser(string input)
         {
             var _api = new SteamUser(Config.Load().SteamApiKey);
+            var id = await SteamUtil.ParseSteamId(input);
+            if(id == 0)
+            {
+                await ReplyAsync("", embed: Xeno.ErrorEmbed("Could not parse steamid/vanity url"));
+                return;
+            }
+        
             var response = await _api.GetPlayerSummaryAsync(id);
             var data = response.Data;
 
@@ -65,15 +72,28 @@ namespace XDB.Modules
                 await ReplyAsync("That user has not setup their community profile.");
 
             var author = new EmbedAuthorBuilder().WithIconUrl(data.AvatarFullUrl).WithName(data.Nickname);
-            var embed = new EmbedBuilder().WithAuthor(author).WithFooter($"Info fetched on {DateTime.UtcNow}").WithColor(GetActivityColor(data.UserStatus, data.PlayingGameName));
+            var embed = new EmbedBuilder().WithAuthor(author).WithFooter($"Info fetched on {DateTime.UtcNow}").WithColor(SteamUtil.GetActivityColor(data.UserStatus, data.PlayingGameName));
             embed.AddInlineField("Status:", data.UserStatus);
             embed.AddInlineField("SteamID:", data.SteamId);
             embed.AddInlineField("Visibility:", data.ProfileVisibility);
             embed.AddInlineField("Date Created:", data.AccountCreatedDate.ToString("M/d/yyyy")); 
             if(data.PlayingGameName != null)
                 embed.AddInlineField("Playing:", data.PlayingGameName);
+            if (data.RealName != null)
+                embed.AddInlineField("Real Name:", data.RealName);
 
             await ReplyAsync("", embed: embed);
+        }
+
+        [Command("resolve"), Summary("test")]
+        public async Task Resolve([Remainder] string url)
+        {
+            var _api = new SteamUser(Config.Load().SteamApiKey);
+            var id = await _api.ResolveVanityUrlAsync(url);
+            var user = await _api.GetPlayerSummaryAsync(id.Data);
+
+            await ReplyAsync(user.Data.Nickname + user.Data.ProfileUrl);
+
         }
 
         [Command("steamgame"), Summary("Fetches information about a steam game.")]
@@ -92,44 +112,14 @@ namespace XDB.Modules
                 var app = data.First(x => x.Name.ToLower().Replace("-", " ").Replace(seps, "") == game.ToLower());
                 var ret = await stats.GetNumberOfCurrentPlayersForGameAsync(app.AppId);
 
-                await ReplyAsync($"game: {app.Name}, appid: {app.AppId}");
+                //await ReplyAsync($"game: {app.Name}, appid: {app.AppId}");
                 var details = await _store.GetStoreAppDetailsAsync(app.AppId);
                 var embed = new EmbedBuilder().WithTitle(details.Name).WithThumbnailUrl(details.HeaderImage).WithFooter(new EmbedFooterBuilder().WithText($"Current Players: {ret.Data}, Released: {details.ReleaseDate.Date}")).WithDescription($"{details.AboutTheGame.Substring(0, 675)}...\n\n**Publisher(s):** {string.Join(", ", details.Publishers)}\n**Store Link:** http://store.steampowered.com/app/{details.SteamAppId}/");
                 await ReplyAsync("", embed: embed);
             } else
             {
-                await ReplyAsync("Game not found, try typing the full game title");
+                await ReplyAsync(":x: Game not found, try typing the full game title");
             }
-        }
-
-        private Color GetActivityColor(Steam.Models.SteamCommunity.UserStatus status, string playing)
-        {
-            if (status == Steam.Models.SteamCommunity.UserStatus.Offline)
-                return new Color(86, 86, 86);
-            else if (status == Steam.Models.SteamCommunity.UserStatus.Online && playing != null)
-                return new Color(143, 185, 59);
-            else if (status == Steam.Models.SteamCommunity.UserStatus.Online && playing == null)
-               return new Color(83, 164, 196);
-            else
-                return new Color(86, 86, 86);
-        }
-
-        private string GetServerOS(string os)
-        {
-            switch(os)
-            {
-                case "l":
-                    return "Linux";
-                case "w":
-                    return "Windows";
-                case "m":
-                    return "Mac";
-                case "o":
-                    return "Mac";
-                default:
-                    return "Invalid OS Code";
-            }
-
         }
     }
 }
