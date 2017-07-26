@@ -54,7 +54,7 @@ namespace XDB.Modules
             }
         }
 
-        [Command("steamuser"), Summary("Provides all information about a steam user.")]
+        [Command("steamuser"), Alias("user"), Summary("Provides all information about a steam user.")]
         public async Task FetchSteamUser(string input)
         {
             var _api = new SteamUser(Config.Load().SteamApiKey);
@@ -72,16 +72,18 @@ namespace XDB.Modules
                 await ReplyAsync("That user has not setup their community profile.");
 
             var author = new EmbedAuthorBuilder().WithIconUrl(data.AvatarFullUrl).WithName(data.Nickname);
-            var embed = new EmbedBuilder().WithAuthor(author).WithFooter($"Info fetched on {DateTime.UtcNow}").WithColor(SteamUtil.GetActivityColor(data.UserStatus, data.PlayingGameName));
+            var embed = new EmbedBuilder().WithAuthor(author).WithFooter($"Info fetched on {DateTime.UtcNow}").WithColor(SteamUtil.GetActivityColor(data.UserStatus, data.PlayingGameName)).WithDescription(data.ProfileUrl);
             embed.AddInlineField("Status:", data.UserStatus);
             embed.AddInlineField("SteamID:", data.SteamId);
-            embed.AddInlineField("Visibility:", data.ProfileVisibility);
-            embed.AddInlineField("Date Created:", data.AccountCreatedDate.ToString("M/d/yyyy")); 
-            if(data.PlayingGameName != null)
-                embed.AddInlineField("Playing:", data.PlayingGameName);
-            if (data.RealName != null)
-                embed.AddInlineField("Real Name:", data.RealName);
 
+            if(data.ProfileVisibility == Steam.Models.SteamCommunity.ProfileVisibility.Public)
+            {
+                embed.AddInlineField("Date Created:", data.AccountCreatedDate.ToString("M/d/yyyy"));
+                if (data.PlayingGameName != null)
+                    embed.AddInlineField("Playing:", data.PlayingGameName);
+                if (data.RealName != null)
+                    embed.AddInlineField("Real Name:", data.RealName);
+            }
             await ReplyAsync("", embed: embed);
         }
 
