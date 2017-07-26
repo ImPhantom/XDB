@@ -16,7 +16,6 @@ namespace XDB
 
         public static DiscordSocketClient client;
         private Handler cmds;
-        //private RatelimitService _rate;
         private MutingService _muting;
         private RemindService _remind;
         private TempBanService _tempbans;
@@ -40,13 +39,6 @@ namespace XDB
                 AlwaysDownloadUsers = true,
                 MessageCacheSize = 1000
             });
-
-            //Commented out cause its a rough version...
-
-            //_rate = new RatelimitService(client, _registry, _checking);
-            //await _rate.LoadConfigurationAsync();
-            //if (_rate.IsEnabled)
-            // _rate.Enable(_rate.Limit);
 
             _muting = new MutingService();
             _muting.InitializeMutes();
@@ -88,7 +80,6 @@ namespace XDB
             var services = new ServiceCollection()
                 .AddSingleton(client)
                 .AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false }))
-                //.AddSingleton<RatelimitService>()
                 .AddSingleton<MutingService>()
                 .AddSingleton<RemindService>()
                 .AddSingleton<TempBanService>()
