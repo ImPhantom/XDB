@@ -11,6 +11,9 @@ namespace XDB.Modules
     [RequireContext(ContextType.Guild)]
     public class Remind : ModuleBase<SocketCommandContext>
     {
+        private RemindService _remind;
+        private CheckingService _checking;
+
         [Command("remind"), Summary("Sets a reminder for you.")]
         public async Task RemindMe(TimeSpan time, [Remainder] string reminder = "")
         {
@@ -23,9 +26,15 @@ namespace XDB.Modules
                 Timestamp = DateTime.UtcNow,
                 RemindTime = DateTime.UtcNow.Add(time)
             };
-            RemindService.AddReminder(_reminder);
-            CheckingService.Reminders.Add(_reminder);
+            _remind.AddReminder(_reminder);
+            _checking.Reminders.Add(_reminder);
             await ReplyAsync($":alarm_clock: Okay, I will remind you in {time.Humanize()}.");
+        }
+
+        public Remind(RemindService remind, CheckingService checking)
+        {
+            _remind = remind;
+            _checking = checking;
         }
     }
 }

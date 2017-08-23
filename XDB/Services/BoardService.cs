@@ -12,7 +12,7 @@ namespace XDB.Services
 {
     public class BoardService
     {
-        private static DiscordSocketClient _client;
+        private DiscordSocketClient _client;
 
         public static List<BoardMessage> FetchMessages()
             => JsonConvert.DeserializeObject<List<BoardMessage>>(File.ReadAllText(Xeno.CringePath));
@@ -57,14 +57,11 @@ namespace XDB.Services
 
         public void Initialize()
         {
-            if (File.Exists(Xeno.CringePath))
-                return;
-            else
+            if (!File.Exists(Xeno.CringePath))
             {
                 List<BoardMessage> _messages = new List<BoardMessage>();
-                var messages = JsonConvert.SerializeObject(_messages);
                 using (var file = new FileStream(Xeno.CringePath, FileMode.Create)) { }
-                File.WriteAllText(Xeno.CringePath, messages);
+                File.WriteAllText(Xeno.CringePath, JsonConvert.SerializeObject(_messages));
             }
         }
 

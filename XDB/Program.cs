@@ -16,9 +16,8 @@ namespace XDB
 
         public static DiscordSocketClient client;
         private Handler cmds;
-        private MutingService _muting;
+        private ModerationService _moderation;
         private RemindService _remind;
-        private TempBanService _tempbans;
         private CheckingService _checking;
         private BoardService _board;
 
@@ -40,16 +39,13 @@ namespace XDB
                 MessageCacheSize = 1000
             });
 
-            _muting = new MutingService();
-            _muting.InitializeMutes();
+            _moderation = new ModerationService();
+            _moderation.Initialize();
 
             _remind = new RemindService();
             _remind.Initialize();
 
-            _tempbans = new TempBanService();
-            _tempbans.Initialize();
-
-            _checking = new CheckingService(client, _muting, _remind, _tempbans);
+            _checking = new CheckingService(client, _moderation, _remind);
             await _checking.FetchChecksAsync();
 
             _board = new BoardService(client);
@@ -70,7 +66,7 @@ namespace XDB
             await Task.Delay(6000);
             await client.SetGameAsync($"{Config.Load().Prefix}help | Users: {client.Guilds.Sum(x => x.Users.Count())}");
 
-            Events.Listen();
+            Events.Listen(_checking);
 
             await Task.Delay(-1);
         }
@@ -80,9 +76,8 @@ namespace XDB
             var services = new ServiceCollection()
                 .AddSingleton(client)
                 .AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false }))
-                .AddSingleton<MutingService>()
+                .AddSingleton<ModerationService>()
                 .AddSingleton<RemindService>()
-                .AddSingleton<TempBanService>()
                 .AddSingleton<CheckingService>();
 
             return new DefaultServiceProviderFactory().CreateServiceProvider(services);

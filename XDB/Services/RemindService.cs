@@ -9,13 +9,13 @@ namespace XDB.Services
 {
     public class RemindService
     {
-        public static List<Reminder> FetchReminders()
+        public List<Reminder> FetchReminders()
             => JsonConvert.DeserializeObject<List<Reminder>>(File.ReadAllText(Xeno.RemindPath));
 
-        public IEnumerable<Reminder> GetActiveReminders()
+        public IEnumerable<Reminder> FetchActiveReminders()
             => FetchReminders().Where(x => DateTime.Compare(DateTime.UtcNow, x.RemindTime) > 0);
 
-        public static void AddReminder(Reminder reminder)
+        public void AddReminder(Reminder reminder)
         {
             var _in = FetchReminders();
             try
@@ -36,7 +36,7 @@ namespace XDB.Services
             }
         }
 
-        public static void RemoveReminder(Reminder _reminder)
+        public void RemoveReminder(Reminder _reminder)
         {
             var _in = FetchReminders();
             try

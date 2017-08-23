@@ -12,13 +12,13 @@ namespace XDB
 {
     public class Events
     {
-        public static void Listen()
+        public static void Listen(CheckingService checking)
         {
             var client = Program.client;
 
             client.UserJoined += async (user) =>
             {
-                if(CheckingService.Mutes.Any(x => x.UserId == user.Id))
+                if(checking.Mutes.Any(x => x.UserId == user.Id))
                 {
                     var muteRole = user.Guild.GetRole(Config.Load().MutedRoleId);
                     await user.AddRoleAsync(muteRole);
