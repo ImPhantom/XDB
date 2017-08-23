@@ -20,120 +20,44 @@ namespace XDB.Modules
 
         [Command("user"), Summary("Displays your user information.")]
         public async Task UserInfo()
-            => await GetUserInfo(Context, Context.User as SocketGuildUser);
+            => await ReplyAsync("", embed: FetchUserInfoEmbed(Context.User as SocketGuildUser));
 
         [Command("user"), Summary("Displays a specified users information.")]
         public async Task UserInfo(SocketGuildUser user)
-            => await GetUserInfo(Context, user);
+            => await ReplyAsync("", embed: FetchUserInfoEmbed(user));
 
         [Command("guild"), Alias("server"), Summary("Display's the current guild's information.")]
         public async Task GuildInfo()
+            => await ReplyAsync("", embed: FetchGuildInfoEmbed(Context.Guild));
+
+        private Embed FetchGuildInfoEmbed(SocketGuild guild)
         {
-            var guild = Context.Guild as SocketGuild;
-            var author = new EmbedAuthorBuilder().WithIconUrl(guild.IconUrl).WithName(guild.Name);
-            var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(author).WithCurrentTimestamp();
-            embed.AddField(x =>
-            {
-                x.Name = "Owner:";
-                x.Value = guild.Owner.Mention;
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Guild ID:";
-                x.Value = $"`{guild.Id}`";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Voice Region:";
-                x.Value = $"`{guild.VoiceRegionId}`";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Created:";
-                x.Value = $"{guild.CreatedAt.Month}/{guild.CreatedAt.Day}/{guild.CreatedAt.Year}";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Roles:";
-                x.Value = $"{guild.Roles.Count}";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Users:";
-                x.Value = $"{guild.MemberCount}";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Text Channels:";
-                x.Value = $"{guild.TextChannels.Count}";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Voice Channels:";
-                x.Value = $"{guild.VoiceChannels.Count}";
-                x.IsInline = true;
-            });
-            await ReplyAsync("", false, embed.Build());
+            var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(guild.Name, guild.IconUrl).WithCurrentTimestamp();
+            embed.AddInlineField("Owner:", guild.Owner.Mention);
+            embed.AddInlineField("Guild ID:", $"`{guild.Id}`");
+            embed.AddInlineField("Voice Region:", $"`{guild.VoiceRegionId}`");
+            embed.AddInlineField("Created:", guild.CreatedAt.ToString("M/dd/yyyy"));
+            embed.AddInlineField("Roles:", guild.Roles.Count);
+            embed.AddInlineField("Users:", guild.MemberCount);
+            embed.AddInlineField("Text Channels:", guild.TextChannels.Count);
+            embed.AddInlineField("Voice Channels:", guild.VoiceChannels.Count);
+
+            return embed;
         }
 
-        private async Task GetUserInfo(SocketCommandContext context, SocketGuildUser user)
+        private Embed FetchUserInfoEmbed(SocketGuildUser user)
         {
-            var author = new EmbedAuthorBuilder().WithName(Context.User.Username).WithIconUrl(Context.User.GetAvatarUrl());
-            var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(author).WithCurrentTimestamp();
-
-            embed.AddField(x =>
-            {
-                x.Name = "Username:";
-                x.Value = $"`{user.Username}#{user.Discriminator}`";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "ID:";
-                x.Value = $"`{user.Id}`";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Created:";
-                x.Value = $"{user.CreatedAt.Month}/{user.CreatedAt.Day}/{user.CreatedAt.Year}";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Joined:";
-                x.Value = $"{user.JoinedAt.Value.Month}/{user.JoinedAt.Value.Day}/{user.JoinedAt.Value.Year}";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Status:";
-                x.Value = $"{user.Status}";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Game:";
-                x.Value = $"{Xeno.GetUserGame(user)}";
-                x.IsInline = true;
-            });
+            var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(user.Username, user.GetAvatarUrl()).WithCurrentTimestamp();
+            embed.AddInlineField("Username:", $"`{user.Username}#{user.Discriminator}`");
+            embed.AddInlineField("ID:", $"`{user.Id}`");
+            embed.AddInlineField("Created:", user.CreatedAt.ToString("M/d/yyyy"));
+            embed.AddInlineField("Joined:", user.JoinedAt.Value.ToString("M/d/yyyy"));
+            embed.AddInlineField("Status:", user.Status);
+            embed.AddInlineField("Game:", Xeno.GetUserGame(user));
             if (user.VoiceChannel != null)
-            {
-                embed.AddField(x =>
-                {
-                    x.Name = "Voice State: ";
-                    x.Value = $"{Xeno.GetVoiceState(user)}";
-                    x.IsInline = true;
-                });
-            }
-            await ReplyAsync("", false, embed.Build());
+                embed.AddInlineField("Voice State:", Xeno.GetVoiceState(user));
+
+            return embed;
         }
     }
 }
