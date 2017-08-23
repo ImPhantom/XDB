@@ -16,18 +16,17 @@ namespace XDB.Services
         private readonly Timer _timer;
 
         private DiscordSocketClient _client;
-        private MutingService _muting;
+        private ModerationService _moderation;
         private RemindService _remind;
-        private TempBanService _tempbans;
-        public static List<Mute> Mutes { get; set; }
-        public static List<Reminder> Reminders { get; set; }
-        public static List<TempBan> TempBans { get; set; }
+        public List<Mute> Mutes { get; set; }
+        public List<Reminder> Reminders { get; set; }
+        public List<TempBan> TempBans { get; set; }
 
         public Task FetchChecksAsync()
         {
-            Mutes = new List<Mute>(_muting.GetActiveMutes());
-            Reminders = new List<Reminder>(_remind.GetActiveReminders());
-            TempBans = new List<TempBan>(_tempbans.GetActiveBans());
+            Mutes = new List<Mute>(_moderation.FetchActiveMutes());
+            Reminders = new List<Reminder>(_remind.FetchActiveReminders());
+            TempBans = new List<TempBan>(_moderation.FetchActiveTempBans());
             return Task.CompletedTask;
         }
 
@@ -40,7 +39,7 @@ namespace XDB.Services
                 var user = guild.GetUser(mute.UserId);
                 if (user == null)
                 {
-                    MutingService.RemoveMute(mute);
+                    _moderation.RemoveMute(mute);
                     Mutes.Remove(mute);
                     BetterConsole.LogError("Muting", "Error trying to unmute unknown user, mute removed.");
                     return;
@@ -50,7 +49,7 @@ namespace XDB.Services
                 await user.RemoveRolesAsync(new SocketRole[] { role });
                 await user.ModifyAsync(x => x.Mute = false);
                 await Logging.TryLoggingAsync($":alarm_clock: `{user.Username}#{user.Discriminator}`'s mute for `{mute.Reason}` has expired.");
-                MutingService.RemoveMute(mute);
+                _moderation.RemoveMute(mute);
                 mutes.Add(mute);
             }
             foreach (var mute in mutes)
@@ -67,7 +66,7 @@ namespace XDB.Services
                 var user = guild.GetUser(reminder.UserId);
                 if(user == null)
                 {
-                    RemindService.RemoveReminder(reminder);
+                    _remind.RemoveReminder(reminder);
                     Reminders.Remove(reminder);
                     BetterConsole.LogError("Remind", "Error trying to remind an unknown user, reminder deleted.");
                     return;
@@ -77,7 +76,7 @@ namespace XDB.Services
                     await channel?.SendMessageAsync($":mega: {user?.Mention} Timer is up!");
                 else
                     await channel?.SendMessageAsync($":mega: {user?.Mention} Timer is up! You need to: `{reminder.Reason}`");
-                RemindService.RemoveReminder(reminder);
+                _remind.RemoveReminder(reminder);
                 reminders.Add(reminder);
             }
             foreach (var reminder in reminders)
@@ -97,11 +96,11 @@ namespace XDB.Services
                     var user = bans.First(x => x.User.Id == ban.BannedUserId).User;
                     await guild.RemoveBanAsync(ban.BannedUserId);
                     await Logging.TryLoggingAsync($":clock3:  **{user.Username}#{user.Discriminator}**'s `{(ban.UnbanTime - ban.Timestamp).Humanize().Singularize()}` ban has expired.");
-                    TempBanService.RemoveTemporaryBan(ban);
+                    _moderation.RemoveTemporaryBan(ban);
                     _bans.Add(ban);
                 } else
                 {
-                    TempBanService.RemoveTemporaryBan(ban);
+                    _moderation.RemoveTemporaryBan(ban);
                     TempBans.Remove(ban);
                     BetterConsole.LogError("Tempban", "Error trying to unban user (ban was not found)");
                     return;
@@ -111,12 +110,11 @@ namespace XDB.Services
                 TempBans.Remove(ban);
         }
 
-        public CheckingService(DiscordSocketClient client, MutingService muting, RemindService remind, TempBanService tempbans)
+        public CheckingService(DiscordSocketClient client, ModerationService moderation, RemindService remind/*, TempBanService tempbans*/)
         {
             _client = client;
-            _muting = muting;
+            _moderation = moderation;
             _remind = remind;
-            _tempbans = tempbans;
             Mutes = new List<Mute>();
             Reminders = new List<Reminder>();
             TempBans = new List<TempBan>();
