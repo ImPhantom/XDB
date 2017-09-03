@@ -68,30 +68,6 @@ namespace XDB
                 await client.SetGameAsync($"{Config.Load().Prefix}help | Users: {client.Guilds.Sum(x => x.Users.Count())}");
             };
 
-            client.MessageReceived += async (message) =>
-            {
-                if (message.Channel is IDMChannel && message.Author != client.CurrentUser)
-                    BetterConsole.LogDM(message);
-
-                if (Config.Load().WordFilter == true)
-                {
-                    if (message.Author.IsBot)
-                        return;
-                    if (Config.Load().IgnoredChannels.Contains(message.Channel.Id) || message.Channel is IDMChannel)
-                        return;
-                    var words = Config.Load().Words;
-                    if (words.Any(message.Content.ToLower().Contains))
-                    {
-                        var log = client.GetChannel(Config.Load().LogChannel) as SocketTextChannel;
-                        if (log == null)
-                            await message.DeleteAsync();
-                        else
-                            await log.SendMessageAsync($":anger: {message.Author.Mention} violated the word filter. **Message Deleted**");
-                        await message.DeleteAsync();
-                    }
-                }
-            };
-
             client.MessageDeleted += async (message, channel) =>
             { 
                 // Fix ratelimit issue when using the ~clean command

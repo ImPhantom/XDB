@@ -54,16 +54,16 @@ namespace XDB.Common.Types
 
         public static async Task RemoveDisabledModulesAsync(CommandService _commands)
         {
-            if (!ModuleConfig.Load().ChatModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Chat")); }
-            if (!ModuleConfig.Load().ModerationModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Moderation")); }
-            if (!ModuleConfig.Load().MathModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Maths")); }
-            if (!ModuleConfig.Load().UtilModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Utility")); }
-            if (!ModuleConfig.Load().WarnModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Warn")); }
-            if (!ModuleConfig.Load().RepModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Rep")); }
-            if (!ModuleConfig.Load().TodoModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Todo")); }
-            if (!ModuleConfig.Load().SteamModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Steam")); }
-            if (!ModuleConfig.Load().RemindModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Remind")); }
-            if (!ModuleConfig.Load().TagsModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Tags")); }
+            if (!Load().ChatModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Chat")); }
+            if (!Load().ModerationModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Moderation")); }
+            if (!Load().MathModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Maths")); }
+            if (!Load().UtilModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Utility")); }
+            if (!Load().WarnModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Warn")); }
+            if (!Load().RepModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Rep")); }
+            if (!Load().TodoModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Todo")); }
+            if (!Load().SteamModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Steam")); }
+            if (!Load().RemindModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Remind")); }
+            if (!Load().TagsModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Tags")); }
         }
     }
 }

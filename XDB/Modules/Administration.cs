@@ -16,7 +16,7 @@ namespace XDB.Modules
 {
     [Summary("Administration")]
     [RequireContext(ContextType.Guild)]
-    [Permissions(AccessLevel.FullAdmin)]
+    [RequireGuildAdmin]
     public class Administration : ModuleBase<SocketCommandContext>
     {
         [Command("leave"), Summary("Forces the bot to leave its current guild.")]
@@ -30,38 +30,6 @@ namespace XDB.Modules
                 await ReplyAsync(":heavy_multiplication_x: **A reason is required.**");
             else
                 await ModUtil.BanUserAsync(user, Context, reason);
-        }
-
-        [Command("filters"), Summary("Displays all words in the word filter.")]
-        public async Task FilterWords()
-        {
-            var words = new StringBuilder();
-            if (!Config.Load().Words.Any()) { await ReplyAsync(":black_medium_small_square:  There are no words in the word filter."); return; }
-            foreach (var word in Config.Load().Words)
-            {
-                words.AppendLine(word);
-            }
-            await ReplyAsync($":heavy_check_mark:  Currently Blacklisted Words:\n```\n{words.ToString()}\n```");
-        }
-
-        [Command("addword"), Summary("Adds a word/string to the word filter.")]
-        public async Task FilterAdd([Remainder] string str)
-        {
-            var cfg = Config.Load();
-            if (cfg.Words.Contains(str)) { await ReplyAsync($":black_medium_small_square:  There is already a string matching `{str}` in the word filter."); return; }
-            cfg.Words.Add(str.ToLower());
-            cfg.Save();
-            await ReplyAsync($":heavy_check_mark:  You added `{str}` to the word filter!");
-        }
-
-        [Command("delword"), Summary("Removes a word/string from the word filter.")]
-        public async Task FilterDel([Remainder] string str)
-        {
-            var cfg = Config.Load();
-            if (!cfg.Words.Contains(str)) { await ReplyAsync($":black_medium_small_square:  There is no string matching `{str}` in the word filter."); return; }
-            cfg.Words.Remove(str.ToLower());
-            cfg.Save();
-            await ReplyAsync($":heavy_multiplication_x:  You removed `{str}` from the word filter!");
         }
 
         [Command("ignore"), Summary("Adds a channel to the list of ignored channels.")]
@@ -109,7 +77,7 @@ namespace XDB.Modules
         }
 
         [Command("lock"), Summary("Locks a channel to disallow messages being sent.")]
-        [Permissions(AccessLevel.BotOwner)]
+        [RequireOwner]
         public async Task LockChannel()
         {
             var channel = Context.Channel as SocketTextChannel;
@@ -121,7 +89,7 @@ namespace XDB.Modules
         }
 
         [Command("unlock"), Summary("Unlocks a channel to allow messages being sent.")]
-        [Permissions(AccessLevel.BotOwner)]
+        [RequireOwner]
         public async Task UnlockChannel()
         {
             var channel = Context.Channel as SocketTextChannel;
@@ -133,7 +101,7 @@ namespace XDB.Modules
     }
 
     [Summary("Moderation")]
-    [Permissions(AccessLevel.Administrators)]
+    [RequireAdministrator]
     [RequireContext(ContextType.Guild)]
     public class Moderation : ModuleBase<SocketCommandContext>
     {
@@ -242,11 +210,11 @@ namespace XDB.Modules
     }
 
     [Summary("Clean")]
-    [Permissions(AccessLevel.Administrators)]
     [RequireContext(ContextType.Guild)]
     public class Cleanup : ModuleBase<SocketCommandContext>
     {
         [Command("clean", RunMode = RunMode.Async), Summary("Cleans all user messages from a channel")]
+        [RequireAdministrator]
         public async Task Clean(int amount = 5)
         {
             amount++;
