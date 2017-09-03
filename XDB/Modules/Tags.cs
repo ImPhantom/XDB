@@ -65,7 +65,7 @@ namespace XDB.Modules
         }
 
         [Command("addtag")]
-        [Permissions(AccessLevel.FullAdmin)]
+        [RequireGuildAdmin]
         public async Task AddTag(string name, [Remainder] string content)
         {
             Config.TagsCheck();
@@ -85,7 +85,7 @@ namespace XDB.Modules
         }
 
         [Command("removetag"), Alias("deltag", "deletetag", "remtag")]
-        [Permissions(AccessLevel.FullAdmin)]
+        [RequireGuildAdmin]
         public async Task RemoveTag(string name)
         {
             Config.TagsCheck();
@@ -111,7 +111,7 @@ namespace XDB.Modules
         }
 
         [Command("edittag"), Alias("tagedit")]
-        [Permissions(AccessLevel.FullAdmin)]
+        [RequireGuildAdmin]
         public async Task EditTag(string name, [Remainder] string newtag)
         {
             Config.TagsCheck();

@@ -10,11 +10,11 @@ namespace XDB.Common.Types
     {
         [JsonIgnore]
         public static readonly string appdir = AppContext.BaseDirectory;
+        [JsonIgnore]
+        public static readonly string FilePath = Path.Combine(AppContext.BaseDirectory, "cfg/config.json");
 
         public string Prefix { get; set; } = "~";
         public List<ulong> Owners { get; set; } = new List<ulong> { };
-        public List<ulong> Moderators { get; set; } = new List<ulong> { };
-        public List<ulong> Administrators { get; set; } = new List<ulong> { };
         public ulong MutedRoleId { get; set; } = 0;
         public string Token { get; set; } = "";
         public string GoogleKey { get; set; } = "";
@@ -24,8 +24,6 @@ namespace XDB.Common.Types
         public List<ulong> WhitelistedChannels { get; set; } = new List<ulong> { };
         public bool ExtraLogging { get; set; } = false;
         public List<ulong> IgnoredChannels { get; set; } = new List<ulong> { };
-        public bool WordFilter { get; set; } = false;
-        public List<string> Words { get; set; } = new List<string> { };
         public bool Welcome { get; set; } = false;
         public string WelcomeMessage { get; set; } = "**Welcome to the server, **{mention}";
         public string Rules { get; set; } = "1. Don't be disrespectful\n2. Don't insult other guild members";
@@ -51,7 +49,7 @@ namespace XDB.Common.Types
             if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "cfg")))
                 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "cfg"));
 
-            if (!File.Exists(Xeno.ConfigPath))
+            if (!File.Exists(FilePath))
             {
                 var cfg = new Config();
                 Console.WriteLine(Xeno.ConfigCreated);

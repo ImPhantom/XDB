@@ -24,40 +24,6 @@ namespace XDB.Modules
         public async Task Help()
             => await ReplyAsync("You can find a command list here:\n https://github.com/ImPhantom/XDB/wiki/XDB-Command-List");
 
-        [Command("mods"), Alias("moderators")]
-        public async Task Moderators()
-        {
-            var moderators = Config.Load().Moderators;
-            var list = new StringBuilder();
-            foreach (var mod in moderators)
-            {
-                var user = Context.Client.GetUser(mod);
-                if (user == null)
-                    list.AppendLine($"> `{mod}`");
-                else
-                    list.AppendLine($"> `{user.Username}#{user.Discriminator}`");
-            }
-            var embed = new EmbedBuilder().WithTitle("XDB Moderators").WithDescription(list.ToString()).WithColor(new Color(28, 156, 199));
-            await ReplyAsync("", embed: embed.Build());
-        }
-
-        [Command("admins")]
-        public async Task Administrators()
-        {
-            var administrators = Config.Load().Administrators;
-            var list = new StringBuilder();
-            foreach (var admin in administrators)
-            {
-                var user = Context.Client.GetUser(admin);
-                if (user == null)
-                    list.AppendLine($"> `{admin}`");
-                else
-                    list.AppendLine($"> `{user.Username}#{user.Discriminator}`");
-            }
-            var embed = new EmbedBuilder().WithTitle("XDB Administrators").WithDescription(list.ToString()).WithColor(new Color(28, 156, 199));
-            await ReplyAsync("", embed: embed.Build());
-        }
-
         [Command("ping", RunMode = RunMode.Async), Alias("rtt"), Summary("Returns the estimated round-trip latency over the WebSocket.")]
         public async Task Ping()
         {
@@ -99,7 +65,7 @@ namespace XDB.Modules
         }
 
         [Command("nick"), Summary("Sets the bots nickname.")]
-        [Permissions(AccessLevel.FullAdmin)]
+        [RequireOwner]
         public async Task SetNick([Remainder] string str)
         {
             var current = Context.Guild.CurrentUser;
@@ -107,29 +73,8 @@ namespace XDB.Modules
             await ReplyAsync(":heavy_check_mark:  You set the bots nickname to: `" + str + "`");
         }
 
-        [Command("addadmin"), Summary("Adds an administrator.")]
-        [Permissions(AccessLevel.FullAdmin)]
-        public async Task AddAdministrator(SocketGuildUser user)
-        {
-            var cfg = Config.Load();
-            cfg.Administrators.Add(user.Id);
-            cfg.Save();
-            await Logging.TryLoggingAsync($":diamond_shape_with_a_dot_inside:  `{Context.User.Username}#{Context.User.Discriminator}` has added `{user.Username}#{user.Discriminator}` as an administrator.");
-        }
-
-
-        [Command("addmod"), Summary("Adds a moderator to your config.")]
-        [Permissions(AccessLevel.FullAdmin)]
-        public async Task AddModerator(SocketGuildUser user)
-        {
-            var cfg = Config.Load();
-            cfg.Moderators.Add(user.Id);
-            cfg.Save();
-            await Logging.TryLoggingAsync($":diamond_shape_with_a_dot_inside:  `{Context.User.Username}#{Context.User.Discriminator}` has added `{user.Username}#{user.Discriminator}` as a moderator.");
-        }
-
         [Command("status"), Summary("Sets the bots status.")]
-        [Permissions(AccessLevel.BotOwner)]
+        [RequireOwner]
         public async Task SetGame([Remainder] string str)
         {
             await (Context.Client as DiscordSocketClient).SetGameAsync(str);
@@ -137,7 +82,7 @@ namespace XDB.Modules
         }
 
         [Command("pres"), Summary("Sets the bots presence.")]
-        [Permissions(AccessLevel.BotOwner)]
+        [RequireOwner]
         public async Task SetStatus([Remainder] string str)
         {
             var client = Context.Client as DiscordSocketClient;
@@ -162,7 +107,7 @@ namespace XDB.Modules
         }
 
         [Command("avatar"), Summary("Sets the bots avatar.")]
-        [Permissions(AccessLevel.BotOwner)]
+        [RequireOwner]
         public async Task SetAvatar([Remainder] string str)
         {
             using (var http = new HttpClient())
@@ -180,16 +125,15 @@ namespace XDB.Modules
         }
 
         [Command("username"), Summary("Sets the bots username.")]
-        [Permissions(AccessLevel.BotOwner)]
+        [RequireOwner]
         public async Task SetUsername([Remainder] string str)
         {
             await Context.Client.CurrentUser.ModifyAsync(x => x.Username = str);
             await ReplyAsync($":heavy_check_mark:  You set the bots username to: `{str}`");
         }
 
-        [Command("logchannel"), Summary("Sets the logging channel.")]
-        [Alias("log")]
-        [Permissions(AccessLevel.BotOwner)]
+        [Command("logchannel"), Alias("log"), Summary("Sets the logging channel.")]
+        [RequireOwner]
         public async Task LogChannel(ulong channelid)
         {
             var cfg = Config.Load();
@@ -207,54 +151,14 @@ namespace XDB.Modules
             var avatar = Context.Client.CurrentUser.GetAvatarUrl();
             var author = new EmbedAuthorBuilder().WithName(Context.Client.CurrentUser.Username).WithIconUrl(avatar);
             var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(author).WithCurrentTimestamp();
-            embed.AddField(x =>
-            {
-                x.Name = "Author:";
-                x.Value = $"{application.Owner.Username} (**ID:** `{application.Owner.Id}`)";
-                x.IsInline = false;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Version:";
-                x.Value = $"`XDB v{Xeno.Version}`";
-                x.IsInline = false;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Library:";
-                x.Value = $"Discord.Net (`{DiscordConfig.Version}`)";
-                x.IsInline = false;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Runtime:";
-                x.Value = $"{RuntimeInformation.FrameworkDescription} ({RuntimeInformation.OSArchitecture})";
-                x.IsInline = false;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Host OS:";
-                x.Value = RuntimeInformation.OSDescription;
-                x.IsInline = false;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Uptime:";
-                x.Value = $"`{GetUptime().Humanize()}`";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Heap Size:";
-                x.Value = $"`{GetHeapSize()}MB`";
-                x.IsInline = true;
-            });
-            embed.AddField(x =>
-            {
-                x.Name = "Guilds/Channels/Users:";
-                x.Value = $"{(Context.Client as DiscordSocketClient).Guilds.Count} / {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)} / {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}";
-                x.IsInline = false;
-            });
+            embed.AddField("Author:", $"{application.Owner.Username} (**ID:** `{application.Owner.Id}`)", false);
+            embed.AddField("Version", $"`XDB v{Xeno.Version}`", false);
+            embed.AddField("Library:", $"Discord.Net (`{DiscordConfig.Version}`)", false);
+            embed.AddField("Runtime:", $"{RuntimeInformation.FrameworkDescription} ({RuntimeInformation.OSArchitecture})", false);
+            embed.AddField("Host OS:", $"{RuntimeInformation.OSDescription}", false);
+            embed.AddField("Uptime:", $"`{GetUptime().Humanize()}`", false);
+            embed.AddField("Heap Size:", $"`{GetHeapSize()}MB`", false);
+            embed.AddField("Guilds/Channels/Users:", $"{(Context.Client as DiscordSocketClient).Guilds.Count} / {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)} / {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}", false);
 
             await ReplyAsync("", false, embed.Build());
         }
