@@ -25,7 +25,7 @@ namespace XDB.Services
 
             var author = new EmbedAuthorBuilder().WithName(user.Username).WithIconUrl(user.GetAvatarUrl());
             var embed = new EmbedBuilder().WithAuthor(author).WithDescription(message.Message).WithTimestamp(message.Timestamp).WithColor(new Color(71, 237, 149));
-            await channel.SendMessageAsync("", embed: embed);
+            await channel.SendMessageAsync("", embed: embed.Build());
 
             var _in = FetchMessages();
             try

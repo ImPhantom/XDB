@@ -30,13 +30,11 @@ Please fill in all your info and restart the bot.";
  ";
 
         #region paths
-        public static string ConfigPath = Path.Combine(AppContext.BaseDirectory, "cfg/config.json");
         public static string ModulePath = Path.Combine(AppContext.BaseDirectory, "cfg/modules.json");
         public static string TodoPath = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
         public static string TagsPath = Path.Combine(AppContext.BaseDirectory, $"tags/tags.json");
         public static string RepPath = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
         public static string WarnPath = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
-        //public static string RatePath = Path.Combine(AppContext.BaseDirectory, $"cfg/ratelimit.json");
         public static string MutesPath = Path.Combine(AppContext.BaseDirectory, $"mutes.json");
         public static string RemindPath = Path.Combine(AppContext.BaseDirectory, $"reminders.json");
         public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"tempbans.json");
@@ -46,7 +44,7 @@ Please fill in all your info and restart the bot.";
         public static Embed ErrorEmbed(string error)
         {
             var embed = new EmbedBuilder().WithColor(new Color(255, 0, 0)).WithTitle("Error:").WithDescription(error);
-            return embed;
+            return embed.Build();
         }
 
         public static string GetUserGame(SocketGuildUser user)

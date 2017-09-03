@@ -57,7 +57,7 @@ namespace XDB.Modules
         {
             var results = (await SearchGoogleAsync(query)).ToArray();
             var embed = new EmbedBuilder().WithColor(new Color(16, 178, 232)).WithTitle($"Search results for: {query}").WithDescription($"{results[0].Link}\n\nSee also:\n{results[1].Link}\n{results[2].Link}");
-            await ReplyAsync("", embed: embed);
+            await ReplyAsync("", embed: embed.Build());
         }
 
         [Command("urban"), Summary("Retrieves a definition from UrbanDictionary.")]

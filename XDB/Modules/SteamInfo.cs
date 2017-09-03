@@ -42,29 +42,29 @@ namespace XDB.Modules
                     if (_content[6] == "1") vac = "Yes"; else vac = "No";
                     sw.Stop();
                     var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithDescription($"__**{_content[1]}**__\n\n").WithFooter($"Generated in: {sw.ElapsedMilliseconds}ms");
-                    embed.AddInlineField("Map:", $"`{_content[4]}`");
-                    embed.AddInlineField("Players:", $"{_content[2]}/{_content[3]}");
-                    embed.AddInlineField("Game:", _content[0]);
-                    embed.AddInlineField("Gamemode:", $"`{_content[5]}`");
-                    embed.AddInlineField("OS:", SteamUtil.GetServerOS(_content[7]));
-                    embed.AddInlineField("VAC Secure:", vac);
+                    embed.AddField("Map:", $"`{_content[4]}`", true);
+                    embed.AddField("Players:", $"{_content[2]}/{_content[3]}", true);
+                    embed.AddField("Game:", _content[0], true);
+                    embed.AddField("Gamemode:", $"`{_content[5]}`", true);
+                    embed.AddField("OS:", SteamUtil.GetServerOS(_content[7]), true);
+                    embed.AddField("VAC Secure:", vac, true);
 
-                    await ReplyAsync("" , embed: embed);
+                    await ReplyAsync("" , embed: embed.Build());
                 }
             }
         }
 
-        [Command("steamuser"), Alias("user"), Summary("Provides all information about a steam user.")]
+        [Command("steamuser"), Alias("suser"), Summary("Provides all information about a steam user.")]
         public async Task FetchSteamUser(string input)
         {
             var _api = new SteamUser(Config.Load().SteamApiKey);
             var id = await SteamUtil.ParseSteamId(input);
-            if(id == 0)
+            if (id == 0)
             {
                 await ReplyAsync("", embed: Xeno.ErrorEmbed("Could not parse steamid/vanity url"));
                 return;
             }
-        
+
             var response = await _api.GetPlayerSummaryAsync(id);
             var data = response.Data;
 
@@ -73,32 +73,21 @@ namespace XDB.Modules
 
             var author = new EmbedAuthorBuilder().WithIconUrl(data.AvatarFullUrl).WithName(data.Nickname);
             var embed = new EmbedBuilder().WithAuthor(author).WithFooter($"Info fetched on {DateTime.UtcNow}").WithColor(SteamUtil.GetActivityColor(data.UserStatus, data.PlayingGameName)).WithDescription(data.ProfileUrl);
-            embed.AddInlineField("Status:", data.UserStatus);
-            embed.AddInlineField("SteamID:", data.SteamId);
+            embed.AddField("Status:", data.UserStatus, true);
+            embed.AddField("SteamID:", data.SteamId, true);
 
-            if(data.ProfileVisibility == Steam.Models.SteamCommunity.ProfileVisibility.Public)
+            if (data.ProfileVisibility == Steam.Models.SteamCommunity.ProfileVisibility.Public)
             {
-                embed.AddInlineField("Date Created:", data.AccountCreatedDate.ToString("M/d/yyyy"));
+                embed.AddField("Date Created:", data.AccountCreatedDate.ToString("M/d/yyyy"), true);
                 if (data.PlayingGameName != null)
-                    embed.AddInlineField("Playing:", data.PlayingGameName);
+                    embed.AddField("Playing:", data.PlayingGameName, true);
                 if (data.RealName != null)
-                    embed.AddInlineField("Real Name:", data.RealName);
+                    embed.AddField("Real Name:", data.RealName, true);
             }
-            await ReplyAsync("", embed: embed);
+            await ReplyAsync("", embed: embed.Build());
         }
 
-        [Command("resolve"), Summary("test")]
-        public async Task Resolve([Remainder] string url)
-        {
-            var _api = new SteamUser(Config.Load().SteamApiKey);
-            var id = await _api.ResolveVanityUrlAsync(url);
-            var user = await _api.GetPlayerSummaryAsync(id.Data);
-
-            await ReplyAsync(user.Data.Nickname + user.Data.ProfileUrl);
-
-        }
-
-        [Command("steamgame"), Summary("Fetches information about a steam game.")]
+        [Command("steamgame"), Alias("sgame"), Summary("Fetches information about a steam game.")]
         public async Task FetchSteamGame([Remainder] string game)
         {
             var _api = new SteamApps(Config.Load().SteamApiKey);
@@ -114,10 +103,9 @@ namespace XDB.Modules
                 var app = data.First(x => x.Name.ToLower().Replace("-", " ").Replace(seps, "") == game.ToLower());
                 var ret = await stats.GetNumberOfCurrentPlayersForGameAsync(app.AppId);
 
-                //await ReplyAsync($"game: {app.Name}, appid: {app.AppId}");
                 var details = await _store.GetStoreAppDetailsAsync(app.AppId);
                 var embed = new EmbedBuilder().WithTitle(details.Name).WithThumbnailUrl(details.HeaderImage).WithFooter(new EmbedFooterBuilder().WithText($"Current Players: {ret.Data}, Released: {details.ReleaseDate.Date}")).WithDescription($"{details.AboutTheGame.Substring(0, 675)}...\n\n**Publisher(s):** {string.Join(", ", details.Publishers)}\n**Store Link:** http://store.steampowered.com/app/{details.SteamAppId}/");
-                await ReplyAsync("", embed: embed);
+                await ReplyAsync("", embed: embed.Build());
             } else
             {
                 await ReplyAsync(":x: Game not found, try typing the full game title");

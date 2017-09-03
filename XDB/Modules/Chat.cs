@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
+using XDB.Common.Attributes;
 
 namespace XDB.Modules
 {
@@ -33,31 +34,31 @@ namespace XDB.Modules
         private Embed FetchGuildInfoEmbed(SocketGuild guild)
         {
             var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(guild.Name, guild.IconUrl).WithCurrentTimestamp();
-            embed.AddInlineField("Owner:", guild.Owner.Mention);
-            embed.AddInlineField("Guild ID:", $"`{guild.Id}`");
-            embed.AddInlineField("Voice Region:", $"`{guild.VoiceRegionId}`");
-            embed.AddInlineField("Created:", guild.CreatedAt.ToString("M/dd/yyyy"));
-            embed.AddInlineField("Roles:", guild.Roles.Count);
-            embed.AddInlineField("Users:", guild.MemberCount);
-            embed.AddInlineField("Text Channels:", guild.TextChannels.Count);
-            embed.AddInlineField("Voice Channels:", guild.VoiceChannels.Count);
+            embed.AddField("Owner:", guild.Owner.Mention, true);
+            embed.AddField("Guild ID:", $"`{guild.Id}`", true);
+            embed.AddField("Voice Region:", $"`{guild.VoiceRegionId}`", true);
+            embed.AddField("Created:", guild.CreatedAt.ToString("M/dd/yyyy"), true);
+            embed.AddField("Roles:", guild.Roles.Count, true);
+            embed.AddField("Users:", guild.MemberCount, true);
+            embed.AddField("Text Channels:", guild.TextChannels.Count, true);
+            embed.AddField("Voice Channels:", guild.VoiceChannels.Count, true);
 
-            return embed;
+            return embed.Build();
         }
 
         private Embed FetchUserInfoEmbed(SocketGuildUser user)
         {
             var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithAuthor(user.Username, user.GetAvatarUrl()).WithCurrentTimestamp();
-            embed.AddInlineField("Username:", $"`{user.Username}#{user.Discriminator}`");
-            embed.AddInlineField("ID:", $"`{user.Id}`");
-            embed.AddInlineField("Created:", user.CreatedAt.ToString("M/d/yyyy"));
-            embed.AddInlineField("Joined:", user.JoinedAt.Value.ToString("M/d/yyyy"));
-            embed.AddInlineField("Status:", user.Status);
-            embed.AddInlineField("Game:", Xeno.GetUserGame(user));
+            embed.AddField("Username:", $"`{user.Username}#{user.Discriminator}`", true);
+            embed.AddField("ID:", $"`{user.Id}`", true);
+            embed.AddField("Created:", user.CreatedAt.ToString("M/d/yyyy"), true);
+            embed.AddField("Joined:", user.JoinedAt.Value.ToString("M/d/yyyy"), true);
+            embed.AddField("Status:", user.Status, true);
+            embed.AddField("Game:", Xeno.GetUserGame(user), true);
             if (user.VoiceChannel != null)
-                embed.AddInlineField("Voice State:", Xeno.GetVoiceState(user));
+                embed.AddField("Voice State:", Xeno.GetVoiceState(user), true);
 
-            return embed;
+            return embed.Build();
         }
     }
 }
