@@ -17,7 +17,6 @@ namespace XDB.Common.Types
         public bool MathModule { get; set; }
         public bool UtilModule { get; set; }
         public bool WarnModule { get; set; }
-        public bool RepModule { get; set; }
         public bool TodoModule { get; set; }
         public bool SteamModule { get; set; }
         public bool RemindModule { get; set; }
@@ -30,7 +29,6 @@ namespace XDB.Common.Types
             MathModule = true;
             UtilModule = true;
             WarnModule = true;
-            RepModule = true;
             TodoModule = true;
             SteamModule = true;
             RemindModule = true;
@@ -59,7 +57,6 @@ namespace XDB.Common.Types
             if (!Load().MathModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Maths")); }
             if (!Load().UtilModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Utility")); }
             if (!Load().WarnModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Warn")); }
-            if (!Load().RepModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Rep")); }
             if (!Load().TodoModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Todo")); }
             if (!Load().SteamModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Steam")); }
             if (!Load().RemindModule) { await _commands.RemoveModuleAsync(_commands.Modules.First(x => x.Summary == "Remind")); }
