@@ -32,10 +32,6 @@ namespace XDB
                     var def = user.Guild.DefaultChannel;
                     var message = Config.Load().WelcomeMessage.Replace("{mention}", user.Mention).Replace("{username}", user.Username);
                     await def.SendMessageAsync(message);
-
-                    // Disabled temporarily
-                    //var dm = await user.GetOrCreateDMChannelAsync();
-                    //await dm.SendMessageAsync(Config.Load().Rules);
                 }
 
                 if (Config.Load().ExtraLogging)

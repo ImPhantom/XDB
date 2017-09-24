@@ -26,7 +26,6 @@ namespace XDB.Common.Types
         public List<ulong> IgnoredChannels { get; set; } = new List<ulong> { };
         public bool Welcome { get; set; } = false;
         public string WelcomeMessage { get; set; } = "**Welcome to the server, **{mention}";
-        public string Rules { get; set; } = "1. Don't be disrespectful\n2. Don't insult other guild members";
 
         public void Save(string dir = "cfg/config.json")
         {
