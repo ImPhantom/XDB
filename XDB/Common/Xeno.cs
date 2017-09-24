@@ -7,7 +7,7 @@ namespace XDB
 {
     public class Xeno
     {
-        public static readonly string Version = "1.3.0rc1";
+        public static readonly string Version = "1.3.1";
         public static string Status = $"XDB (rel: {Version})(api: {DiscordConfig.Version})";
 
         // Default Messages

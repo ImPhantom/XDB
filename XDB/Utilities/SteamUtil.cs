@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Steam.Models.SteamCommunity;
 using Discord;
 using SteamWebAPI2.Interfaces;
 using XDB.Common.Types;
