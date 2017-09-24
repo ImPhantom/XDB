@@ -167,7 +167,7 @@ namespace XDB.Modules
             await Context.Message.DeleteAsync();
             var dm = await user.GetOrCreateDMChannelAsync();
             await dm.SendMessageAsync($":mute: (`{Context.Guild.Name}`) You have been muted for `{unmuteTime.Humanize()}` by **{Context.User.Username}**\n__Reason:__ {reason}");
-            await Logging.TryLoggingAsync($":mute: **{user.Username}#{user.Discriminator}** has been muted by {Context.User.Username} for:\n `{mute.Reason}`");
+            await Logging.TryLoggingAsync($":mute: **{user.Username}#{user.Discriminator}** has recieved a `{unmuteTime.Humanize()}` mute by {Context.User.Username} for:\n `{mute.Reason}`");
             var reply = await ReplyAsync(":ok_hand:");
             await TimedMessage(reply);
         }
