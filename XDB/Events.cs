@@ -11,19 +11,31 @@ namespace XDB
 {
     public class Events
     {
-        public static void Listen(CheckingService checking)
+        public static void Listen(CheckingService checking, ModerationService mod)
         {
             var client = Program.client;
 
+            client.UserVoiceStateUpdated += async (user, before, after) =>
+            {
+                if (checking.Mutes.Any(x => x.UserId == user.Id))
+                {
+                    var mute = mod.FetchMutes().First(x => x.UserId == user.Id);
+                    var _user = user as SocketGuildUser;
+                    if (mute.Type != MuteType.Text)
+                        await mod.ApplyMuteAsync(_user, MuteType.Voice);
+                }
+            };
+
             client.UserJoined += async (user) =>
             {
-                if(checking.Mutes.Any(x => x.UserId == user.Id))
+                // Anti Mute Evade?
+                if (mod.FetchMutes().Any(x => x.UserId == user.Id))
                 {
-                    var muteRole = user.Guild.GetRole(Config.Load().MutedRoleId);
-                    await user.AddRoleAsync(muteRole);
-                    await user.ModifyAsync(x => x.Mute = true);
+                    var mute = mod.FetchMutes().First(x => x.UserId == user.Id);
+                    await mod.ApplyMuteAsync(user, mute.Type);
                 }
-
+                    
+                    
                 if (Config.Load().Welcome == true)
                 {
                     if (user.IsBot)

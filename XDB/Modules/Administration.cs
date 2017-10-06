@@ -20,6 +20,7 @@ namespace XDB.Modules
     public class Administration : ModuleBase<SocketCommandContext>
     {
         [Command("leave"), Summary("Forces the bot to leave its current guild.")]
+        [RequireOwner]
         public async Task Leave()
             => await Context.Guild.LeaveAsync();
 
@@ -147,17 +148,17 @@ namespace XDB.Modules
         }
 
         [Command("mute", RunMode = RunMode.Async), Summary("Mutes a user")]
-        public async Task Mute(SocketGuildUser user, TimeSpan unmuteTime, [Remainder] string reason = "n/a")
+        public async Task Mute(SocketGuildUser user, TimeSpan unmuteTime, MuteType type, [Remainder] string reason = "n/a")
         {
-            var muteRole = user.Guild.GetRole(Config.Load().MutedRoleId);
-            await user.AddRoleAsync(muteRole);
-            await user.ModifyAsync(x => x.Mute = true);
+            // Apply Mute
+            await _moderation.ApplyMuteAsync(user, type);
 
             var mute = new Mute()
             {
                 GuildId = Context.Guild.Id,
                 UserId = user.Id,
                 Reason = reason,
+                Type = type,
                 Timestamp = DateTime.UtcNow,
                 UnmuteTime = DateTime.UtcNow.Add(unmuteTime),
                 IsActive = true

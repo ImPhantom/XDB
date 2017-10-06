@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using XDB.Common.Types;
 using XDB.Readers;
 using System.Collections.Generic;
+using XDB.Common.Models;
 
 namespace XDB
 {
@@ -26,6 +27,7 @@ namespace XDB
         public async Task Install()
         {
             _cmds.AddTypeReader<TimeSpan>(new TimeStringTypeReader());
+            _cmds.AddTypeReader<MuteType>(new MutingTypeReader());
             await _cmds.AddModulesAsync(Assembly.GetEntryAssembly());
             await ModuleConfig.RemoveDisabledModulesAsync(_cmds);
             _client.MessageReceived += HandleCommand;

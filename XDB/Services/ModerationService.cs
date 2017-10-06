@@ -4,6 +4,9 @@ using System.Linq;
 using Newtonsoft.Json;
 using XDB.Common.Models;
 using System.IO;
+using Discord.WebSocket;
+using System.Threading.Tasks;
+using XDB.Common.Types;
 
 namespace XDB.Services
 {
@@ -120,6 +123,24 @@ namespace XDB.Services
             catch (Exception e)
             {
                 BetterConsole.LogError("Temporary Bans", e.ToString());
+            }
+        }
+
+        public async Task ApplyMuteAsync(SocketGuildUser user, MuteType type)
+        {
+            var muteRole = user.Guild.GetRole(Config.Load().MutedRoleId);
+            switch(type)
+            {
+                case MuteType.Both:
+                    await user.AddRoleAsync(muteRole);
+                    await user.ModifyAsync(x => x.Mute = true);
+                    break;
+                case MuteType.Voice:
+                    await user.ModifyAsync(x => x.Mute = true);
+                    break;
+                case MuteType.Text:
+                    await user.AddRoleAsync(muteRole);
+                    break;
             }
         }
     }
