@@ -10,17 +10,15 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using XDB.Common.Models;
 using XDB.Common.Types;
+using XDB.Services;
 
 namespace XDB.Modules
 {
     [Summary("Self")]
     public class Self : ModuleBase<SocketCommandContext>
     {
-        [Command("help"), Summary("Displays the XDB Changelog for this version.")]
-        public async Task Help()
-            => await ReplyAsync("You can find a command list here:\n https://github.com/ImPhantom/XDB/wiki/XDB-Command-List");
-
         [Command("ping", RunMode = RunMode.Async), Alias("rtt"), Summary("Returns the estimated round-trip latency over the WebSocket.")]
         public async Task Ping()
         {
@@ -59,6 +57,21 @@ namespace XDB.Modules
             }
             sw.Stop();
             await reply.ModifyAsync(x => x.Content = $"**=>** heartbeat: {latency}ms, init: {init}, rtt: timeout");
+        }
+
+        [Command("forceboard")]
+        [RequireOwner]
+        public async Task ForceBoardMessage(ulong userid, [Remainder]string message)
+        {
+            var _board = new BoardService(Context.Client);
+            await _board.CheckChannelExistence();
+            var boardMessage = new BoardMessage
+            {
+                Message = message,
+                UserId = userid,
+                Timestamp = Context.Message.Timestamp
+            };
+            await _board.AddBoardMessageAsync(boardMessage);
         }
 
         [Command("nick"), Summary("Sets the bots nickname.")]
