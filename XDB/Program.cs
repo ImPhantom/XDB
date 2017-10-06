@@ -20,6 +20,7 @@ namespace XDB
         private RemindService _remind;
         private CheckingService _checking;
         private BoardService _board;
+        private ListService _lists;
 
         public async Task Run()
         {
@@ -27,6 +28,7 @@ namespace XDB
             Console.Title = Xeno.Status;
 
             Config.CheckExistence();
+            Config.InitializeData();
 
             client = new DiscordSocketClient(new DiscordSocketConfig()
             {
@@ -51,6 +53,9 @@ namespace XDB
             _board = new BoardService(client);
             _board.Initialize();
 
+            _lists = new ListService(client);
+            _lists.Initialize();
+
             var serviceProvider = ConfigureServices();
 
             cmds = new Handler(serviceProvider);
@@ -66,7 +71,7 @@ namespace XDB
             await Task.Delay(6000);
             await client.SetGameAsync($"{Config.Load().Prefix}help | Users: {client.Guilds.Sum(x => x.Users.Count())}");
 
-            Events.Listen(_checking);
+            Events.Listen(_checking, _moderation);
 
             await Task.Delay(-1);
         }
@@ -78,7 +83,8 @@ namespace XDB
                 .AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false }))
                 .AddSingleton<ModerationService>()
                 .AddSingleton<RemindService>()
-                .AddSingleton<CheckingService>();
+                .AddSingleton<CheckingService>()
+                .AddSingleton<ListService>();
 
             return new DefaultServiceProviderFactory().CreateServiceProvider(services);
         }
