@@ -7,7 +7,7 @@ namespace XDB
 {
     public class Xeno
     {
-        public static readonly string Version = "1.3.1";
+        public static readonly string Version = "1.3.2";
         public static string Status = $"XDB (rel: {Version})(api: {DiscordConfig.Version})";
 
         // Default Messages
@@ -31,14 +31,14 @@ Please fill in all your info and restart the bot.";
 
         #region paths
         public static string ModulePath = Path.Combine(AppContext.BaseDirectory, "cfg/modules.json");
-        public static string TodoPath = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
-        public static string TagsPath = Path.Combine(AppContext.BaseDirectory, $"tags/tags.json");
-        public static string RepPath = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
-        public static string WarnPath = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
-        public static string MutesPath = Path.Combine(AppContext.BaseDirectory, $"mutes.json");
-        public static string RemindPath = Path.Combine(AppContext.BaseDirectory, $"reminders.json");
-        public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"tempbans.json");
-        public static string CringePath = Path.Combine(AppContext.BaseDirectory, $"boardmessages.json");
+        public static string TodoPath = Path.Combine(AppContext.BaseDirectory, $"data/todolists.json");
+        public static string DevListPath = Path.Combine(AppContext.BaseDirectory, $"data/channel_lists.json");
+        public static string TagsPath = Path.Combine(AppContext.BaseDirectory, $"data/tags.json");
+        public static string WarnPath = Path.Combine(AppContext.BaseDirectory, $"data/warns.json");
+        public static string MutesPath = Path.Combine(AppContext.BaseDirectory, $"data/mutes.json");
+        public static string RemindPath = Path.Combine(AppContext.BaseDirectory, $"data/reminders.json");
+        public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"data/tempbans.json");
+        public static string CringePath = Path.Combine(AppContext.BaseDirectory, $"data/boardmessages.json");
         #endregion
 
         public static Embed ErrorEmbed(string error)

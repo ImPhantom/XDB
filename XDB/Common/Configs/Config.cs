@@ -42,6 +42,12 @@ namespace XDB.Common.Types
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
 
+        public static void InitializeData()
+        {
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "data")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "data"));
+        }
+
 
         public static void CheckExistence()
         {
@@ -61,28 +67,9 @@ namespace XDB.Common.Types
         }
 
         #region annoying config checks
-        public static void TodoCheck()
-        {
-            var path = Path.Combine(AppContext.BaseDirectory, $"todo/todolists.json");
-            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "todo")))
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "todo"));
-
-            if (!File.Exists(path))
-            {
-                List<UserTodo> lists = new List<UserTodo>();
-                var json = JsonConvert.SerializeObject(lists);
-                using (var file = new FileStream(path, FileMode.Create)) { }
-                File.WriteAllText(path, json);
-            }
-            else
-                return;
-        }
 
         public static void TagsCheck()
         {
-            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "tags")))
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "tags"));
-
             if (!File.Exists(Xeno.TagsPath))
             {
                 List<Tag> tags = new List<Tag>();
@@ -90,42 +77,17 @@ namespace XDB.Common.Types
                 using (var file = new FileStream(Xeno.TagsPath, FileMode.Create)) { }
                 File.WriteAllText(Xeno.TagsPath, json);
             }
-            else
-                return;
-        }
-
-        public static void RepCheck()
-        {
-            var path = Path.Combine(AppContext.BaseDirectory, $"rep/reputations.json");
-            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "rep")))
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "rep"));
-
-            if (!File.Exists(path))
-            {
-                List<UserRep> reps = new List<UserRep>();
-                var json = JsonConvert.SerializeObject(reps);
-                using (var file = new FileStream(path, FileMode.Create)) { }
-                File.WriteAllText(path, json);
-            }
-            else
-                return;
         }
 
         public static void WarnCheck()
         {
-            var path = Path.Combine(AppContext.BaseDirectory, $"warn/warns.json");
-            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "warn")))
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "warn"));
-
-            if (!File.Exists(path))
+            if (!File.Exists(Xeno.WarnPath))
             {
                 List<UserWarn> warns = new List<UserWarn>();
                 var json = JsonConvert.SerializeObject(warns);
-                using (var file = new FileStream(path, FileMode.Create)) { }
-                File.WriteAllText(path, json);
+                using (var file = new FileStream(Xeno.WarnPath, FileMode.Create)) { }
+                File.WriteAllText(Xeno.WarnPath, json);
             }
-            else
-                return;
         }
 
 #endregion
