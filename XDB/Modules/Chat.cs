@@ -11,6 +11,10 @@ namespace XDB.Modules
     [RequireContext(ContextType.Guild)]
     public class Chat : ModuleBase<SocketCommandContext>
     {
+        [Command("help"), Summary("Displays the XDB Changelog for this version.")]
+        public async Task Help()
+            => await ReplyAsync("You can find a command list here:\n https://github.com/ImPhantom/XDB/wiki/XDB-Command-List");
+
         [Command("8ball"), Summary("Asks the magic 8 ball a question.")]
         public async Task EightBall([Remainder] string question)
         {
@@ -38,10 +42,10 @@ namespace XDB.Modules
             embed.AddField("Guild ID:", $"`{guild.Id}`", true);
             embed.AddField("Voice Region:", $"`{guild.VoiceRegionId}`", true);
             embed.AddField("Created:", guild.CreatedAt.ToString("M/dd/yyyy"), true);
-            embed.AddField("Roles:", guild.Roles.Count, true);
-            embed.AddField("Users:", guild.MemberCount, true);
-            embed.AddField("Text Channels:", guild.TextChannels.Count, true);
-            embed.AddField("Voice Channels:", guild.VoiceChannels.Count, true);
+            embed.AddField("Roles:", guild.Roles.Count.ToString(), true);
+            embed.AddField("Users:", guild.MemberCount.ToString(), true);
+            embed.AddField("Text Channels:", guild.TextChannels.Count.ToString(), true);
+            embed.AddField("Voice Channels:", guild.VoiceChannels.Count.ToString(), true);
 
             return embed.Build();
         }
@@ -53,7 +57,7 @@ namespace XDB.Modules
             embed.AddField("ID:", $"`{user.Id}`", true);
             embed.AddField("Created:", user.CreatedAt.ToString("M/d/yyyy"), true);
             embed.AddField("Joined:", user.JoinedAt.Value.ToString("M/d/yyyy"), true);
-            embed.AddField("Status:", user.Status, true);
+            embed.AddField("Status:", user.Status.ToString(), true);
             embed.AddField("Game:", Xeno.GetUserGame(user), true);
             if (user.VoiceChannel != null)
                 embed.AddField("Voice State:", Xeno.GetVoiceState(user), true);

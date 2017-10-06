@@ -60,9 +60,7 @@ namespace XDB.Services
 
         public void Initialize()
         {
-            if (File.Exists(Xeno.RemindPath))
-                return;
-            else
+            if (!File.Exists(Xeno.RemindPath))
             {
                 List<Reminder> reminders = new List<Reminder>();
                 var json = JsonConvert.SerializeObject(reminders);

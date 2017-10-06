@@ -73,8 +73,8 @@ namespace XDB.Modules
 
             var author = new EmbedAuthorBuilder().WithIconUrl(data.AvatarFullUrl).WithName(data.Nickname);
             var embed = new EmbedBuilder().WithAuthor(author).WithFooter($"Info fetched on {DateTime.UtcNow}").WithColor(SteamUtil.GetActivityColor(data.UserStatus, data.PlayingGameName)).WithDescription(data.ProfileUrl);
-            embed.AddField("Status:", data.UserStatus, true);
-            embed.AddField("SteamID:", data.SteamId, true);
+            embed.AddField("Status:", data.UserStatus.ToString(), true);
+            embed.AddField("SteamID:", data.SteamId.ToString(), true);
 
             if (data.ProfileVisibility == Steam.Models.SteamCommunity.ProfileVisibility.Public)
             {
