@@ -15,7 +15,7 @@ namespace XDB.Common.Attributes
             if (user.Roles.Any(x => x.Name == "XDB Moderator") || user.Roles.Any(x => x.Name == "XDB Administrator") || user.GuildPermissions.Administrator)
                 return Task.FromResult(PreconditionResult.FromSuccess());
             else
-                return Task.FromResult(PreconditionResult.FromError("You do not have sufficient permissions for this command."));
+                return Task.FromResult(PreconditionResult.FromError("This command requires the \"XDB Moderator\" role."));
         }
     }
 }

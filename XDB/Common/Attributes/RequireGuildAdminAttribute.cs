@@ -14,7 +14,7 @@ namespace XDB.Common.Attributes
             if (user.GuildPermissions.Administrator)
                 return Task.FromResult(PreconditionResult.FromSuccess());
             else
-                return Task.FromResult(PreconditionResult.FromError("You do not have sufficient permissions for this command."));
+                return Task.FromResult(PreconditionResult.FromError("This command requires you to be a guild administrator."));
         }
     }
 }
