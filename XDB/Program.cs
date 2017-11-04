@@ -21,6 +21,8 @@ namespace XDB
         private CheckingService _checking;
         private BoardService _board;
         private ListService _lists;
+        private AudioService _audio;
+        private CachingService _caching;
 
         public async Task Run()
         {
@@ -32,11 +34,8 @@ namespace XDB
 
             client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-#if RELEASE
                 LogLevel = LogSeverity.Verbose,
-#else
-                LogLevel = LogSeverity.Debug,
-#endif
+
                 AlwaysDownloadUsers = true,
                 MessageCacheSize = 1000
             });
@@ -61,6 +60,10 @@ namespace XDB
             cmds = new Handler(serviceProvider);
             await cmds.Install();
 
+            _audio = new AudioService();
+            _caching = new CachingService();
+            await _caching.Initialize();
+
             client.Log += (l)
                 => Task.Run(()
                 => BetterConsole.Log(l.Severity, l.Source, l.Message));
@@ -84,7 +87,9 @@ namespace XDB
                 .AddSingleton<ModerationService>()
                 .AddSingleton<RemindService>()
                 .AddSingleton<CheckingService>()
-                .AddSingleton<ListService>();
+                .AddSingleton<ListService>()
+                .AddSingleton<AudioService>()
+                .AddSingleton<CachingService>();
 
             return new DefaultServiceProviderFactory().CreateServiceProvider(services);
         }

@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using System;
 using System.IO;
+using System.Xml;
 
 namespace XDB
 {
@@ -39,11 +40,19 @@ Please fill in all your info and restart the bot.";
         public static string RemindPath = Path.Combine(AppContext.BaseDirectory, $"data/reminders.json");
         public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"data/tempbans.json");
         public static string CringePath = Path.Combine(AppContext.BaseDirectory, $"data/boardmessages.json");
+
+        public static string CachePath = Path.Combine(AppContext.BaseDirectory, $"data/audio_cache");
         #endregion
 
         public static Embed ErrorEmbed(string error)
         {
             var embed = new EmbedBuilder().WithColor(new Color(255, 0, 0)).WithTitle("Error:").WithDescription(error);
+            return embed.Build();
+        }
+
+        public static Embed InfoEmbed(string info)
+        {
+            var embed = new EmbedBuilder().WithColor(new Color(33, 171, 217)).WithTitle("Info").WithDescription(info);
             return embed.Build();
         }
 
@@ -53,6 +62,23 @@ Please fill in all your info and restart the bot.";
                 return $"`N/A`";
             else
                 return $"`{user.Game}`";
+        }
+
+        public static int ParseDuration(string duration)
+        {
+            if(duration.StartsWith("PT"))
+            {
+                var span = XmlConvert.ToTimeSpan(duration);
+                var parsed = Convert.ToInt32(span.TotalSeconds);
+                return parsed;
+            } else
+            {
+                var spl = duration.Split(':');
+                int.TryParse(spl[0], out int min);
+                int.TryParse(spl[1], out int sec);
+                return (min * 60) + sec;
+            }
+            
         }
 
         public static string GetVoiceState(SocketGuildUser user)
