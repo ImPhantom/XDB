@@ -34,8 +34,7 @@ namespace XDB
                     var mute = mod.FetchMutes().First(x => x.UserId == user.Id);
                     await mod.ApplyMuteAsync(user, mute.Type);
                 }
-                    
-                    
+                                        
                 if (Config.Load().Welcome == true)
                 {
                     if (user.IsBot)
@@ -76,7 +75,7 @@ namespace XDB
             };
 
             client.MessageDeleted += async (message, channel) =>
-            { 
+            {
                 // Fix ratelimit issue when using the ~clean command
                 if (Config.Load().ExtraLogging)
                 {

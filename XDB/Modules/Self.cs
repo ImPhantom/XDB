@@ -72,6 +72,7 @@ namespace XDB.Modules
                 Timestamp = Context.Message.Timestamp
             };
             await _board.AddBoardMessageAsync(boardMessage);
+            await ReplyAsync(":ok_hand:");
         }
 
         [Command("nick"), Summary("Sets the bots nickname.")]
@@ -128,7 +129,7 @@ namespace XDB.Modules
                     await response.CopyToAsync(imgStream);
                     imgStream.Position = 0;
 
-                    await Program.client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(imgStream));
+                    await Context.Client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(imgStream));
                     await ReplyAsync(":heavy_check_mark:  You set the bots avatar!");
                 }
             }

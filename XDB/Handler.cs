@@ -59,12 +59,8 @@ namespace XDB
                 var result = await _cmds.ExecuteAsync(context, argPos, _provider);
 
                 if (!result.IsSuccess)
-                {
-                    if (result.Error == CommandError.UnknownCommand)
-                        return;
-
-                    await context.Channel.SendMessageAsync("", false, Xeno.ErrorEmbed(result.ErrorReason));
-                }
+                    if(result.Error != CommandError.UnknownCommand)
+                        await context.Channel.SendMessageAsync("", false, Xeno.ErrorEmbed(result.ErrorReason));
             }
         }
     }

@@ -19,11 +19,6 @@ namespace XDB.Modules
     [RequireGuildAdmin]
     public class Administration : ModuleBase<SocketCommandContext>
     {
-        [Command("leave"), Summary("Forces the bot to leave its current guild.")]
-        [RequireOwner]
-        public async Task Leave()
-            => await Context.Guild.LeaveAsync();
-
         [Command("ban", RunMode = RunMode.Async), Summary("Bans a user from a guild.")]
         public async Task Ban(SocketGuildUser user, [Remainder] string reason = "")
         {
