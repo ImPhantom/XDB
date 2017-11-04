@@ -14,6 +14,8 @@ namespace XDB.Common.Types
         public static readonly string FilePath = Path.Combine(AppContext.BaseDirectory, "cfg/config.json");
 
         public string Prefix { get; set; } = "~";
+        public float AudioVolume { get; set; } = .25f;
+        public int AudioDurationLimit { get; set; } = 1800;
         public List<ulong> Owners { get; set; } = new List<ulong> { };
         public ulong MutedRoleId { get; set; } = 0;
         public string Token { get; set; } = "";

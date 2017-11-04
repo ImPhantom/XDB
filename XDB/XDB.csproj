@@ -5,6 +5,10 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Discord.Net.Commands" Version="2.0.0-alpha-build-00838" />
     <PackageReference Include="Discord.Net.WebSocket" Version="2.0.0-alpha-build-00838" />
