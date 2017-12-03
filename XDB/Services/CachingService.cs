@@ -30,6 +30,10 @@ namespace XDB.Services
                 duration = GetDuration(url);
             else
                 duration = await GetDurationAsync(url);
+
+            if (duration == 0)
+                return null;
+
             if (duration < Config.Load().AudioDurationLimit)
             {
                 var prc = CreateProcess(url);
@@ -71,15 +75,27 @@ namespace XDB.Services
             return Xeno.ParseDuration(dur);
         }
 
-        private async Task<int> GetDurationAsync(string url) // Takes 250-350ms
+        public async Task<int> GetDurationAsync(string url) // Takes 250-350ms
         {
-            var id = Regex.Match(url, @"(?:youtube.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&amp;]v=)|youtu.be\/)([^""&amp;?\/ ]{11})").Groups[1].Value;
-            using (var client = new HttpClient())
+            try
             {
-                var response = await client.GetStringAsync($"https://www.googleapis.com/youtube/v3/videos?id={id}&key={Config.Load().GoogleKey}&part=contentDetails");
-                var json = JsonConvert.DeserializeObject<VideoInfo>(response);
-                return Xeno.ParseDuration(json.Items.First().Details.Duration);
+                var id = Regex.Match(url, @"^(?:https?\:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v\=))([\w-]{10,12})(?:$|\&|\?\#).*").Groups[1].Value;
+                using (var client = new HttpClient())
+                {
+                    var response = await client.GetStringAsync($"https://www.googleapis.com/youtube/v3/videos?id={id}&key={Config.Load().GoogleKey}&part=contentDetails");
+                    var json = JsonConvert.DeserializeObject<VideoInfo>(response);
+                    if (json.Items.Count() > 0)
+                        return Xeno.ParseDuration(json.Items.First().Details.Duration);
+                    else // if the url couldnt be parsed by this regex
+                        return GetDuration(url); // use slow ass yt-dl
+                }
             }
+            catch (Exception e)
+            {
+                BetterConsole.LogError("Caching", $"{e.Message} : {e.StackTrace}");
+                return 0;
+            }
+            
         }
 
         public Task ClearCache()
