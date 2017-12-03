@@ -8,7 +8,7 @@ namespace XDB
 {
     public class Xeno
     {
-        public static readonly string Version = "1.3.2";
+        public static readonly string Version = "1.3.3rc1";
         public static string Status = $"XDB (rel: {Version})(api: {DiscordConfig.Version})";
 
         // Default Messages
@@ -44,6 +44,15 @@ Please fill in all your info and restart the bot.";
         public static string CachePath = Path.Combine(AppContext.BaseDirectory, $"data/audio_cache");
         #endregion
 
+        public static Color RandomColor()
+        {
+            var rand = new Random();
+            var r = rand.Next(0, 255);
+            var g = rand.Next(0, 255);
+            var b = rand.Next(0, 255);
+            return new Color(r, g, b);
+        }
+
         public static Embed ErrorEmbed(string error)
         {
             var embed = new EmbedBuilder().WithColor(new Color(255, 0, 0)).WithTitle("Error:").WithDescription(error);
@@ -69,7 +78,7 @@ Please fill in all your info and restart the bot.";
             if(duration.StartsWith("PT"))
             {
                 var span = XmlConvert.ToTimeSpan(duration);
-                var parsed = Convert.ToInt32(span.TotalSeconds);
+                int.TryParse(span.TotalSeconds.ToString(), out int parsed);
                 return parsed;
             } else
             {

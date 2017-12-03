@@ -3,7 +3,6 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
-using XDB.Common.Attributes;
 
 namespace XDB.Modules
 {

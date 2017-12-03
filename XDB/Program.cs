@@ -55,14 +55,14 @@ namespace XDB
             _lists = new ListService(client);
             _lists.Initialize();
 
+            _audio = new AudioService();
+            _caching = new CachingService();
+            await _caching.Initialize();
+
             var serviceProvider = ConfigureServices();
 
             cmds = new Handler(serviceProvider);
             await cmds.Install();
-
-            _audio = new AudioService();
-            _caching = new CachingService();
-            await _caching.Initialize();
 
             client.Log += (l)
                 => Task.Run(()

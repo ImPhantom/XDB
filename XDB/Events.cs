@@ -39,7 +39,7 @@ namespace XDB
                 {
                     if (user.IsBot)
                         return;
-                    var def = user.Guild.DefaultChannel;
+                    var def = user.Guild.TextChannels.First(x => x.Name == "chat");
                     var message = Config.Load().WelcomeMessage.Replace("{mention}", user.Mention).Replace("{username}", user.Username);
                     await def.SendMessageAsync(message);
                 }

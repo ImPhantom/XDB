@@ -9,13 +9,14 @@ using System.Text;
 
 namespace XDB.Modules
 {
+    [Summary("Audio")]
     [RequireContext(ContextType.Guild)]
     public class Audio : ModuleBase
     {
         private readonly AudioService _service;
         private readonly CachingService _caching;
 
-        [Command("play", RunMode = RunMode.Async)]
+        [Command("play", RunMode = RunMode.Async), Summary("Plays a song from a youtube link/search query.")]
         public async Task Play([Remainder] string song)
         {
             await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
@@ -40,7 +41,7 @@ namespace XDB.Modules
                 list.AppendLine($"**{inc}.)** [{song.Title}]({song.Url})");
                 inc++;
             }
-            await ReplyAsync("", embed: new EmbedBuilder().WithTitle("Songs in Queue:").WithDescription(list.ToString()).WithColor(new Color(33, 171, 217)).Build());
+            await ReplyAsync("", embed: new EmbedBuilder().WithTitle("Songs in Queue:").WithDescription(list.ToString()).WithColor(Xeno.RandomColor()).Build());
         }
 
         [RequireModerator]
@@ -66,7 +67,7 @@ namespace XDB.Modules
             var before = config.AudioVolume;
             config.AudioVolume = newVolume;
             config.Save();
-            await ReplyAsync($":white_small_square:  Volume: `{before}f` => `{config.AudioVolume}f`");
+            await ReplyAsync($":white_small_square:  **Volume:** `{before}f` => `{config.AudioVolume}f`");
         }
 
         [Command("leave", RunMode = RunMode.Async)]
@@ -77,7 +78,7 @@ namespace XDB.Modules
         [Command("v_debug", RunMode = RunMode.Async)]
         public async Task Status()
         {
-            var embed = new EmbedBuilder().WithColor(new Color(0, 188, 140)).AddField("Total Cache Size:", _caching.GetCacheFolderSize().ToFormalSize()).AddField("Total Files Cached:", _caching.GetCachedFileCount()).WithCurrentTimestamp();
+            var embed = new EmbedBuilder().WithColor(Xeno.RandomColor()).AddField("Total Cache Size:", _caching.GetCacheFolderSize().ToFormalSize()).AddField("Total Files Cached:", _caching.GetCachedFileCount()).WithCurrentTimestamp();
             await ReplyAsync("", embed: embed.Build());
         }
 

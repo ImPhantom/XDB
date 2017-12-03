@@ -20,11 +20,11 @@ namespace XDB.Services
         public async Task AddBoardMessageAsync(BoardMessage message)
         {
             var guild = _client.Guilds.First();
-            var channel = guild.Channels.First(x => x.Name == "cringe-hof") as SocketTextChannel;
+            var channel = guild.Channels.First(x => x.Name == "hall-of-cringe") as SocketTextChannel;
             var user = _client.GetUser(message.UserId);
 
             var author = new EmbedAuthorBuilder().WithName(user.Username).WithIconUrl(user.GetAvatarUrl());
-            var embed = new EmbedBuilder().WithAuthor(author).WithDescription(message.Message).WithTimestamp(message.Timestamp).WithColor(new Color(71, 237, 149));
+            var embed = new EmbedBuilder().WithAuthor(author).WithDescription(message.Message).WithTimestamp(message.Timestamp).WithColor(Xeno.RandomColor());
             await channel.SendMessageAsync("", embed: embed.Build());
 
             var _in = FetchMessages();
@@ -50,8 +50,8 @@ namespace XDB.Services
         {
             foreach (var guild in _client.Guilds)
             {
-                if (!guild.Channels.Any(x => x.Name == "cringe-hof"))
-                    await guild.CreateTextChannelAsync("cringe-hof");
+                if (!guild.Channels.Any(x => x.Name == "hall-of-cringe"))
+                    await guild.CreateTextChannelAsync("hall-of-cringe");
             }
         }
 
