@@ -7,7 +7,7 @@ namespace XDB.Readers
 {
     public class MutingTypeReader : TypeReader
     {
-        public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services)
+        public override Task<TypeReaderResult> ReadAsync(ICommandContext context, string input, IServiceProvider services)
         {
             //Do default both type
             if (input.ToLower().Contains("voice") || input.ToLower().Contains("v"))

@@ -9,7 +9,7 @@ namespace XDB.Common.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class RequireAdministratorAttribute : PreconditionAttribute
     {
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider provider)
+        public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider provider)
         {
             var user = context.User as SocketGuildUser;
             if (user.Roles.Any(x => x.Name == "XDB Administrator") || user.GuildPermissions.Administrator)

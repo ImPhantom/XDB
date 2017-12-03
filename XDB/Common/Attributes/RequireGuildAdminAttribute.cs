@@ -8,7 +8,7 @@ namespace XDB.Common.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class RequireGuildAdminAttribute : PreconditionAttribute
     {
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider provider)
+        public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider provider)
         {
             var user = context.User as SocketGuildUser;
             if (user.GuildPermissions.Administrator)
