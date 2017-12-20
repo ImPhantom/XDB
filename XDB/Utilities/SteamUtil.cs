@@ -21,7 +21,7 @@ namespace XDB.Utilities
             return url.StartsWith("steamcommunity.com/id/") || url.StartsWith("steamcommunity.com/profiles/");
         }
 
-        private static string ToSteamID32(string input)
+        private static string Steam64ToSteam32(string input)
         {
             Int64 steamId1 = Convert.ToInt64(input.Substring(0)) % 2;
             Int64 steamId2a = Convert.ToInt64(input.Substring(0, 4)) - 7656;
@@ -31,7 +31,17 @@ namespace XDB.Utilities
             return "STEAM_0:" + steamId1 + ":" + ((steamId2a + steamId2b) / 2);
         }
 
-        private static string ToSteamID64(string input)
+        public static string ToSteam32(string input)
+        {
+            if (input.StartsWith("STEAM_"))
+                return input;
+            else if (input.Length == 17 && input.StartsWith("7656"))
+                return Steam64ToSteam32(input);
+            else
+                return null;
+        }
+
+        public static string Steam32ToSteam64(string input)
         {
             string[] split = input.Replace("STEAM_", "").Split(':');
             return (76561197960265728 + (Convert.ToInt64(split[2]) * 2) + Convert.ToInt64(split[1])).ToString();
@@ -42,7 +52,7 @@ namespace XDB.Utilities
             var _api = new SteamUser(Config.Load().SteamApiKey);
 
             if (IsSteamId32(input))
-                return ulong.Parse(ToSteamID64(input));
+                return ulong.Parse(Steam32ToSteam64(input));
             else if (IsSteamId64(input))
                 return ulong.Parse(input);
             else if (!IsSteamURL(input))
