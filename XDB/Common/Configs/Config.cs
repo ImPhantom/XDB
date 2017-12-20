@@ -50,7 +50,6 @@ namespace XDB.Common.Types
                 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "data"));
         }
 
-
         public static void CheckExistence()
         {
             if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "cfg")))
@@ -92,6 +91,17 @@ namespace XDB.Common.Types
             }
         }
 
-#endregion
+        public static void BlacklistCheck()
+        {
+            if (!File.Exists(Xeno.BlacklistedUsersPath))
+            {
+                List<UserBlacklist> users = new List<UserBlacklist>();
+                var json = JsonConvert.SerializeObject(users);
+                using (var file = new FileStream(Xeno.BlacklistedUsersPath, FileMode.Create)) { }
+                File.WriteAllText(Xeno.BlacklistedUsersPath, json);
+            }
+        }
+
+        #endregion
     }
 }

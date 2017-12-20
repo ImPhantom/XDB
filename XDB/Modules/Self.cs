@@ -2,7 +2,9 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Humanizer;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -10,6 +12,7 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using XDB.Common.Attributes;
 using XDB.Common.Models;
 using XDB.Common.Types;
 using XDB.Services;
@@ -73,6 +76,30 @@ namespace XDB.Modules
             };
             await _board.AddBoardMessageAsync(boardMessage);
             await ReplyAsync(":ok_hand:");
+        }
+
+        [Command("blacklist")]
+        [RequireGuildAdmin]
+        public async Task BlacklistUser(SocketGuildUser user)
+        {
+            Config.BlacklistCheck();
+            var users = JsonConvert.DeserializeObject<List<UserBlacklist>>(File.ReadAllText(Xeno.BlacklistedUsersPath));
+            if (users.Any(x => x.UserId == user.Id))
+            {
+                var item = users.First(x => x.UserId == user.Id);
+                users.Remove(item);
+                await Xeno.SaveJsonAsync(Xeno.BlacklistedUsersPath, JsonConvert.SerializeObject(users));
+                await ReplyAsync(":small_blue_diamond:  Removed specified user from the blacklist.");
+            } else
+            {
+                var item = new UserBlacklist()
+                {
+                    UserId = user.Id
+                };
+                users.Add(item);
+                await Xeno.SaveJsonAsync(Xeno.BlacklistedUsersPath, JsonConvert.SerializeObject(users));
+                await ReplyAsync(":small_blue_diamond:  Added specifed user to the blacklist.");
+            }
         }
 
         [Command("nick"), Summary("Sets the bots nickname.")]

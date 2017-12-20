@@ -8,6 +8,9 @@ using XDB.Common.Types;
 using XDB.Readers;
 using System.Collections.Generic;
 using XDB.Common.Models;
+using System.IO;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace XDB
 {
@@ -53,15 +56,31 @@ namespace XDB
                             if(!msg.Content.StartsWith("~tag"))
                                 return;
                     }
-                    
+
                 if (s.Author.IsBot)
+                    return;
+                if (IsBlacklisted(s.Author.Id))
                     return;
                 var result = await _cmds.ExecuteAsync(context, argPos, _provider);
 
                 if (!result.IsSuccess)
                     if(result.Error != CommandError.UnknownCommand)
+#if DEBUG
                         await context.Channel.SendMessageAsync("", false, Xeno.ErrorEmbed(result.ErrorReason));
+#elif RELEASE
+                        await context.Channel.SendMessageAsync("", false, Xeno.ErrorEmbed(result.ErrorReason));
+#endif
             }
+        }
+
+        private bool IsBlacklisted(ulong uid)
+        {
+            Config.BlacklistCheck();
+            var list = JsonConvert.DeserializeObject<List<UserBlacklist>>(File.ReadAllText(Xeno.BlacklistedUsersPath));
+            if (list.Any(x => x.UserId == uid))
+                return true;
+            else
+                return false;
         }
     }
 }
