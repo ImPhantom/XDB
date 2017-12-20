@@ -14,7 +14,8 @@ namespace XDB.Services
     public class AudioService
     {
         private readonly ConcurrentDictionary<ulong, IAudioClient> ConnectedChannels = new ConcurrentDictionary<ulong, IAudioClient>();
-        public List<CachedVideo> Queue = new List<CachedVideo>();
+
+        public List<QueuedVideo> Queue = new List<QueuedVideo>();
 
         public bool IsPlaying = false;
         private Process FFProcess = null;
@@ -39,18 +40,22 @@ namespace XDB.Services
                 BetterConsole.Log(LogSeverity.Info, "Audio", $"Disconnected from voice in: {guild.Name}");
             }
         }
-        
-        public async Task StartPlayingAsync(IGuild guild, IUserMessage message, CachedVideo video)
+
+        public async Task StartPlayingAsync(IGuild guild, IUserMessage message, string url)
         {
-            if (IsPlaying)
+            var info = GetAudioInfo(url);
+            if(info != null)
             {
-                Queue.Add(video);
-                await message.ModifyAsync(x => x.Content = $":notes:  **Added to queue:** `{video.Title}`");
-            }
-            else
+                Queue.Add(info);
+                if (IsPlaying)
+                    await message.ModifyAsync(x => x.Content = $":notes:  **Added to queue: `{info.Title}`**");
+                else
+                    await BeginAudioPlayback(guild, message);
+            } else
             {
-                Queue.Add(video);
-                await BeginAudioPlayback(guild, message);
+                await message.Channel.SendMessageAsync("", embed: Xeno.ErrorEmbed("Video duration exceeds the specified limit."));
+                await message.DeleteAsync();
+                return;
             }
         }
 
@@ -69,14 +74,40 @@ namespace XDB.Services
             return Task.CompletedTask;
         }
 
-        private async Task BeginAudioPlayback(IGuild guild, IUserMessage message)
+        private QueuedVideo GetAudioInfo(string url)
+        {
+            var prc = Process.Start(new ProcessStartInfo()
+            {
+                FileName = @"youtube-dl",
+                Arguments = $" -x -g -e --get-duration {url}",
+                UseShellExecute = false,
+                RedirectStandardOutput = true
+            });
+            var title = prc.StandardOutput.ReadLine();
+            var purl = prc.StandardOutput.ReadLine();
+            var duration = prc.StandardOutput.ReadLine();
+            if (Xeno.ParseDuration(duration) < Config.Load().AudioDurationLimit)
+            {
+                return new QueuedVideo()
+                {
+                    Title = title,
+                    Url = purl,
+                    Duration = duration
+                };
+            }
+            else
+                return null;
+            
+        }
+
+        public async Task BeginAudioPlayback(IGuild guild, IUserMessage message)
         {
             if (Queue.Count > 0)
             {
                 var song = Queue.First();
                 if (ConnectedChannels.TryGetValue(guild.Id, out IAudioClient client))
                 {
-                    FFProcess = CreateStream(song.Filename);
+                    FFProcess = CreateStream(song.Url);
                     var volume = Config.Load().AudioVolume;
                     using (var output = FFProcess.StandardOutput.BaseStream)
                     using (var stream = client.CreatePCMStream(AudioApplication.Music))
@@ -110,8 +141,8 @@ namespace XDB.Services
         {
             return Process.Start(new ProcessStartInfo
             {
-                FileName = "ffmpeg.exe",
-                Arguments = $"-hide_banner -loglevel panic -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1",
+                FileName = "ffmpeg",
+                Arguments = $"-hide_banner -loglevel panic -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1 -aq 3",
                 UseShellExecute = false,
                 RedirectStandardOutput = true
             });

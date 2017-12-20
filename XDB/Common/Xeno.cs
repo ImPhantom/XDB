@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XDB
@@ -40,6 +41,8 @@ Please fill in all your info and restart the bot.";
         public static string RemindPath = Path.Combine(AppContext.BaseDirectory, $"data/reminders.json");
         public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"data/tempbans.json");
         public static string CringePath = Path.Combine(AppContext.BaseDirectory, $"data/boardmessages.json");
+
+        public static string BlacklistedUsersPath = Path.Combine(AppContext.BaseDirectory, $"data/blacklisted_users.json");
 
         public static string CachePath = Path.Combine(AppContext.BaseDirectory, $"data/audio_cache");
         #endregion
@@ -101,6 +104,17 @@ Please fill in all your info and restart the bot.";
                 return $"`{channel}` (Deafened)";
             else
                 return $"`{channel}`";
+        }
+
+        public static async Task SaveJsonAsync(string path, string json)
+        {
+            using (var stream = new FileStream(path, FileMode.Truncate))
+            {
+                using (var writer = new StreamWriter(stream))
+                {
+                    await writer.WriteAsync(json);
+                }
+            }
         }
     }
 }

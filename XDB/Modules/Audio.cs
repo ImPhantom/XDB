@@ -2,7 +2,6 @@
 using XDB.Services;
 using System.Threading.Tasks;
 using Discord;
-using XDB.Common;
 using XDB.Common.Attributes;
 using XDB.Common.Types;
 using System.Text;
@@ -14,21 +13,13 @@ namespace XDB.Modules
     public class Audio : ModuleBase
     {
         private readonly AudioService _service;
-        private readonly CachingService _caching;
 
         [Command("play", RunMode = RunMode.Async), Summary("Plays a song from a youtube link/search query.")]
         public async Task Play([Remainder] string song)
         {
             await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
-            var message = await ReplyAsync(":hourglass:  Downloading/Validating...");
-            var video = await _caching.CacheVideo(ParseVideo(song));
-            if (video == null)
-            {
-                await message.DeleteAsync();
-                await ReplyAsync("", embed: Xeno.ErrorEmbed("Video duration exceeds the specified limit."));
-                return;
-            }
-            await _service.StartPlayingAsync(Context.Guild, message, video);       
+            var message = await ReplyAsync(":hourglass:  Fetching video information...");
+            await _service.StartPlayingAsync(Context.Guild, message, ParseVideo(song));
         }
 
         [Command("queue", RunMode = RunMode.Async)]
@@ -74,24 +65,6 @@ namespace XDB.Modules
         public async Task Leave()
             => await _service.LeaveAudio(Context.Guild);
 
-        [RequireGuildAdmin]
-        [Command("v_debug", RunMode = RunMode.Async)]
-        public async Task Status()
-        {
-            var embed = new EmbedBuilder().WithColor(Xeno.RandomColor()).AddField("Total Cache Size:", _caching.GetCacheFolderSize().ToFormalSize()).AddField("Total Files Cached:", _caching.GetCachedFileCount()).WithCurrentTimestamp();
-            await ReplyAsync("", embed: embed.Build());
-        }
-
-        [RequireOwner]
-        [Command("cac", RunMode = RunMode.Async)]
-        public async Task ClearAllCache()
-        {
-            var folderSize = _caching.GetCacheFolderSize().ToFormalSize();
-            var fileCount = _caching.GetCachedFileCount();
-            await _caching.ClearCache();
-            await ReplyAsync("", embed: Xeno.InfoEmbed($"Success! Deleted {fileCount} files, emptying {folderSize} of space."));
-        }
-
         private string ParseVideo(string input)
         {
             if (input.StartsWith("http"))
@@ -100,10 +73,9 @@ namespace XDB.Modules
                 return $"\"ytsearch:{input}\"";
         }
 
-        public Audio(AudioService service, CachingService caching)
+        public Audio(AudioService service)
         {
             _service = service;
-            _caching = caching;
         }
     }
 }
