@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net.Commands" Version="2.0.0-beta-00854" />
-    <PackageReference Include="Discord.Net.WebSocket" Version="2.0.0-beta-00854" />
+    <PackageReference Include="Discord.Net.Commands" Version="2.0.0-beta-00858" />
+    <PackageReference Include="Discord.Net.WebSocket" Version="2.0.0-beta-00858" />
     <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.25.0.466" />
     <PackageReference Include="Google.Apis.Urlshortener.v1" Version="1.25.0.138" />
     <PackageReference Include="Humanizer.Core" Version="2.2.0" />

@@ -31,10 +31,8 @@ Please fill in all your info and restart the bot.";
       #---------------------------------#
  ";
 
-        #region paths
         public static string ModulePath = Path.Combine(AppContext.BaseDirectory, "cfg/modules.json");
         public static string TodoPath = Path.Combine(AppContext.BaseDirectory, $"data/todolists.json");
-        public static string DevListPath = Path.Combine(AppContext.BaseDirectory, $"data/channel_lists.json");
         public static string TagsPath = Path.Combine(AppContext.BaseDirectory, $"data/tags.json");
         public static string WarnPath = Path.Combine(AppContext.BaseDirectory, $"data/warns.json");
         public static string MutesPath = Path.Combine(AppContext.BaseDirectory, $"data/mutes.json");
@@ -44,8 +42,7 @@ Please fill in all your info and restart the bot.";
 
         public static string BlacklistedUsersPath = Path.Combine(AppContext.BaseDirectory, $"data/blacklisted_users.json");
 
-        public static string CachePath = Path.Combine(AppContext.BaseDirectory, $"data/audio_cache");
-        #endregion
+        public static string LocalAudioPath = Path.Combine(AppContext.BaseDirectory, $"data/local_audio");
 
         public static Color RandomColor()
         {
@@ -70,10 +67,10 @@ Please fill in all your info and restart the bot.";
 
         public static string GetUserGame(SocketGuildUser user)
         {
-            if (!user.Game.HasValue)
-                return $"`N/A`";
+            if(user.Activity != null)
+                return $"`{user.Activity.Name}`";
             else
-                return $"`{user.Game}`";
+                return $"`n/a`";
         }
 
         public static int ParseDuration(string duration)

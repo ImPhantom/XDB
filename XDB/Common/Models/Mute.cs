@@ -12,4 +12,11 @@ namespace XDB.Common.Models
         public DateTime Timestamp { get; set; }
         public DateTime UnmuteTime { get; set; }
     }
+
+    public enum MuteType
+    {
+        Both,
+        Voice,
+        Text
+    }
 }
