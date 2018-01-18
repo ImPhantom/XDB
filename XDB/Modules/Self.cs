@@ -22,46 +22,6 @@ namespace XDB.Modules
     [Summary("Self")]
     public class Self : ModuleBase<SocketCommandContext>
     {
-        [Command("ping", RunMode = RunMode.Async), Alias("rtt"), Summary("Returns the estimated round-trip latency over the WebSocket.")]
-        public async Task Ping()
-        {
-            ulong target = 0;
-            CancellationTokenSource source = new CancellationTokenSource();
-
-            Task WaitTarget(SocketMessage message)
-            {
-                if (message.Id != target) return Task.CompletedTask;
-                source.Cancel();
-                return Task.CompletedTask;
-            }
-
-            var latency = Context.Client.Latency;
-            var sw = Stopwatch.StartNew();
-            var reply = await ReplyAsync($"**=>** heartbeat: {latency}ms, init: ---, rtt: ---");
-            var init = sw.ElapsedMilliseconds;
-            target = reply.Id;
-            sw.Restart();
-            Context.Client.MessageReceived += WaitTarget;
-
-            try
-            {
-                await Task.Delay(TimeSpan.FromSeconds(30), source.Token);
-            }
-            catch (TaskCanceledException)
-            {
-                var rtt = sw.ElapsedMilliseconds;
-                sw.Stop();
-                await reply.ModifyAsync(x => x.Content = $"**=>** heartbeat: {latency}ms, init: {init}, rtt: {rtt}");
-                return;
-            }
-            finally
-            {
-                Context.Client.MessageReceived -= WaitTarget;
-            }
-            sw.Stop();
-            await reply.ModifyAsync(x => x.Content = $"**=>** heartbeat: {latency}ms, init: {init}, rtt: timeout");
-        }
-
         [Command("forceboard")]
         [RequireOwner]
         public async Task ForceBoardMessage(ulong userid, [Remainder]string message)

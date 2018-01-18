@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using XDB.Common.Models;
@@ -79,6 +80,7 @@ namespace XDB
             client.UserLeft += OnUserLeave;
             client.UserUpdated += OnUserUpdate;
             client.GuildMemberUpdated += OnGuildMemberUpdate;
+            client.MessageReceived += OnMessageReceived;
             client.MessageDeleted += OnMessageDelete;
             client.MessageUpdated += OnMessageUpdate;
             client.ReactionAdded += OnReactionAdded;
@@ -173,6 +175,19 @@ namespace XDB
             if (Config.Load().ExtraLogging)
                 if (before.Nickname != after.Nickname)
                     await Logging.LogNicknamesAsync(before, after);
+        }
+
+        private async Task OnMessageReceived(SocketMessage message)
+        {
+            var management = new List<ulong>() { 93765631177920512, 99710940601135104, 97675548985143296, 103954684837920768 };
+            if (management.Contains(message.Author.Id))
+                if (message.Content.Contains("Who?"))
+                {
+                    await message.Channel.TriggerTypingAsync();
+                    await Task.Delay(6000);
+                    await message.Channel.SendMessageAsync("Cares.");
+                }
+                    
         }
 
         private async Task OnMessageDelete(Cacheable<IMessage, ulong> message, ISocketMessageChannel channel)

@@ -30,6 +30,7 @@ namespace XDB.Modules
                 embed.AddField("Requested By:", $"{Context.User.Username}#{Context.User.Discriminator}", true);
                 embed.AddField("Duration:", $"{length.Humanize()}", true);
                 embed.AddField("Reason:", $"{reason} (Banned on behalf of: {Context.User.Username})");
+                embed.AddField("Command:", $"`ulx banid {id32} {length.TotalMinutes} \"{reason}\"`");
                 await ReplyAsync("<@!169591360695959553>", embed: embed.Build());
             } else
             {
