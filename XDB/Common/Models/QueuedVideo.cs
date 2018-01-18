@@ -12,5 +12,7 @@ namespace XDB.Common.Models
 
         [JsonProperty("duration")]
         public string Duration { get; set; }
+
+        public string VideoId { get; set; }
     }
 }

@@ -66,6 +66,12 @@ namespace XDB.Services
             Queue.Remove(first);
         }
 
+        public async Task ClearQueueAsync()
+        {
+            await StopPlaying();
+            Queue.Clear();
+        }
+
         public Task StopPlaying()
         {
             FFProcess.Kill();
@@ -79,11 +85,12 @@ namespace XDB.Services
             var prc = Process.Start(new ProcessStartInfo()
             {
                 FileName = @"youtube-dl",
-                Arguments = $" -x -g -e --get-duration {url}",
+                Arguments = $" -x -g -e --get-duration --get-id {url}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true
             });
             var title = prc.StandardOutput.ReadLine();
+            var videoId = prc.StandardOutput.ReadLine();
             var purl = prc.StandardOutput.ReadLine();
             var duration = prc.StandardOutput.ReadLine();
             if (Xeno.ParseDuration(duration) < Config.Load().AudioDurationLimit)
@@ -92,12 +99,12 @@ namespace XDB.Services
                 {
                     Title = title,
                     Url = purl,
-                    Duration = duration
+                    Duration = duration,
+                    VideoId = videoId
                 };
             }
             else
                 return null;
-            
         }
 
         public async Task BeginAudioPlayback(IGuild guild, IUserMessage message)
@@ -142,7 +149,7 @@ namespace XDB.Services
             return Process.Start(new ProcessStartInfo
             {
                 FileName = "ffmpeg",
-                Arguments = $"-hide_banner -loglevel panic -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1 -aq 3",
+                Arguments = $"-hide_banner -loglevel panic -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1 -aq 4",
                 UseShellExecute = false,
                 RedirectStandardOutput = true
             });

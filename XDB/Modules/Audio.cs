@@ -5,6 +5,7 @@ using Discord;
 using XDB.Common.Attributes;
 using XDB.Common.Types;
 using System.Text;
+using System.Linq;
 
 namespace XDB.Modules
 {
@@ -14,12 +15,25 @@ namespace XDB.Modules
     {
         private readonly AudioService _service;
 
+        [Ratelimit(3, 1, Measure.Minutes)]
         [Command("play", RunMode = RunMode.Async), Summary("Plays a song from a youtube link/search query.")]
         public async Task Play([Remainder] string song)
         {
             await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
             var message = await ReplyAsync(":hourglass:  Fetching video information...");
             await _service.StartPlayingAsync(Context.Guild, message, ParseVideo(song));
+        }
+
+        [Command("song", RunMode = RunMode.Async), Summary("Gets the currently playing song.")]
+        public async Task Song()
+        {
+            if (_service.IsPlaying)
+            {
+                var song = _service.Queue.First();
+                await ReplyAsync("", embed: new EmbedBuilder().WithTitle("Currently Playing:").WithDescription($"[{song.Title}](http://www.youtube.com/watch?v={song.VideoId})").WithColor(Xeno.RandomColor()).Build());
+            }
+            else
+                await ReplyAsync("", embed: Xeno.ErrorEmbed("The bot is not playing any music."));
         }
 
         [Command("queue", RunMode = RunMode.Async)]
@@ -29,7 +43,7 @@ namespace XDB.Modules
             var list = new StringBuilder();
             foreach (var song in _service.Queue)
             {
-                list.AppendLine($"**{inc}.)** [{song.Title}]({song.Url})");
+                list.AppendLine($"**{inc}.)** [{song.Title}](http://www.youtube.com/watch?v={song.VideoId})");
                 inc++;
             }
             await ReplyAsync("", embed: new EmbedBuilder().WithTitle("Songs in Queue:").WithDescription(list.ToString()).WithColor(Xeno.RandomColor()).Build());
@@ -43,7 +57,18 @@ namespace XDB.Modules
         [RequireAdministrator]
         [Command("stop", RunMode = RunMode.Async)]
         public async Task Stop()
-            => await _service.StopPlaying();
+        {
+            await _service.StopPlaying();
+            await ReplyAsync(":ok_hand:");
+        }
+
+        [RequireAdministrator]
+        [Command("clearqueue", RunMode = RunMode.Async)]
+        public async Task ClearQueue()
+        {
+            await _service.ClearQueueAsync();
+            await ReplyAsync(":ok_hand:");
+        }
 
         [RequireAdministrator]
         [Command("volume", RunMode = RunMode.Async)]
