@@ -8,12 +8,14 @@ using XDB.Common.Models;
 using System.Linq;
 using System;
 using XDB.Common.Types;
+using System.IO;
 
 namespace XDB.Services
 {
     public class AudioService
     {
-        private readonly ConcurrentDictionary<ulong, IAudioClient> ConnectedChannels = new ConcurrentDictionary<ulong, IAudioClient>();
+        private readonly ConcurrentDictionary<ulong, IAudioClient> ConnectedClients = new ConcurrentDictionary<ulong, IAudioClient>();
+        public ConcurrentDictionary<ulong, ulong> ConnectedChannels = new ConcurrentDictionary<ulong, ulong>();
 
         public List<QueuedVideo> Queue = new List<QueuedVideo>();
 
@@ -22,23 +24,25 @@ namespace XDB.Services
 
         public async Task JoinAudio(IGuild guild, IVoiceChannel channel)
         {
-            if (ConnectedChannels.TryGetValue(guild.Id, out IAudioClient client))
+            if (ConnectedClients.TryGetValue(guild.Id, out IAudioClient client))
                 return;
             if (channel.Guild.Id != guild.Id)
                 return;
 
             var audioClient = await channel.ConnectAsync();
-            if (ConnectedChannels.TryAdd(guild.Id, audioClient))
-                BetterConsole.Log(LogSeverity.Info, "Audio", $"Connected to voice in: {guild.Name} ({channel.Name})");
+            if (ConnectedClients.TryAdd(guild.Id, audioClient))
+                if(ConnectedChannels.TryAdd(guild.Id, channel.Id))
+                    BetterConsole.Log(LogSeverity.Info, "Audio", $"Connected to voice in: {guild.Name} ({channel.Name})");
         }
 
         public async Task LeaveAudio(IGuild guild)
         {
-            if (ConnectedChannels.TryRemove(guild.Id, out IAudioClient client))
-            {
-                await client.StopAsync();
-                BetterConsole.Log(LogSeverity.Info, "Audio", $"Disconnected from voice in: {guild.Name}");
-            }
+            if (ConnectedClients.TryRemove(guild.Id, out IAudioClient client))
+                if(ConnectedChannels.TryRemove(guild.Id, out ulong channelId))
+                {
+                    await client.StopAsync();
+                    BetterConsole.Log(LogSeverity.Info, "Audio", $"Disconnected from voice in: {guild.Name}");
+                }
         }
 
         public async Task StartPlayingAsync(IGuild guild, IUserMessage message, string url)
@@ -57,6 +61,54 @@ namespace XDB.Services
                 await message.DeleteAsync();
                 return;
             }
+        }
+
+        public async Task StartLocalFolderAsync(IGuild guild, IUserMessage message, string foldername, string filename)
+        {
+            var path = Path.Combine(Xeno.LocalAudioPath, foldername);
+            if (Directory.Exists(path))
+            {
+                var files = Directory.GetFiles(path);
+                if(filename != null)
+                {
+                    if (files.Any(x => x.ToLower().Contains(filename.ToLower())))
+                    {
+                        var file = files.First(x => x.ToLower().Contains(filename.ToLower()));
+                        var fn = Path.GetFileName(file);
+                        Queue.Add(new QueuedVideo()
+                        {
+                            Url = file,
+                            Title = $"{foldername}/{fn}"
+                        });
+                        await message.ModifyAsync(x => x.Content = $":notes:  **Added `{foldername}/{fn}` to the queue.**");
+                    } else
+                    {
+                        await message.Channel.SendMessageAsync("", embed: Xeno.ErrorEmbed($"Could not find any file that contained `{filename}` in `{foldername}/`"));
+                        await message.DeleteAsync();
+                        return;
+                    }
+                } else
+                {
+                    foreach (var file in files)
+                    {
+                        var fn = Path.GetFileName(file);
+                        
+                        Queue.Add(new QueuedVideo()
+                        {
+                            Url = file,
+                            Title = $"{foldername}/{fn}"
+                        });
+                    }
+                    await message.ModifyAsync(x => x.Content = $":notes:  **Added {files.Count()} files from `{foldername}/` to the queue.**");
+                }
+                await BeginAudioPlayback(guild, message);
+            }
+            else
+            {
+                await message.Channel.SendMessageAsync("", embed: Xeno.ErrorEmbed("No folder with that name."));
+                await message.DeleteAsync();
+                return;
+            }            
         }
 
         public async Task SkipSongAsync(IGuild guild, IMessageChannel channel)
@@ -112,7 +164,7 @@ namespace XDB.Services
             if (Queue.Count > 0)
             {
                 var song = Queue.First();
-                if (ConnectedChannels.TryGetValue(guild.Id, out IAudioClient client))
+                if (ConnectedClients.TryGetValue(guild.Id, out IAudioClient client))
                 {
                     FFProcess = CreateStream(song.Url);
                     var volume = Config.Load().AudioVolume;

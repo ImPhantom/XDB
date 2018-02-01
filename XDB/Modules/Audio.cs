@@ -20,8 +20,33 @@ namespace XDB.Modules
         public async Task Play([Remainder] string song)
         {
             await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
-            var message = await ReplyAsync(":hourglass:  Fetching video information...");
-            await _service.StartPlayingAsync(Context.Guild, message, ParseVideo(song));
+            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            {
+                if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
+                {
+                    var message = await ReplyAsync(":hourglass:  Fetching video information...");
+                    await _service.StartPlayingAsync(Context.Guild, message, ParseVideo(song));
+                }
+                else
+                    await ReplyAsync("", embed: Xeno.ErrorEmbed("This command requires you to be in the bots voice channel."));
+            }
+        }
+
+        [RequirePermission(Permission.GuildAdmin)]
+        [Command("local", RunMode = RunMode.Async)]
+        public async Task Local(string foldername, string filename = "")
+        {
+            await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
+            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            {
+                if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
+                {
+                    var message = await ReplyAsync(":hourglass:  Fetching files from local directory...");
+                    await _service.StartLocalFolderAsync(Context.Guild, message, foldername, filename);
+                }
+                else
+                    await ReplyAsync("", embed: Xeno.ErrorEmbed("This command requires you to be in the bots voice channel."));
+            }
         }
 
         [Command("song", RunMode = RunMode.Async), Summary("Gets the currently playing song.")]
@@ -49,20 +74,38 @@ namespace XDB.Modules
             await ReplyAsync("", embed: new EmbedBuilder().WithTitle("Songs in Queue:").WithDescription(list.ToString()).WithColor(Xeno.RandomColor()).Build());
         }
 
-        [RequireModerator]
+        [RequirePermission(Permission.XDBModerator)]
         [Command("skip", RunMode = RunMode.Async)]
         public async Task Skip()
-            => await _service.SkipSongAsync(Context.Guild, Context.Channel);
+        {
+            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            {
+                if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
+                {
+                    await _service.SkipSongAsync(Context.Guild, Context.Channel);
+                }
+                else
+                    await ReplyAsync("", embed: Xeno.ErrorEmbed("This command requires you to be in the bots voice channel."));
+            }
+        }
 
-        [RequireAdministrator]
+        [RequirePermission(Permission.XDBAdministrator)]
         [Command("stop", RunMode = RunMode.Async)]
         public async Task Stop()
         {
-            await _service.StopPlaying();
-            await ReplyAsync(":ok_hand:");
+            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            {
+                if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
+                {
+                    await _service.StopPlaying();
+                    await ReplyAsync(":ok_hand:");
+                }
+                else
+                    await ReplyAsync("", embed: Xeno.ErrorEmbed("This command requires you to be in the bots voice channel."));
+            }
         }
 
-        [RequireAdministrator]
+        [RequirePermission(Permission.XDBAdministrator)]
         [Command("clearqueue", RunMode = RunMode.Async)]
         public async Task ClearQueue()
         {
@@ -70,7 +113,7 @@ namespace XDB.Modules
             await ReplyAsync(":ok_hand:");
         }
 
-        [RequireAdministrator]
+        [RequirePermission(Permission.XDBAdministrator)]
         [Command("volume", RunMode = RunMode.Async)]
         public async Task Volume([Remainder] float newVolume)
         {
@@ -88,7 +131,19 @@ namespace XDB.Modules
 
         [Command("leave", RunMode = RunMode.Async)]
         public async Task Leave()
-            => await _service.LeaveAudio(Context.Guild);
+        {
+            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            {
+                if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
+                {
+                    await _service.LeaveAudio(Context.Guild);
+                    await ReplyAsync(":ok_hand:");
+                }
+                else
+                    await ReplyAsync("", embed: Xeno.ErrorEmbed("This command requires you to be in the bots voice channel."));
+            }
+            
+        }
 
         private string ParseVideo(string input)
         {
