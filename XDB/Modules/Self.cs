@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using XDB.Common.Attributes;
 using XDB.Common.Models;
@@ -39,7 +38,7 @@ namespace XDB.Modules
         }
 
         [Command("blacklist")]
-        [RequireGuildAdmin]
+        [RequirePermission(Permission.GuildAdmin)]
         public async Task BlacklistUser(SocketGuildUser user)
         {
             Config.BlacklistCheck();
@@ -59,6 +58,24 @@ namespace XDB.Modules
                 users.Add(item);
                 await Xeno.SaveJsonAsync(Xeno.BlacklistedUsersPath, JsonConvert.SerializeObject(users));
                 await ReplyAsync(":small_blue_diamond:  Added specifed user to the blacklist.");
+            }
+        }
+
+        [Command("whitelist"), Summary("Whitelists a channel for people to use bot commands.")]
+        [RequirePermission(Permission.GuildAdmin)]
+        public async Task Whitelist()
+        {
+            var cfg = Config.Load();
+            if(cfg.WhitelistedChannels.Any(x => x == Context.Channel.Id))
+            {
+                cfg.WhitelistedChannels.Remove(Context.Channel.Id);
+                cfg.Save();
+                await ReplyAsync($":black_medium_small_square: Removed `#{Context.Channel.Name}` from the whitelist.");
+            }else
+            {
+                cfg.WhitelistedChannels.Add(Context.Channel.Id);
+                cfg.Save();
+                await ReplyAsync($":heavy_check_mark: Added `#{Context.Channel.Name}` to the whitelist.");
             }
         }
 
