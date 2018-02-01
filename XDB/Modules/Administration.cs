@@ -16,7 +16,7 @@ namespace XDB.Modules
 {
     [Summary("Administration")]
     [RequireContext(ContextType.Guild)]
-    [RequireGuildAdmin]
+    [RequirePermission(Permission.GuildAdmin)]
     public class Administration : ModuleBase<SocketCommandContext>
     {
         [Command("ban", RunMode = RunMode.Async), Summary("Bans a user from a guild.")]
@@ -97,7 +97,7 @@ namespace XDB.Modules
     }
 
     [Summary("Moderation")]
-    [RequireAdministrator]
+    [RequirePermission(Permission.XDBAdministrator)]
     [RequireContext(ContextType.Guild)]
     public class Moderation : ModuleBase<SocketCommandContext>
     {
@@ -210,7 +210,7 @@ namespace XDB.Modules
     public class Cleanup : ModuleBase<SocketCommandContext>
     {
         [Command("clean", RunMode = RunMode.Async), Summary("Cleans all user messages from a channel")]
-        [RequireAdministrator]
+        [RequirePermission(Permission.XDBAdministrator)]
         public async Task Clean(int amount = 5)
         {
             amount++;
