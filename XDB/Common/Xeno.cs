@@ -9,7 +9,7 @@ namespace XDB
 {
     public class Xeno
     {
-        public static readonly string Version = "1.3.3rc1";
+        public static readonly string Version = "1.3.4";
         public static string Status = $"XDB (rel: {Version})(api: {DiscordConfig.Version})";
 
         // Default Messages
@@ -33,8 +33,9 @@ Please fill in all your info and restart the bot.";
 
         public static string ModulePath = Path.Combine(AppContext.BaseDirectory, "cfg/modules.json");
         public static string TodoPath = Path.Combine(AppContext.BaseDirectory, $"data/todolists.json");
-        public static string TagsPath = Path.Combine(AppContext.BaseDirectory, $"data/tags.json");
+        public static string TagsPath = Path.Combine(AppContext.BaseDirectory, $"data/tag_dict.json");
         public static string WarnPath = Path.Combine(AppContext.BaseDirectory, $"data/warns.json");
+        public static string WarningsPath = Path.Combine(AppContext.BaseDirectory, $"data/warnings.json");
         public static string MutesPath = Path.Combine(AppContext.BaseDirectory, $"data/mutes.json");
         public static string RemindPath = Path.Combine(AppContext.BaseDirectory, $"data/reminders.json");
         public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"data/tempbans.json");

@@ -1,139 +1,70 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using Discord.Commands;
 using System.Threading.Tasks;
-using XDB.Common.Types;
-using Newtonsoft.Json;
-using XDB.Common.Models;
 using System.Linq;
-using XDB.Common.Attributes;
 using Discord;
+using XDB.Common;
+using XDB.Services;
 
 namespace XDB.Modules
 {
     [Summary("tags")]
     [RequireContext(ContextType.Guild)]
-    public class Tags : ModuleBase
+    public class Tags : XenoBase
     {
+        private TagService _service;
+
         [Command("tag")]
-        public async Task GetTag(string keyword)
+        public async Task Tag(string tagName)
         {
-            Config.TagsCheck();
-            var tags = File.ReadAllText(Xeno.TagsPath);
-            var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
-            try
-            {
-                var term = keyword.ToLower();
-                if (!_json.Any(x => x.TagName == term))
-                    await ReplyAsync(":heavy_multiplication_x:  There are no tags matching that keyword.");
-                else
-                {
-                    var tag = _json.First(x => x.TagName == term);
-                    var embed = new EmbedBuilder().WithColor(new Color(39, 217, 196)).WithDescription(tag.TagContent);
-                    await ReplyAsync("", embed: embed.Build());
-                }
-                    
-            }
-            catch (Exception e)
-            {
-                BetterConsole.LogError("Tags", e.ToString());
-            }
+            var tag = await _service.FetchTagContentAsync(tagName);
+            if (tag != null)
+                await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(39, 217, 196)).WithDescription(tag).Build());
+            else
+                await SendErrorEmbedAsync("No tag found with that name.");
         }
 
         [Command("tags")]
         public async Task ListTags()
         {
-            Config.TagsCheck();
-            var tags = File.ReadAllText(Xeno.TagsPath);
-            var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
-            try
-            {
-                if (!_json.Any())
-                    await ReplyAsync(":eight_pointed_black_star:  There are no tags!");
-                else
-                {
-                    List<string> alltags = new List<string>{};
-                    _json.ForEach(x => alltags.Add(x.TagName));
-                    string list = string.Join(", ", alltags);
-                    await ReplyAsync($":small_blue_diamond:  **List of all tags:**```\n{list}\n```");
-                }
-            } catch(Exception e)
-            {
-                BetterConsole.LogError("Tags", e.ToString());
-            }
+            var tags = _service.FetchAllTags().Keys.ToList();
+            string list = string.Join(", ", tags);
+            await ReplyAsync($":small_blue_diamond:  **List of all tags:**```\n{list}\n```");
         }
 
-        [Command("addtag")]
-        [RequirePermission(Permission.GuildAdmin)]
-        public async Task AddTag(string name, [Remainder] string content)
+        [Command("tag add"), Alias("tag +")]
+        public async Task AddTag(string tagName, string tagContent)
         {
-            Config.TagsCheck();
-            var tags = File.ReadAllText(Xeno.TagsPath);
-            var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
-            try
-            {
-                var lower = name.ToLower();
-                _json.Add(new Tag() { TagName = lower, TagContent = content });
-                File.WriteAllText(Xeno.TagsPath, JsonConvert.SerializeObject(_json));
-                await ReplyAsync($":heavy_check_mark:  You have added the `{lower}` tag.");
-            }
-            catch (Exception e)
-            {
-                BetterConsole.LogError("Tags", e.ToString());
-            }
+            var tag = await _service.TryAddTagAsync(tagName, tagContent);
+            if (tag)
+                await ReplyThenRemoveAsync(":ok_hand: Tag added.", TimeSpan.FromSeconds(7));
+            else
+                await SendErrorEmbedAsync("A tag already exists with that name.");
         }
 
-        [Command("removetag"), Alias("deltag", "deletetag", "remtag")]
-        [RequirePermission(Permission.GuildAdmin)]
-        public async Task RemoveTag(string name)
+        [Command("tag remove"), Alias("tag delete", "tag -")]
+        public async Task RemoveTag(string tagName, string tagContent)
         {
-            Config.TagsCheck();
-            var tags = File.ReadAllText(Xeno.TagsPath);
-            var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
-            try
-            {
-                var lower = name.ToLower();
-                if (!_json.Any(x => x.TagName == lower))
-                    await ReplyAsync(":heavy_multiplication_x:  There are no tags matching that keyword!");
-                else
-                {
-                    var tag = _json.First(x => x.TagName == lower);
-                    _json.Remove(tag);
-                    File.WriteAllText(Xeno.TagsPath, JsonConvert.SerializeObject(_json));
-                    await ReplyAsync($":heavy_check_mark:  You have removed the `{lower}` tag.");
-                }
-            }
-            catch (Exception e)
-            {
-                BetterConsole.LogError("Tags", e.ToString());
-            }
+            var tag = await _service.TryRemoveTagAsync(tagName);
+            if (tag)
+                await ReplyThenRemoveAsync(":ok_hand: Tag removed.", TimeSpan.FromSeconds(7));
+            else
+                await SendErrorEmbedAsync("No tag exists with that name.");
         }
 
-        [Command("edittag"), Alias("tagedit")]
-        [RequirePermission(Permission.GuildAdmin)]
-        public async Task EditTag(string name, [Remainder] string newtag)
+        [Command("tag edit"), Alias("tag delete", "tag =")]
+        public async Task EditTag(string tagName, string newTagContent)
         {
-            Config.TagsCheck();
-            var tags = File.ReadAllText(Xeno.TagsPath);
-            var _json = JsonConvert.DeserializeObject<List<Tag>>(tags);
-            try
-            {
-                var lower = name.ToLower();
-                if (!_json.Any(x => x.TagName == lower))
-                    await ReplyAsync(":heavy_multiplication_x:  There are no tags matching that keyword!");
-                else
-                {
-                    var tag = _json.First(x => x.TagName == lower);
-                    tag.TagContent = newtag;
-                    File.WriteAllText(Xeno.TagsPath, JsonConvert.SerializeObject(_json));
-                    await ReplyAsync($":heavy_check_mark:  You have successfully modified the `{lower}` tag.");
-                }
-            }
-            catch (Exception e)
-            {
-                BetterConsole.LogError("Tags", e.ToString());
-            }
+            var tag = await _service.TryEditTagAsync(tagName, newTagContent);
+            if (tag)
+                await ReplyThenRemoveAsync(":ok_hand: Tag edited.", TimeSpan.FromSeconds(7));
+            else
+                await SendErrorEmbedAsync("No tag exists with that name.");
+        }
+
+        public Tags(TagService service)
+        {
+            _service = service;
         }
     }
 }

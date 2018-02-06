@@ -16,13 +16,16 @@ namespace XDB.Services
             => JsonConvert.DeserializeObject<List<TempBan>>(File.ReadAllText(Xeno.TempBanPath));
 
         public IEnumerable<TempBan> FetchActiveTempBans()
-            => FetchTempBans().Where(x => DateTime.Compare(DateTime.UtcNow, x.UnbanTime) > 0);
+            => FetchTempBans().Where(x => DateTime.Compare(DateTime.UtcNow, x.UnbanTime) < 0);
 
         public List<Mute> FetchMutes()
             => JsonConvert.DeserializeObject<List<Mute>>(File.ReadAllText(Xeno.MutesPath));
 
         public IEnumerable<Mute> FetchActiveMutes()
-            => FetchMutes().Where(x => DateTime.Compare(DateTime.UtcNow, x.UnmuteTime) > 0 && x.IsActive);
+            => FetchMutes().Where(x => DateTime.Compare(DateTime.UtcNow, x.UnmuteTime) < 0 && x.IsActive);
+
+        public Dictionary<ulong, List<string>> FetchWarnings()
+            => JsonConvert.DeserializeObject<Dictionary<ulong, List<string>>>(File.ReadAllText(Xeno.WarningsPath));
 
         public void Initialize()
         {
@@ -38,6 +41,13 @@ namespace XDB.Services
                 List<Mute> mutes = new List<Mute>();
                 using (var file = new FileStream(Xeno.MutesPath, FileMode.Create)) { }
                 File.WriteAllText(Xeno.MutesPath, JsonConvert.SerializeObject(mutes));
+            }
+
+            if (!File.Exists(Xeno.WarningsPath))
+            {
+                Dictionary<ulong, List<string>> warnings = new Dictionary<ulong, List<string>>();
+                using (var file = new FileStream(Xeno.WarningsPath, FileMode.Create)) { }
+                File.WriteAllText(Xeno.WarningsPath, JsonConvert.SerializeObject(warnings));
             }
         }
 
@@ -141,6 +151,21 @@ namespace XDB.Services
                 case MuteType.Text:
                     await user.AddRoleAsync(muteRole);
                     break;
+            }
+        }
+
+        public async Task WarnUserAsync(SocketGuildUser user, string reason)
+        {
+            var warnings = FetchWarnings();
+            if (warnings.TryGetValue(user.Id, out List<string> _warnings))
+            {
+                _warnings.Add(reason);
+                await Xeno.SaveJsonAsync(Xeno.WarningsPath, JsonConvert.SerializeObject(warnings));
+            }
+            else
+            {
+                warnings.Add(user.Id, new List<string> { reason });
+                await Xeno.SaveJsonAsync(Xeno.WarningsPath, JsonConvert.SerializeObject(warnings));
             }
         }
     }
