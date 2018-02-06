@@ -63,34 +63,10 @@ namespace XDB.Common.Types
                 cfg.Token = Console.ReadLine();
                 cfg.Save();
             }
-            if (!File.Exists(Xeno.ModulePath)) { var mdls = new ModuleConfig(); mdls.Save(); }
             BetterConsole.Log("Info", "XDB", "Configuration successfully loaded!");
         }
 
         #region annoying config checks
-
-        public static void TagsCheck()
-        {
-            if (!File.Exists(Xeno.TagsPath))
-            {
-                List<Tag> tags = new List<Tag>();
-                var json = JsonConvert.SerializeObject(tags);
-                using (var file = new FileStream(Xeno.TagsPath, FileMode.Create)) { }
-                File.WriteAllText(Xeno.TagsPath, json);
-            }
-        }
-
-        public static void WarnCheck()
-        {
-            if (!File.Exists(Xeno.WarnPath))
-            {
-                List<UserWarn> warns = new List<UserWarn>();
-                var json = JsonConvert.SerializeObject(warns);
-                using (var file = new FileStream(Xeno.WarnPath, FileMode.Create)) { }
-                File.WriteAllText(Xeno.WarnPath, json);
-            }
-        }
-
         public static void BlacklistCheck()
         {
             if (!File.Exists(Xeno.BlacklistedUsersPath))
@@ -101,7 +77,6 @@ namespace XDB.Common.Types
                 File.WriteAllText(Xeno.BlacklistedUsersPath, json);
             }
         }
-
         #endregion
     }
 }

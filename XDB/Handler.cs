@@ -32,7 +32,6 @@ namespace XDB
             _cmds.AddTypeReader<TimeSpan>(new TimeStringTypeReader());
             _cmds.AddTypeReader<MuteType>(new MutingTypeReader());
             await _cmds.AddModulesAsync(Assembly.GetEntryAssembly());
-            await ModuleConfig.RemoveDisabledModulesAsync(_cmds);
             _client.MessageReceived += HandleCommand;
         }
 
@@ -65,11 +64,7 @@ namespace XDB
 
                 if (!result.IsSuccess)
                     if(result.Error != CommandError.UnknownCommand)
-#if DEBUG
                         await context.Channel.SendMessageAsync("", false, Xeno.ErrorEmbed(result.ErrorReason));
-#elif RELEASE
-                        await context.Channel.SendMessageAsync("", false, Xeno.ErrorEmbed(result.ErrorReason));
-#endif
             }
         }
 
