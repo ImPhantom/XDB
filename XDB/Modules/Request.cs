@@ -11,10 +11,11 @@ using Discord;
 using Humanizer;
 using XDB.Common.Attributes;
 using Discord.WebSocket;
+using XDB.Common;
 
 namespace XDB.Modules
 {
-    public class Request : ModuleBase
+    public class Request : XenoBase
     {
         [Command("request")]
         [RequireContext(ContextType.Guild)]
@@ -37,9 +38,7 @@ namespace XDB.Modules
                 embed.AddField("Command:", $"`ulx banid {id32} {length.TotalMinutes} \"{full}\"`");
                 await ReplyAsync("<@!169591360695959553>", embed: embed.Build());
             } else
-            {
-                await ReplyAsync("", embed: Xeno.ErrorEmbed("Could not validate SteamID"));
-            }
+                await SendErrorEmbedAsync("Could not validate SteamID");
         }
 
         private async Task<PlayerSummary> ValidateSteamId(string input)

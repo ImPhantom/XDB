@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using XDB.Common;
 using XDB.Common.Attributes;
 using XDB.Common.Models;
 using XDB.Common.Types;
@@ -19,7 +20,7 @@ using XDB.Services;
 namespace XDB.Modules
 {
     [Summary("Self")]
-    public class Self : ModuleBase<SocketCommandContext>
+    public class Self : XenoBase
     {
         [Command("forceboard")]
         [RequireOwner]
@@ -34,7 +35,7 @@ namespace XDB.Modules
                 Timestamp = Context.Message.Timestamp
             };
             await _board.AddBoardMessageAsync(boardMessage);
-            await ReplyAsync(":ok_hand:");
+            await ReplyThenRemoveAsync(":ok_hand:");
         }
 
         [Command("blacklist")]

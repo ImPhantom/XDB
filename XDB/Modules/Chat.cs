@@ -2,14 +2,20 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
+using XDB.Common;
+using XDB.Services;
 
 namespace XDB.Modules
 {
     [Summary("Chat")]
     [RequireContext(ContextType.Guild)]
-    public class Chat : ModuleBase<SocketCommandContext>
+    public class Chat : XenoBase
     {
+        private ModerationService _moderation;
+
         [Command("help"), Summary("Displays the XDB Changelog for this version.")]
         public async Task Help()
             => await ReplyAsync("You can find a command list here:\n https://github.com/ImPhantom/XDB/wiki/XDB-Command-List");
@@ -20,6 +26,25 @@ namespace XDB.Modules
             Random random = new Random();
             var response = Xeno.EightBallResponses[random.Next(Xeno.EightBallResponses.Length)];
             await ReplyAsync($":8ball: {response}");
+        }
+
+        [Command("warns"), Summary("Views your warnings")]
+        public async Task Warns()
+        {
+            var warnings = _moderation.FetchWarnings();
+            if (warnings.TryGetValue(Context.User.Id, out List<string> _warnings))
+            {
+                var str = new StringBuilder();
+                var count = 1;
+                _warnings.ForEach(x =>
+                {
+                    str.Append($"{count}. {x}\n");
+                    count++;
+                });
+                await ReplyAsync($":small_blue_diamond: `{Context.User.Username}#{Context.User.Discriminator}`'s {_warnings.Count} warnings:\n```{str.ToString()}```");
+            }
+            else
+                await SendErrorEmbedAsync($"You have no warnings.");
         }
 
         [Command("user"), Summary("Displays your user information.")]
@@ -62,6 +87,11 @@ namespace XDB.Modules
                 embed.AddField("Voice State:", Xeno.GetVoiceState(user), true);
 
             return embed.Build();
+        }
+
+        public Chat(ModerationService moderation)
+        {
+            _moderation = moderation;
         }
     }
 }

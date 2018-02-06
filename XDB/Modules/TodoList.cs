@@ -1,23 +1,24 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
+using XDB.Common;
 using XDB.Services;
 
 namespace XDB.Modules
 {
     [Summary("Todo")]
     [Group("todo")]
-    public class TodoList : ModuleBase<SocketCommandContext>
+    public class TodoList : XenoBase
     {
         private ListService _lists;
 
         [Command, Summary("Displays your todo list.")]
         public async Task ViewTodo()
         {
-            var chList = _lists.FetchListItems(Context.User.Id);
-            if (!chList.StartsWith(":"))
-                await ReplyAsync("", embed: Xeno.ErrorEmbed(chList));
+            var result = _lists.FetchListItems(Context.User.Id);
+            if (!result.StartsWith(":"))
+                await SendErrorEmbedAsync(result);
             else
-                await ReplyAsync(chList);
+                await ReplyAsync(result);
         }
             
         [Command("add"), Summary("Adds item to you todo list.")]
@@ -25,7 +26,7 @@ namespace XDB.Modules
         {
             var result = await _lists.AddTodoListItemAsync(Context.User.Id, listitem);
             if (!result.StartsWith(":"))
-                await ReplyAsync("", embed: Xeno.ErrorEmbed(result));
+                await SendErrorEmbedAsync(result);
             else
                 await ReplyAsync(result);
         }
@@ -35,7 +36,7 @@ namespace XDB.Modules
         {
             var result = await _lists.RemoveTodoListItemAsync(Context.User.Id, index);
             if (!result.StartsWith(":"))
-                await ReplyAsync("", embed: Xeno.ErrorEmbed(result));
+                await SendErrorEmbedAsync(result);
             else
                 await ReplyAsync(result);
         }
@@ -45,7 +46,7 @@ namespace XDB.Modules
         {
             var result = await _lists.ClearTodoListAsync(Context.User.Id);
             if (!result.StartsWith(":"))
-                await ReplyAsync("", embed: Xeno.ErrorEmbed(result));
+                await SendErrorEmbedAsync(result);
             else
                 await ReplyAsync(result);
         }
@@ -55,7 +56,7 @@ namespace XDB.Modules
         {
             var result = await _lists.EditTodoListItemAsync(Context.User.Id, index, edit);
             if (!result.StartsWith(":"))
-                await ReplyAsync("", embed: Xeno.ErrorEmbed(result));
+                await SendErrorEmbedAsync(result);
             else
                 await ReplyAsync(result);
         }

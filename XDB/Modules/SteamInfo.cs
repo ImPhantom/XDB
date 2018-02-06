@@ -11,13 +11,15 @@ using System.Net.Http;
 using System.IO;
 using System.Text.RegularExpressions;
 using XDB.Utilities;
+using XDB.Common.Attributes;
 
 namespace XDB.Modules
 {
     [Summary("Steam")]
     [RequireContext(ContextType.Guild)]
-    public class SteamInfo : ModuleBase<SocketCommandContext>
+    public class SteamInfo : XenoBase
     {
+        [Ratelimit(2, 1, Measure.Hours)]
         [Command("query"), Summary("Querys a source server for its public information.")]
         public async Task QuerySourceServer(string queryIp)
         {
@@ -61,7 +63,7 @@ namespace XDB.Modules
             var id = await SteamUtil.ParseSteamId(input);
             if (id == 0)
             {
-                await ReplyAsync("", embed: Xeno.ErrorEmbed("Could not parse steamid/vanity url"));
+                await SendErrorEmbedAsync("Could not parse steamid/vanity url.");
                 return;
             }
 
@@ -69,7 +71,7 @@ namespace XDB.Modules
             var data = response.Data;
 
             if (data.ProfileState != 1)
-                await ReplyAsync("That user has not setup their community profile.");
+                await SendErrorEmbedAsync("That user has not setup their community profile.");
 
             var author = new EmbedAuthorBuilder().WithIconUrl(data.AvatarFullUrl).WithName(data.Nickname);
             var embed = new EmbedBuilder().WithAuthor(author).WithFooter($"Info fetched on {DateTime.UtcNow}").WithColor(SteamUtil.GetActivityColor(data.UserStatus, data.PlayingGameName)).WithDescription(data.ProfileUrl);

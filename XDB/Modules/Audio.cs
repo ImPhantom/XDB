@@ -6,12 +6,13 @@ using XDB.Common.Attributes;
 using XDB.Common.Types;
 using System.Text;
 using System.Linq;
+using XDB.Common;
 
 namespace XDB.Modules
 {
     [Summary("Audio")]
     [RequireContext(ContextType.Guild)]
-    public class Audio : ModuleBase
+    public class Audio : XenoBase
     {
         private readonly AudioService _service;
 
@@ -28,13 +29,13 @@ namespace XDB.Modules
                     await _service.StartPlayingAsync(Context.Guild, message, ParseVideo(song));
                 }
                 else
-                    await ReplyAsync("", embed: Xeno.ErrorEmbed("This command requires you to be in the bots voice channel."));
+                    await SendErrorEmbedAsync("This command requires you to be in the bots voice channel.");
             }
         }
 
         [RequirePermission(Permission.GuildAdmin)]
         [Command("local", RunMode = RunMode.Async)]
-        public async Task Local(string foldername, string filename = "")
+        public async Task Local(string foldername, string filename = null)
         {
             await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
             if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
@@ -45,7 +46,7 @@ namespace XDB.Modules
                     await _service.StartLocalFolderAsync(Context.Guild, message, foldername, filename);
                 }
                 else
-                    await ReplyAsync("", embed: Xeno.ErrorEmbed("This command requires you to be in the bots voice channel."));
+                    await SendErrorEmbedAsync("This command requires you to be in the bots voice channel.");
             }
         }
 
@@ -58,7 +59,7 @@ namespace XDB.Modules
                 await ReplyAsync("", embed: new EmbedBuilder().WithTitle("Currently Playing:").WithDescription($"[{song.Title}](http://www.youtube.com/watch?v={song.VideoId})").WithColor(Xeno.RandomColor()).Build());
             }
             else
-                await ReplyAsync("", embed: Xeno.ErrorEmbed("The bot is not playing any music."));
+                await SendErrorEmbedAsync("The bot is not playing any music.");
         }
 
         [Command("queue", RunMode = RunMode.Async)]
@@ -83,9 +84,10 @@ namespace XDB.Modules
                 if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
                 {
                     await _service.SkipSongAsync(Context.Guild, Context.Channel);
+                    await ReplyThenRemoveAsync(":ok_hand:");
                 }
                 else
-                    await ReplyAsync("", embed: Xeno.ErrorEmbed("This command requires you to be in the bots voice channel."));
+                    await SendErrorEmbedAsync("This command requires you to be in the bots voice channel.");
             }
         }
 
@@ -98,10 +100,10 @@ namespace XDB.Modules
                 if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
                 {
                     await _service.StopPlaying();
-                    await ReplyAsync(":ok_hand:");
+                    await ReplyThenRemoveAsync(":ok_hand:");
                 }
                 else
-                    await ReplyAsync("", embed: Xeno.ErrorEmbed("This command requires you to be in the bots voice channel."));
+                    await SendErrorEmbedAsync("This command requires you to be in the bots voice channel.");
             }
         }
 
@@ -110,7 +112,7 @@ namespace XDB.Modules
         public async Task ClearQueue()
         {
             await _service.ClearQueueAsync();
-            await ReplyAsync(":ok_hand:");
+            await ReplyThenRemoveAsync(":ok_hand:");
         }
 
         [RequirePermission(Permission.XDBAdministrator)]
@@ -137,10 +139,10 @@ namespace XDB.Modules
                 if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
                 {
                     await _service.LeaveAudio(Context.Guild);
-                    await ReplyAsync(":ok_hand:");
+                    await ReplyThenRemoveAsync(":ok_hand:");
                 }
                 else
-                    await ReplyAsync("", embed: Xeno.ErrorEmbed("This command requires you to be in the bots voice channel."));
+                    await SendErrorEmbedAsync("This command requires you to be in the bots voice channel.");
             }
             
         }
