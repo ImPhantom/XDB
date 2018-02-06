@@ -26,6 +26,7 @@ namespace XDB
         private BoardService _board;
         private ListService _lists;
         private AudioService _audio;
+        private TagService _tags;
 
         public async Task Run()
         {
@@ -60,6 +61,9 @@ namespace XDB
 
             _audio = new AudioService();
 
+            _tags = new TagService();
+            _tags.Initialize();
+
             var serviceProvider = ConfigureServices();
 
             cmds = new Handler(serviceProvider);
@@ -79,6 +83,7 @@ namespace XDB
             client.UserJoined += OnUserJoined;
             client.UserLeft += OnUserLeave;
             client.UserUpdated += OnUserUpdate;
+            client.UserUnbanned += OnUserUnban;
             client.GuildMemberUpdated += OnGuildMemberUpdate;
             client.MessageReceived += OnMessageReceived;
             client.MessageDeleted += OnMessageDelete;
@@ -87,6 +92,8 @@ namespace XDB
 
             await Task.Delay(-1);
         }
+
+        
 
         private IServiceProvider ConfigureServices()
         {
@@ -97,7 +104,8 @@ namespace XDB
                 .AddSingleton<RemindService>()
                 .AddSingleton<CheckingService>()
                 .AddSingleton<ListService>()
-                .AddSingleton<AudioService>();
+                .AddSingleton<AudioService>()
+                .AddSingleton<TagService>();
 
             return new DefaultServiceProviderFactory().CreateServiceProvider(services);
         }
@@ -115,6 +123,20 @@ namespace XDB
                 var _user = user as SocketGuildUser;
                 if (mute.Type != MuteType.Text)
                     await _moderation.ApplyMuteAsync(_user, MuteType.Voice);
+            }
+        }
+
+        private async Task OnUserUnban(SocketUser user, SocketGuild guild)
+        {
+            var tempBans = _moderation.FetchActiveTempBans();
+            if (tempBans.Any(x => x.BannedUserId == user.Id))
+            {
+                var ban = tempBans.First(x => x.BannedUserId == user.Id);
+                _moderation.RemoveTemporaryBan(ban);
+                if (_checking.TempBans.Contains(ban))
+                    _checking.TempBans.Remove(ban);
+
+                // TODO: (new logging system) "Unban Logging?"
             }
         }
 
