@@ -1,6 +1,5 @@
 ﻿using Discord.WebSocket;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,178 +8,111 @@ using System.Threading.Tasks;
 using XDB.Common.Models;
 
 namespace XDB.Services
-{    
+{
     public class ListService
     {
         private DiscordSocketClient _client;
 
+        private Dictionary<ulong, List<string>> FetchAllTodoLists()
+            => JsonConvert.DeserializeObject<Dictionary<ulong, List<string>>>(File.ReadAllText(Xeno.Todo));
+
         private List<UserTodo> FetchLists()
-            => JsonConvert.DeserializeObject<List<UserTodo>>(File.ReadAllText(Xeno.TodoPath));
+            => JsonConvert.DeserializeObject<List<UserTodo>>(File.ReadAllText(Xeno.TodoPath)); // TODO: Remove after next update (only for migrating todo lists)
 
-        public string FetchListItems(ulong userId)
+        public string FetchTodoList(ulong userId)
         {
-            try
+            var lists = FetchAllTodoLists();
+            if(lists.TryGetValue(userId, out List<string> todoList))
             {
-                var _in = FetchLists();
-                if (_in.Any(x => x.Id == userId))
-                {
-                    var list = _in.First(x => x.Id == userId);
-                    if (!list.ListItems.Any())
-                        return ":eight_pointed_black_star:  Your todo list is empty.";
-
-                    var ol = new StringBuilder();
-                    int count = 1;
-                    foreach (var item in list.ListItems)
-                    {
-                        ol.AppendLine($"{count}. {item}");
-                        count++;
-                    }
-                    return $":small_blue_diamond: **Your Todo List:**```{ol.ToString()}```";
-                }
-                else
+                if (!todoList.Any())
                     return ":eight_pointed_black_star:  Your todo list is empty.";
-            }
-            catch (Exception ex)
+
+                var list = new StringBuilder();
+                int count = 1;
+                foreach (var item in todoList)
+                {
+                    list.AppendLine($"{count}. {item}");
+                    count++;
+                }
+                return $":small_blue_diamond: **Your Todo List:**```{list.ToString()}```";
+            } else
+                return ":eight_pointed_black_star:  Your todo list is empty.";
+        }
+
+        public async Task<bool> TryAddListItemAsync(ulong userId, string listItem)
+        {
+            var lists = FetchAllTodoLists();
+            if(lists.TryGetValue(userId, out List<string> todoList))
             {
-                BetterConsole.LogError("List Service", $"{ex.Message}{ex.StackTrace}");
-                return $"{ex.Message}";
+                todoList.Add(listItem);
+                await Xeno.SaveJsonAsync(Xeno.Todo, JsonConvert.SerializeObject(lists));
+                return true;
+            } else
+            {
+                lists.Add(userId, new List<string> { listItem });
+                await Xeno.SaveJsonAsync(Xeno.Todo, JsonConvert.SerializeObject(lists));
+                return true;
             }
         }
 
-        public async Task<string> AddTodoListItemAsync(ulong userId, string item)
+        public async Task<bool> TryEditListItemAsync(ulong userId, int itemIndex, string listItem)
         {
-            try
+            var lists = FetchAllTodoLists();
+            if (lists.TryGetValue(userId, out List<string> todoList))
             {
-                var _in = FetchLists();
-                if (!_in.Any(x => x.Id == userId))
-                {
-                    var list = new UserTodo() { Id = userId, ListItems = new List<string> { item } };
-                    _in.Add(list);
-                    var _out = JsonConvert.SerializeObject(_in);
-                    await Save(Xeno.TodoPath, _out);
-                    return FetchListItems(userId);
-                }
-                else
-                {
-                    _in.First(x => x.Id == userId).ListItems.Add(item);
-                    var _out = JsonConvert.SerializeObject(_in);
-                    await Save(Xeno.TodoPath, _out);
-                    return FetchListItems(userId);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                BetterConsole.LogError("List Service", $"{ex.Message}{ex.StackTrace}");
-                return $"{ex.Message}";
-            }
+                itemIndex--;
+                todoList[itemIndex] = listItem;
+                await Xeno.SaveJsonAsync(Xeno.Todo, JsonConvert.SerializeObject(lists));
+                return true;
+            } else
+                return false;
         }
 
-        public async Task<string> EditTodoListItemAsync(ulong userId, int index, string content)
+        public async Task<bool> TryRemoveListItemAsync(ulong userId, int itemIndex)
         {
-            try
+            var lists = FetchAllTodoLists();
+            if (lists.TryGetValue(userId, out List<string> todoList))
             {
-                var _in = FetchLists();
-                if (_in.Any(x => x.Id == userId))
-                {
-                    if (!_in.First(x => x.Id == userId).ListItems.Any())
-                        return ":eight_pointed_black_star:  Your todo list is empty.";
-                    index--;
-                    if (index < _in.First(x => x.Id == userId).ListItems.Count)
-                    {
-                        _in.First(x => x.Id == userId).ListItems[index] = content;
-                        var _out = JsonConvert.SerializeObject(_in);
-                        await Save(Xeno.TodoPath, _out);
-                        return FetchListItems(userId);
-                    }
-                    else
-                        return ":heavy_multiplication_x:  There is no list item for that index.";
-                }
-                else
-                    return ":eight_pointed_black_star:  Your todo list is empty.";
+                itemIndex--;
+                todoList.RemoveAt(itemIndex);
+                await Xeno.SaveJsonAsync(Xeno.Todo, JsonConvert.SerializeObject(lists));
+                return true;
             }
-            catch (Exception ex)
-            {
-                BetterConsole.LogError("List Service", $"{ex.Message}{ex.StackTrace}");
-                return $"{ex.Message}";
-            }
+            else
+                return false;
         }
 
-        public async Task<string> RemoveTodoListItemAsync(ulong userId, int index)
+        public async Task<bool> TryClearListAsync(ulong userId)
         {
-            try
+            var lists = FetchAllTodoLists();
+            if (lists.TryGetValue(userId, out List<string> todoList))
             {
-                var _in = FetchLists();
-                if (_in.Any(x => x.Id == userId))
-                {
-                    if (!_in.First(x => x.Id == userId).ListItems.Any())
-                        return ":eight_pointed_black_star:  Your todo list is empty.";
-                    index--;
-                    if (index < _in.First(x => x.Id == userId).ListItems.Count)
-                    {
-                        _in.First(x => x.Id == userId).ListItems.RemoveAt(index);
-                        var _out = JsonConvert.SerializeObject(_in);
-                        await Save(Xeno.TodoPath, _out);
-                        return FetchListItems(userId);
-                    }
-                    else
-                        return ":heavy_multiplication_x:  There is no list item for that index.";
-                }
-                else
-                    return ":eight_pointed_black_star:  Your todo list is empty.";
+                todoList.Clear();
+                await Xeno.SaveJsonAsync(Xeno.Todo, JsonConvert.SerializeObject(lists));
+                return true;
             }
-            catch (Exception ex)
-            {
-                BetterConsole.LogError("List Service", $"{ex.Message}{ex.StackTrace}");
-                return $"{ex.Message}";
-            }
+            else
+                return false;
         }
 
-        public async Task<string> ClearTodoListAsync(ulong userId)
+        public async Task Initialize()
         {
-            try
+            if(!File.Exists(Xeno.Todo))
             {
-                var _in = FetchLists();
-                if (_in.Any(x => x.Id == userId))
-                {
-                    if (!_in.First(x => x.Id == userId).ListItems.Any())
-                        return ":eight_pointed_black_star:  Your todo list is already empty.";
-                    else
-                    {
-                        _in.First(x => x.Id == userId).ListItems.Clear();
-                        var _out = JsonConvert.SerializeObject(_in);
-                        await Save(Xeno.TodoPath, _out);
-                        return ":heavy_check_mark: Successfully cleared your todo list.";
-                    }
-                }
-                else
-                    return ":eight_pointed_black_star:  Your todo list is already empty.";
-            }
-            catch (Exception ex)
-            {
-                BetterConsole.LogError("List Service", $"{ex.Message}{ex.StackTrace}");
-                return $"{ex.Message}";
-            }
-        }
+                var lists = new Dictionary<ulong, List<string>>();
+                using (var file = new FileStream(Xeno.Todo, FileMode.Create)) { }
+                File.WriteAllText(Xeno.Todo, JsonConvert.SerializeObject(lists));
 
-        private async Task Save(string path, string json)
-        {
-            using (var stream = new FileStream(path, FileMode.Truncate))
-            {
-                using (var writer = new StreamWriter(stream))
+                if(File.Exists(Xeno.TodoPath)) // TODO: Remove after next update (only for migrating todo lists)
                 {
-                    await writer.WriteAsync(json);
+                    BetterConsole.AppendLine("Beginning migration of todo lists...");
+                    var oldLists = FetchLists();
+                    var newLists = FetchAllTodoLists();
+                    foreach(var list in oldLists)
+                        newLists.Add(list.Id, list.ListItems);
+                    await Xeno.SaveJsonAsync(Xeno.Todo, JsonConvert.SerializeObject(newLists));
+                    BetterConsole.AppendLine("Migration complete.");
                 }
-            }
-        }
-
-        public void Initialize()
-        {
-            if (!File.Exists(Xeno.TodoPath))
-            {
-                List<UserTodo> lists = new List<UserTodo>();
-                using (var file = new FileStream(Xeno.TodoPath, FileMode.Create)) { }
-                File.WriteAllText(Xeno.TodoPath, JsonConvert.SerializeObject(lists));
             }
         }
 
