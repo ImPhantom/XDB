@@ -118,10 +118,11 @@ namespace XDB.Services
             Queue.Remove(first);
         }
 
-        public async Task ClearQueueAsync()
+        public Task ClearQueueAsync()
         {
-            await StopPlaying();
+            StopPlaying();
             Queue.Clear();
+            return Task.CompletedTask;
         }
 
         public Task StopPlaying()
@@ -190,6 +191,9 @@ namespace XDB.Services
                             Queue.Remove(song);
                             if (Queue.Count > 0)
                                 await BeginAudioPlayback(guild, message);
+                            else
+                                await LeaveAudio(guild).ConfigureAwait(false);
+                            
                         }
                     }
                 }
