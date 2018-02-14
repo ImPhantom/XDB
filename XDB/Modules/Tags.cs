@@ -5,6 +5,7 @@ using System.Linq;
 using Discord;
 using XDB.Common;
 using XDB.Services;
+using XDB.Common.Attributes;
 
 namespace XDB.Modules
 {
@@ -17,7 +18,7 @@ namespace XDB.Modules
         [Command("tag")]
         public async Task Tag(string tagName)
         {
-            var tag = await _service.FetchTagContentAsync(tagName);
+            var tag = _service.FetchTagContentAsync(tagName);
             if (tag != null)
                 await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(39, 217, 196)).WithDescription(tag).Build());
             else
@@ -28,12 +29,19 @@ namespace XDB.Modules
         public async Task ListTags()
         {
             var tags = _service.FetchAllTags().Keys.ToList();
-            string list = string.Join(", ", tags);
-            await ReplyAsync($":small_blue_diamond:  **List of all tags:**```\n{list}\n```");
+            if (tags.Any())
+            {
+                string list = string.Join(", ", tags);
+                await ReplyAsync($":small_blue_diamond:  **List of all tags:**```\n{list}\n```");
+            }
+            else
+                await ReplyAsync("", embed: Xeno.InfoEmbed("There are no tags."));
+            
         }
 
+        [RequirePermission(Permission.GuildAdmin)]
         [Command("tag add"), Alias("tag +")]
-        public async Task AddTag(string tagName, string tagContent)
+        public async Task AddTag(string tagName, [Remainder] string tagContent)
         {
             var tag = await _service.TryAddTagAsync(tagName, tagContent);
             if (tag)
@@ -42,8 +50,9 @@ namespace XDB.Modules
                 await SendErrorEmbedAsync("A tag already exists with that name.");
         }
 
+        [RequirePermission(Permission.GuildAdmin)]
         [Command("tag remove"), Alias("tag delete", "tag -")]
-        public async Task RemoveTag(string tagName, string tagContent)
+        public async Task RemoveTag(string tagName)
         {
             var tag = await _service.TryRemoveTagAsync(tagName);
             if (tag)
@@ -52,8 +61,9 @@ namespace XDB.Modules
                 await SendErrorEmbedAsync("No tag exists with that name.");
         }
 
+        [RequirePermission(Permission.GuildAdmin)]
         [Command("tag edit"), Alias("tag delete", "tag =")]
-        public async Task EditTag(string tagName, string newTagContent)
+        public async Task EditTag(string tagName, [Remainder] string newTagContent)
         {
             var tag = await _service.TryEditTagAsync(tagName, newTagContent);
             if (tag)

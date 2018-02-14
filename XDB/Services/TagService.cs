@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace XDB.Services
@@ -23,7 +20,7 @@ namespace XDB.Services
             }
         }
 
-        public async Task<string> FetchTagContentAsync(string tagName)
+        public string FetchTagContentAsync(string tagName)
         {
             var tags = FetchAllTags();
             if (tags.TryGetValue(tagName.ToLower(), out string content))
