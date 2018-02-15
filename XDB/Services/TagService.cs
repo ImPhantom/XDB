@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using XDB.Common.Models;
 
 namespace XDB.Services
 {
@@ -10,13 +11,26 @@ namespace XDB.Services
         public Dictionary<string, string> FetchAllTags()
             => JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(Xeno.TagsPath));
 
-        public void Initialize()
+        public List<OldTag> FetchOldTags()
+            => JsonConvert.DeserializeObject<List<OldTag>>(File.ReadAllText(Xeno.OldTagsPath)); // TODO: Remove after next update (only for migrating)
+
+        public async Task Initialize()
         {
             if(!File.Exists(Xeno.TagsPath))
             {
                 Dictionary<string, string> tags = new Dictionary<string, string>();
                 using (var file = new FileStream(Xeno.TagsPath, FileMode.Create)) { }
                 File.WriteAllText(Xeno.TagsPath, JsonConvert.SerializeObject(tags));
+                if (File.Exists(Xeno.OldTagsPath)) // TODO: Remove after next update (only for migrating)
+                {
+                    BetterConsole.AppendLine("Beginning migration of tags...");
+                    var oldTags = FetchOldTags();
+                    var newTags = FetchAllTags();
+                    foreach (var tag in oldTags)
+                        newTags.Add(tag.TagName, tag.TagContent);
+                    await Xeno.SaveJsonAsync(Xeno.TagsPath, JsonConvert.SerializeObject(newTags));
+                    BetterConsole.AppendLine("Migration complete.");
+                }
             }
         }
 

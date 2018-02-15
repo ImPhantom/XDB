@@ -30,7 +30,9 @@ namespace XDB
         public static string TodoPath = Path.Combine(AppContext.BaseDirectory, $"data/todolists.json");
         public static string Todo = Path.Combine(AppContext.BaseDirectory, $"data/todo.json");
 
-        public static string TagsPath = Path.Combine(AppContext.BaseDirectory, $"data/tag_dict.json");
+        public static string TagsPath = Path.Combine(AppContext.BaseDirectory, $"data/guild_tags.json");
+        public static string OldTagsPath = Path.Combine(AppContext.BaseDirectory, $"data/tags.json");
+
         public static string WarningsPath = Path.Combine(AppContext.BaseDirectory, $"data/warnings.json");
         public static string MutesPath = Path.Combine(AppContext.BaseDirectory, $"data/mutes.json");
         public static string RemindPath = Path.Combine(AppContext.BaseDirectory, $"data/reminders.json");
