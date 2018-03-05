@@ -50,6 +50,22 @@ namespace XDB.Modules
             }
         }
 
+        [Command("playlist", RunMode = RunMode.Async)]
+        public async Task Playlist(string url)
+        {
+            await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
+            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            {
+                if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
+                {
+                    var message = await ReplyAsync(":hourglass:  Fetching playlist information...");
+                    await _service.StartPlaylistAsync(Context.Guild, message, url);
+                }
+                else
+                    await SendErrorEmbedAsync("This command requires you to be in the bots voice channel.");
+            }
+        }
+
         [Command("song", RunMode = RunMode.Async), Summary("Gets the currently playing song.")]
         public async Task Song()
         {

@@ -9,6 +9,7 @@ using System.Linq;
 using System;
 using XDB.Common.Types;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace XDB.Services
 {
@@ -61,6 +62,21 @@ namespace XDB.Services
                 await message.DeleteAsync();
                 return;
             }
+        }
+
+        public async Task StartPlaylistAsync(IGuild guild, IUserMessage message, string url)
+        {
+            var response = await AddPlaylistToQueue(url);
+            if (response)
+            {
+                if (Queue.Count > 0)
+                    if (IsPlaying)
+                        await message.ModifyAsync(x => x.Content = $":notes: **Playlist has been appended to the queue.**");
+                    else
+                        await BeginAudioPlayback(guild, message);
+            }
+            else
+                await message.ModifyAsync(x => x.Content = $":hourglass:  Failed to retrieve playlist information. (too many videos in playlist (limit: `{Config.Load().PlaylistVideoLimit}`)");
         }
 
         public async Task StartLocalFolderAsync(IGuild guild, IUserMessage message, string foldername, string filename)
@@ -160,6 +176,36 @@ namespace XDB.Services
                 return null;
         }
 
+        private Task<bool> AddPlaylistToQueue(string url)
+        {
+            var prc = Process.Start(new ProcessStartInfo()
+            {
+                FileName = @"youtube-dl",
+                Arguments = $" --dump-single-json {url}",
+                UseShellExecute = false,
+                RedirectStandardOutput = true
+            });
+            var json = prc.StandardOutput.ReadLine();
+            var playlist = JsonConvert.DeserializeObject<YtdlPlaylist>(json);
+            if (playlist.Videos.Count > Config.Load().PlaylistVideoLimit)
+                return Task.FromResult(false);
+            foreach (var video in playlist.Videos)
+            {
+                if (video.Duration < Config.Load().AudioDurationLimit)
+                {
+                    var m4a = video.Formats.FirstOrDefault(x => x.Extension == "m4a");
+                    Queue.Add(new QueuedVideo()
+                    {
+                        Title = video.Title,
+                        Url = m4a.PlayUrl,
+                        Duration = video.Duration.ToString(),
+                        VideoId = video.VideoId
+                    });
+                }
+            }
+            return Task.FromResult(true);
+        }
+
         public async Task BeginAudioPlayback(IGuild guild, IUserMessage message)
         {
             if (Queue.Count > 0)
@@ -170,7 +216,7 @@ namespace XDB.Services
                     FFProcess = CreateStream(song.Url);
                     var volume = Config.Load().AudioVolume;
                     using (var output = FFProcess.StandardOutput.BaseStream)
-                    using (var stream = client.CreatePCMStream(AudioApplication.Music))
+                    using (var stream = client.CreatePCMStream(AudioApplication.Music, bufferMillis: 2500))
                     {
                         IsPlaying = true;
                         try
