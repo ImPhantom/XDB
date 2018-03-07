@@ -17,7 +17,7 @@ namespace XDB.Utilities
                 await log.SendMessageAsync(message);
             }
             else
-                Console.WriteLine(Xeno.LoggerFailed);
+                Console.WriteLine("[Logging] [Error] Log message failed to send! Either set your Logging Channel ID in cfg/config.json or use the '~log <channel-id>' command.");
         }
 
         private static bool LogChannelExists()

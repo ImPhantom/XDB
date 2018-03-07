@@ -13,10 +13,7 @@ namespace XDB.Modules
 
         [Command, Summary("Displays your todo list.")]
         public async Task ViewTodo()
-        {
-            var result = _lists.FetchTodoList(Context.User.Id);
-            await ReplyAsync(result);
-        }
+            => await ReplyAsync(_lists.FetchTodoList(Context.User.Id));
             
         [Command("add"), Summary("Adds item to you todo list.")]
         public async Task AddTodo([Remainder] string listitem)

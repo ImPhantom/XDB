@@ -110,7 +110,7 @@ namespace XDB.Services
                 TempBans.Remove(ban);
         }
 
-        public CheckingService(DiscordSocketClient client, ModerationService moderation, RemindService remind/*, TempBanService tempbans*/)
+        public CheckingService(DiscordSocketClient client, ModerationService moderation, RemindService remind)
         {
             _client = client;
             _moderation = moderation;

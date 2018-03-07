@@ -50,9 +50,6 @@ namespace XDB
             _remind = new RemindService();
             _remind.Initialize();
 
-            _checking = new CheckingService(client, _moderation, _remind);
-            await _checking.FetchChecksAsync();
-
             _board = new BoardService(client);
             _board.Initialize();
 
@@ -63,6 +60,9 @@ namespace XDB
 
             _tags = new TagService();
             _tags.Initialize();
+
+            _checking = new CheckingService(client, _moderation, _remind);
+            await _checking.FetchChecksAsync();
 
             var serviceProvider = ConfigureServices();
 
@@ -92,8 +92,6 @@ namespace XDB
 
             await Task.Delay(-1);
         }
-
-        
 
         private IServiceProvider ConfigureServices()
         {
@@ -154,7 +152,7 @@ namespace XDB
             if (Config.Load().Welcome)
             {
                 var channel = user.Guild.TextChannels.First(x => x.Name == "chat");
-                var message = Config.Load().WelcomeMessage.Replace("{mention}", user.Mention).Replace("{username}", user.Username);
+                var message = Config.Load().WelcomeMessage.Replace("{mention}", user.Mention).Replace("{username}", user.Username).Replace("{guild}", user.Guild.Name);
                 await channel.SendMessageAsync(message);
             }
 
