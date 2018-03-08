@@ -16,9 +16,6 @@ namespace XDB.Services
         private Dictionary<ulong, List<string>> FetchAllTodoLists()
             => JsonConvert.DeserializeObject<Dictionary<ulong, List<string>>>(File.ReadAllText(Xeno.Todo));
 
-        private List<UserTodo> FetchLists()
-            => JsonConvert.DeserializeObject<List<UserTodo>>(File.ReadAllText(Xeno.TodoPath)); // TODO: Remove after next update (only for migrating todo lists)
-
         public string FetchTodoList(ulong userId)
         {
             var lists = FetchAllTodoLists();
@@ -102,17 +99,6 @@ namespace XDB.Services
                 var lists = new Dictionary<ulong, List<string>>();
                 using (var file = new FileStream(Xeno.Todo, FileMode.Create)) { }
                 File.WriteAllText(Xeno.Todo, JsonConvert.SerializeObject(lists));
-
-                if(File.Exists(Xeno.TodoPath)) // TODO: Remove after next update (only for migrating todo lists)
-                {
-                    BetterConsole.AppendLine("Beginning migration of todo lists...");
-                    var oldLists = FetchLists();
-                    var newLists = FetchAllTodoLists();
-                    foreach(var list in oldLists)
-                        newLists.Add(list.Id, list.ListItems);
-                    await Xeno.SaveJsonAsync(Xeno.Todo, JsonConvert.SerializeObject(newLists));
-                    BetterConsole.AppendLine("Migration complete.");
-                }
             }
         }
 

@@ -21,16 +21,6 @@ namespace XDB.Services
                 Dictionary<string, string> tags = new Dictionary<string, string>();
                 using (var file = new FileStream(Xeno.TagsPath, FileMode.Create)) { }
                 File.WriteAllText(Xeno.TagsPath, JsonConvert.SerializeObject(tags));
-                if (File.Exists(Xeno.OldTagsPath)) // TODO: Remove after next update (only for migrating)
-                {
-                    BetterConsole.AppendLine("Beginning migration of tags...");
-                    var oldTags = FetchOldTags();
-                    var newTags = FetchAllTags();
-                    foreach (var tag in oldTags)
-                        newTags.Add(tag.TagName, tag.TagContent);
-                    await Xeno.SaveJsonAsync(Xeno.TagsPath, JsonConvert.SerializeObject(newTags));
-                    BetterConsole.AppendLine("Migration complete.");
-                }
             }
         }
 
