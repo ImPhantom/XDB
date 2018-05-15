@@ -11,19 +11,6 @@ namespace XDB.Services
         public Dictionary<string, string> FetchAllTags()
             => JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(Xeno.TagsPath));
 
-        public List<OldTag> FetchOldTags()
-            => JsonConvert.DeserializeObject<List<OldTag>>(File.ReadAllText(Xeno.OldTagsPath)); // TODO: Remove after next update (only for migrating)
-
-        public async Task Initialize()
-        {
-            if(!File.Exists(Xeno.TagsPath))
-            {
-                Dictionary<string, string> tags = new Dictionary<string, string>();
-                using (var file = new FileStream(Xeno.TagsPath, FileMode.Create)) { }
-                File.WriteAllText(Xeno.TagsPath, JsonConvert.SerializeObject(tags));
-            }
-        }
-
         public string FetchTagContentAsync(string tagName)
         {
             var tags = FetchAllTags();
@@ -65,6 +52,16 @@ namespace XDB.Services
                 return true;
             } else
                 return false;
+        }
+
+        public void Initialize()
+        {
+            if (!File.Exists(Xeno.TagsPath))
+            {
+                Dictionary<string, string> tags = new Dictionary<string, string>();
+                using (var file = new FileStream(Xeno.TagsPath, FileMode.Create)) { }
+                File.WriteAllText(Xeno.TagsPath, JsonConvert.SerializeObject(tags));
+            }
         }
     }
 }

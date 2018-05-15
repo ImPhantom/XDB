@@ -16,9 +16,16 @@ namespace XDB.Modules
     {
         private ModerationService _moderation;
 
-        [Command("help"), Summary("Displays the XDB Changelog for this version.")]
+        [Command("help"), Summary("Displays the command list/bot help for XDB.")]
         public async Task Help()
             => await ReplyAsync("You can find a command list here:\n https://github.com/ImPhantom/XDB/wiki/XDB-Command-List");
+
+        [Command("changelog"), Summary("Displays the XDB Changelog for this version.")]
+        public async Task Changelog()
+        {
+            await Context.Message.DeleteAsync();
+            await ReplyAsync(Xeno.Changelog);
+        }
 
         [Command("8ball"), Summary("Asks the magic 8 ball a question.")]
         public async Task EightBall([Remainder] string question)

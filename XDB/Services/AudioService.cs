@@ -60,23 +60,9 @@ namespace XDB.Services
             {
                 await message.Channel.SendMessageAsync("", embed: Xeno.ErrorEmbed("Video duration exceeds the specified limit."));
                 await message.DeleteAsync();
+                await LeaveAudio(guild);
                 return;
             }
-        }
-
-        public async Task StartPlaylistAsync(IGuild guild, IUserMessage message, string url)
-        {
-            var response = await AddPlaylistToQueue(url);
-            if (response)
-            {
-                if (Queue.Count > 0)
-                    if (IsPlaying)
-                        await message.ModifyAsync(x => x.Content = $":notes: **Playlist has been appended to the queue.**");
-                    else
-                        await BeginAudioPlayback(guild, message);
-            }
-            else
-                await message.ModifyAsync(x => x.Content = $":hourglass:  Failed to retrieve playlist information. (too many videos in playlist (limit: `{Config.Load().PlaylistVideoLimit}`)");
         }
 
         public async Task StartLocalFolderAsync(IGuild guild, IUserMessage message, string foldername, string filename)
@@ -134,6 +120,8 @@ namespace XDB.Services
             Queue.Remove(first);
         }
 
+        
+
         public Task ClearQueueAsync()
         {
             StopPlaying();
@@ -174,36 +162,6 @@ namespace XDB.Services
             }
             else
                 return null;
-        }
-
-        private Task<bool> AddPlaylistToQueue(string url)
-        {
-            var prc = Process.Start(new ProcessStartInfo()
-            {
-                FileName = @"youtube-dl",
-                Arguments = $" --dump-single-json {url}",
-                UseShellExecute = false,
-                RedirectStandardOutput = true
-            });
-            var json = prc.StandardOutput.ReadLine();
-            var playlist = JsonConvert.DeserializeObject<YtdlPlaylist>(json);
-            if (playlist.Videos.Count > Config.Load().PlaylistVideoLimit)
-                return Task.FromResult(false);
-            foreach (var video in playlist.Videos)
-            {
-                if (video.Duration < Config.Load().AudioDurationLimit)
-                {
-                    var m4a = video.Formats.FirstOrDefault(x => x.Extension == "m4a");
-                    Queue.Add(new QueuedVideo()
-                    {
-                        Title = video.Title,
-                        Url = m4a.PlayUrl,
-                        Duration = video.Duration.ToString(),
-                        VideoId = video.VideoId
-                    });
-                }
-            }
-            return Task.FromResult(true);
         }
 
         public async Task BeginAudioPlayback(IGuild guild, IUserMessage message)

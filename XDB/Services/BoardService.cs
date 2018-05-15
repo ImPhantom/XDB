@@ -23,8 +23,7 @@ namespace XDB.Services
             var channel = guild.Channels.First(x => x.Name == "hall-of-cringe") as SocketTextChannel;
             var user = _client.GetUser(message.UserId);
 
-            var author = new EmbedAuthorBuilder().WithName(user.Username).WithIconUrl(user.GetAvatarUrl());
-            var embed = new EmbedBuilder().WithAuthor(author).WithDescription(message.Message).WithTimestamp(message.Timestamp).WithColor(Xeno.RandomColor());
+            var embed = new EmbedBuilder().WithAuthor(new EmbedAuthorBuilder().WithName(user.Username)).WithDescription(message.Message).WithTimestamp(message.Timestamp).WithColor(Xeno.RandomColor());
             await channel.SendMessageAsync("", embed: embed.Build());
 
             var _in = FetchMessages();

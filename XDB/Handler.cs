@@ -29,9 +29,9 @@ namespace XDB
 
         public async Task Install()
         {
-            _cmds.AddTypeReader<TimeSpan>(new TimeStringTypeReader());
+            _cmds.AddTypeReader<TimeSpan>(new TimeStringTypeReader(), true);
             _cmds.AddTypeReader<MuteType>(new MutingTypeReader());
-            await _cmds.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _cmds.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
             _client.MessageReceived += HandleCommand;
         }
 
@@ -49,7 +49,7 @@ namespace XDB
                 if (Config.Load().BotChannelWhitelist)
                     if (!Config.Load().WhitelistedChannels.Contains(s.Channel.Id))
                     {
-                        var management = new List<ulong>() { 186253663398789120, 93765631177920512, 99710940601135104, 97675548985143296 };
+                        var management = new List<ulong>() { 93765631177920512, 99710940601135104, 97675548985143296 };
 
                         if (!management.Contains(s.Author.Id))
                             if(!msg.Content.StartsWith("~tag"))

@@ -112,8 +112,15 @@ namespace XDB
         private async Task OnVoiceStateChange(SocketUser user, SocketVoiceState before, SocketVoiceState after)
         {
             if (user.Id == client.CurrentUser.Id)
-                if (after.VoiceChannel == null)
+            {
+                if (after.VoiceChannel == null) // if bot somehow randomly disconnects from voice force end audio
                     await _audio.LeaveAudio(before.VoiceChannel.Guild);
+
+                if(_audio.ConnectedChannels.TryGetValue(before.VoiceChannel.Guild.Id, out ulong channelId)) // modify dictionary value everytime the bot moves channels
+                    if (_audio.ConnectedChannels.TryUpdate(before.VoiceChannel.Guild.Id, after.VoiceChannel.Id, before.VoiceChannel.Id))
+                        BetterConsole.Log("Notice", "Voice", "Bot has moved channels, updated dictionary.");
+            }
+                
 
             if (_checking.Mutes.Any(x => x.UserId == user.Id))
             {
@@ -135,6 +142,8 @@ namespace XDB
                     _checking.TempBans.Remove(ban);
 
                 // TODO: (new logging system) "Unban Logging?"
+                var timeLeft = ban.UnbanTime - DateTime.UtcNow;
+                await Logging.TryLoggingAsync($"`{user.Username}#{user.Discriminator}` has been manually unbanned.\n\nThus ending his tempban for {ban.Reason} which had **{timeLeft.Humanize()}** left.");
             }
         }
 

@@ -35,7 +35,7 @@ namespace XDB.Modules
                 Timestamp = Context.Message.Timestamp
             };
             await _board.AddBoardMessageAsync(boardMessage);
-            await ReplyThenRemoveAsync(":ok_hand:");
+            await ReplyOkReactionAsync();
         }
 
         [Command("blacklist")]

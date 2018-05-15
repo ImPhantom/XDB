@@ -36,7 +36,7 @@ namespace XDB.Modules
                 await Logging.TryLoggingAsync($":heavy_check_mark:  **{Context.User.Username}** has kicked {user.Mention}\n**Reason:** `{reason}`");
                 await dmChannel.SendMessageAsync($":small_blue_diamond: You were kicked from **{Context.Guild.Name}**\n**Reason:** `{reason}`");
                 await user.KickAsync($"{reason} (kicked by: {Context.User.Username})");
-                await ReplyThenRemoveAsync(":ok_hand:");
+                await ReplyOkReactionAsync();
             }
         }
 
@@ -64,7 +64,7 @@ namespace XDB.Modules
                 await Context.Guild.AddBanAsync(user, reason: $"{reason} (temp-banned by: {Context.User.Username})");
 
                 await Context.Message.DeleteAsync();
-                await ReplyThenRemoveAsync(":ok_hand:");
+                await ReplyOkReactionAsync();
             }
         }
 
@@ -88,7 +88,6 @@ namespace XDB.Modules
         {
             var dm = await user.GetOrCreateDMChannelAsync();
             await _moderation.ApplyMuteAsync(user, type);
-            await Context.Message.DeleteAsync();
 
             var mute = new Mute()
             {
@@ -102,7 +101,7 @@ namespace XDB.Modules
             };
             _moderation.AddMute(mute);
             _checking.Mutes.Add(mute);
-            await ReplyThenRemoveAsync(":ok_hand:");
+            await ReplyOkReactionAsync();
             await Logging.TryLoggingAsync($":mute: **{user.Username}#{user.Discriminator}** has recieved a `{unmuteTime.Humanize()}` mute by {Context.User.Username} for:\n `{mute.Reason}`");
             await dm.SendMessageAsync($":mute: (`{Context.Guild.Name}`) You have been muted for `{unmuteTime.Humanize()}` by **{Context.User.Username}**\n__Reason:__ {reason}");
         }
@@ -114,7 +113,6 @@ namespace XDB.Modules
             var dm = await user.GetOrCreateDMChannelAsync();
             await user.RemoveRoleAsync(muteRole);
             await user.ModifyAsync(x => x.Mute = false);
-            await Context.Message.DeleteAsync();
 
             var mutes = _moderation.FetchMutes();
             foreach (var mute in mutes)
@@ -126,19 +124,18 @@ namespace XDB.Modules
                         _checking.Mutes.Remove(mute);
                 }
             }
-            await ReplyThenRemoveAsync(":ok_hand:");
+            await ReplyOkReactionAsync();
             await Logging.TryLoggingAsync($":loud_sound: **{user.Username}#{user.Discriminator}** has been unmuted by {Context.User.Username}.");
             await dm.SendMessageAsync($":loud_sound: (`{Context.Guild.Name}`) You have been unmuted by **{Context.User.Username}**!");
         }
 
         [Command("warn"), Summary("Warns a user for doing something wrong")]
-        public async Task WarnUser(SocketGuildUser user, string reason)
+        public async Task WarnUser(SocketGuildUser user, [Remainder] string reason)
         {
             await _moderation.WarnUserAsync(user, reason);
-            await ReplyThenRemoveAsync(":ok_hand:");
+            await ReplyOkReactionAsync();
             await Logging.TryLoggingAsync($":heavy_check_mark: `{user.Username}#{user.Discriminator}` has been warned by `{Context.User.Username}#{Context.User.Discriminator}` for:\n`{reason}`");
             await (await user.GetOrCreateDMChannelAsync()).SendMessageAsync($":heavy_multiplication_x: You have been warned by **{Context.User.Username}#{Context.User.Discriminator}** in **{Context.Guild.Name}** for:\n`{reason}`");
-            
         }
 
         [Command("removewarn"), Summary("Removes a warn from a specified user.")]
@@ -150,7 +147,7 @@ namespace XDB.Modules
                 var warn = _warnings.ElementAt(index - 1);
                 _warnings.Remove(warn);
                 await Xeno.SaveJsonAsync(Xeno.WarningsPath, JsonConvert.SerializeObject(warnings));
-                await ReplyThenRemoveAsync(":ok_hand:");
+                await ReplyOkReactionAsync();
                 await Logging.TryLoggingAsync($":heavy_check_mark: `{Context.User.Username}#{Context.User.Discriminator}` has removed `{user.Username}#{user.Discriminator}`'s warn for:\n`{warn}`");
             }
             else

@@ -92,7 +92,7 @@ namespace XDB.Services
                 return false;
         }
 
-        public async Task Initialize()
+        public void Initialize()
         {
             if(!File.Exists(Xeno.Todo))
             {

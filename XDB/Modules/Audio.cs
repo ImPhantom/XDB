@@ -14,19 +14,19 @@ namespace XDB.Modules
     [RequireContext(ContextType.Guild)]
     public class Audio : XenoBase
     {
-        private readonly AudioService _service;
+        private readonly AudioService _audio;
 
         [Ratelimit(3, 1, Measure.Minutes)]
         [Command("play", RunMode = RunMode.Async), Summary("Plays a song from a youtube link/search query.")]
         public async Task Play([Remainder] string song)
         {
-            await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
-            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            await _audio.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
+            if (_audio.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
             {
                 if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
                 {
                     var message = await ReplyAsync(":hourglass:  Fetching video information...");
-                    await _service.StartPlayingAsync(Context.Guild, message, ParseVideo(song));
+                    await _audio.StartPlayingAsync(Context.Guild, message, ParseVideo(song));
                 }
                 else
                     await SendErrorEmbedAsync("This command requires you to be in the bots voice channel.");
@@ -37,29 +37,13 @@ namespace XDB.Modules
         [Command("local", RunMode = RunMode.Async)]
         public async Task Local(string foldername, string filename = null)
         {
-            await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
-            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            await _audio.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
+            if (_audio.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
             {
                 if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
                 {
                     var message = await ReplyAsync(":hourglass:  Fetching files from local directory...");
-                    await _service.StartLocalFolderAsync(Context.Guild, message, foldername, filename);
-                }
-                else
-                    await SendErrorEmbedAsync("This command requires you to be in the bots voice channel.");
-            }
-        }
-
-        [Command("playlist", RunMode = RunMode.Async)]
-        public async Task Playlist(string url)
-        {
-            await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
-            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
-            {
-                if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
-                {
-                    var message = await ReplyAsync(":hourglass:  Fetching playlist information...");
-                    await _service.StartPlaylistAsync(Context.Guild, message, url);
+                    await _audio.StartLocalFolderAsync(Context.Guild, message, foldername, filename);
                 }
                 else
                     await SendErrorEmbedAsync("This command requires you to be in the bots voice channel.");
@@ -69,9 +53,9 @@ namespace XDB.Modules
         [Command("song", RunMode = RunMode.Async), Summary("Gets the currently playing song.")]
         public async Task Song()
         {
-            if (_service.IsPlaying)
+            if (_audio.IsPlaying)
             {
-                var song = _service.Queue.First();
+                var song = _audio.Queue.First();
                 await ReplyAsync("", embed: new EmbedBuilder().WithTitle("Currently Playing:").WithDescription($"[{song.Title}](http://www.youtube.com/watch?v={song.VideoId})").WithColor(Xeno.RandomColor()).Build());
             }
             else
@@ -83,7 +67,7 @@ namespace XDB.Modules
         {
             int inc = 1;
             var list = new StringBuilder();
-            foreach (var song in _service.Queue)
+            foreach (var song in _audio.Queue)
             {
                 list.AppendLine($"**{inc}.)** [{song.Title}](http://www.youtube.com/watch?v={song.VideoId})");
                 inc++;
@@ -95,11 +79,11 @@ namespace XDB.Modules
         [Command("skip", RunMode = RunMode.Async)]
         public async Task Skip()
         {
-            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            if (_audio.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
             {
                 if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
                 {
-                    await _service.SkipSongAsync(Context.Guild, Context.Channel);
+                    await _audio.SkipSongAsync(Context.Guild, Context.Channel);
                     await ReplyThenRemoveAsync(":ok_hand:");
                 }
                 else
@@ -111,11 +95,11 @@ namespace XDB.Modules
         [Command("stop", RunMode = RunMode.Async)]
         public async Task Stop()
         {
-            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            if (_audio.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
             {
                 if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
                 {
-                    await _service.StopPlaying();
+                    await _audio.StopPlaying();
                     await ReplyThenRemoveAsync(":ok_hand:");
                 }
                 else
@@ -127,7 +111,7 @@ namespace XDB.Modules
         [Command("clearqueue", RunMode = RunMode.Async)]
         public async Task ClearQueue()
         {
-            await _service.ClearQueueAsync();
+            await _audio.ClearQueueAsync();
             await ReplyThenRemoveAsync(":ok_hand:");
         }
 
@@ -150,11 +134,11 @@ namespace XDB.Modules
         [Command("leave", RunMode = RunMode.Async)]
         public async Task Leave()
         {
-            if (_service.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
+            if (_audio.ConnectedChannels.TryGetValue(Context.Guild.Id, out ulong channelId))
             {
                 if ((Context.User as IVoiceState).VoiceChannel.Id == channelId)
                 {
-                    await _service.LeaveAudio(Context.Guild);
+                    await _audio.LeaveAudio(Context.Guild);
                     await ReplyThenRemoveAsync(":ok_hand:");
                 }
                 else
@@ -171,9 +155,11 @@ namespace XDB.Modules
                 return $"\"ytsearch:{input}\"";
         }
 
-        public Audio(AudioService service)
+        public Audio(AudioService audio)
         {
-            _service = service;
+            _audio = audio;
         }
     }
+
+    
 }

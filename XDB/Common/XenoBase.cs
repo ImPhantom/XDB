@@ -15,6 +15,9 @@ namespace XDB.Common
             return reply;
         }
 
+        public async Task ReplyOkReactionAsync()
+            => await Context.Message.AddReactionAsync(new Emoji("👌"));
+
         public async Task<IUserMessage> SendErrorEmbedAsync(string error, string source = null)
         {
             var embed = new EmbedBuilder().WithColor(new Color(255, 0, 0)).WithTitle("Error:").WithDescription(error);

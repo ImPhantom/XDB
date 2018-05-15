@@ -31,12 +31,12 @@ namespace XDB.Modules
                 var id32 = SteamUtil.ToSteam32(steamId);
                 var author = new EmbedAuthorBuilder().WithName(valid.PersonaName).WithIconUrl(valid.MediumSizeAvatarUrl);
                 var embed = new EmbedBuilder().WithAuthor(author).WithColor(Xeno.RandomColor());
-                embed.AddField("SteamIDs:", $"{id32}  ( {valid.Steam64Id} )", false);
+                embed.AddField("Steam32 (Steam64):", $"{id32}  ( {valid.Steam64Id} )", false);
                 embed.AddField("Requested By:", $"{rby}#{Context.User.Discriminator}", true);
                 embed.AddField("Duration:", $"{Humanize(length)}", true);
                 embed.AddField("Reason:", full);
                 embed.AddField("Command:", $"`ulx banid {id32} {length.TotalMinutes} \"{full}\"`");
-                await ReplyAsync("<@!169591360695959553>", embed: embed.Build());
+                await ReplyAsync("<@&234804942492270593> <@&305569059431383041>", embed: embed.Build());
             } else
                 await SendErrorEmbedAsync("Could not validate SteamID");
         }

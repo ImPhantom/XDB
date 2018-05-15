@@ -10,6 +10,13 @@ namespace XDB
     public class Xeno
     {
         public static readonly string Version = "1.3.5";
+        public static readonly string Changelog = $@"I've updated to `v{Version}`.
+
+**Changes:**
+~ 
+~
+~";
+
         public static string Status = $"XDB (rel: {Version})(api: {DiscordConfig.Version})";
 
         public static string[] EightBallResponses = { "It is certain", "It is decidedly so", "Without a doubt", "Yes, definitely", "You may rely on it", "As I see it, yes", "Most likely", "Outlook good", "Yes", "Signs point to yes", "Reply hazy try again", "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again", "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful" };
@@ -27,18 +34,13 @@ namespace XDB
       #---------------------------------#
  ";
 
-        public static string TodoPath = Path.Combine(AppContext.BaseDirectory, $"data/todolists.json");
         public static string Todo = Path.Combine(AppContext.BaseDirectory, $"data/todo.json");
-
         public static string TagsPath = Path.Combine(AppContext.BaseDirectory, $"data/guild_tags.json");
-        public static string OldTagsPath = Path.Combine(AppContext.BaseDirectory, $"data/tags.json");
-
         public static string WarningsPath = Path.Combine(AppContext.BaseDirectory, $"data/warnings.json");
         public static string MutesPath = Path.Combine(AppContext.BaseDirectory, $"data/mutes.json");
         public static string RemindPath = Path.Combine(AppContext.BaseDirectory, $"data/reminders.json");
         public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"data/tempbans.json");
         public static string CringePath = Path.Combine(AppContext.BaseDirectory, $"data/boardmessages.json");
-
         public static string BlacklistedUsersPath = Path.Combine(AppContext.BaseDirectory, $"data/blacklisted_users.json");
 
         public static string LocalAudioPath = Path.Combine(AppContext.BaseDirectory, $"data/local_audio");
