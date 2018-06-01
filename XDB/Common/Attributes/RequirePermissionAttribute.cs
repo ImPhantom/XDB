@@ -17,11 +17,8 @@ namespace XDB.Common.Attributes
         public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider provider)
         {
             var user = context.User as SocketGuildUser;
-            var staffRoles = new string[] { "Trial-Mod", "Moderator", "Senior Moderator", "Head-Admin", "Admin", "Community Manager", "Owners" };
 
-            if (_permission == Permission.Staff && staffRoles.Any(x => user.Roles.Any(y => y.Name == x)))
-                return Task.FromResult(PreconditionResult.FromSuccess());
-            else if (_permission == Permission.GuildAdmin && user.GuildPermissions.Administrator)
+            if (_permission == Permission.GuildAdmin && user.GuildPermissions.Administrator)
                 return Task.FromResult(PreconditionResult.FromSuccess());
             else if (_permission == Permission.XDBAdministrator && user.Roles.Any(x => x.Name == "XDB Administrator") || user.GuildPermissions.Administrator)
                 return Task.FromResult(PreconditionResult.FromSuccess());
@@ -34,7 +31,6 @@ namespace XDB.Common.Attributes
 
     public enum Permission
     {
-        Staff,
         GuildAdmin,
         XDBAdministrator,
         XDBModerator
