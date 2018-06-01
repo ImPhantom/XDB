@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using XDB.Common.Types;
+using XDB.Common;
 using XDB.Readers;
 using System.Collections.Generic;
 using XDB.Common.Models;
@@ -44,7 +45,8 @@ namespace XDB
             var context = new SocketCommandContext(_client, msg);
 
             int argPos = 0;
-            if (msg.HasStringPrefix(Config.Load().Prefix, ref argPos))
+            var prefix = Config.Load().Prefix;
+            if (msg.HasStringPrefix(prefix, ref argPos))
             {
                 if (Config.Load().BotChannelWhitelist)
                     if (!Config.Load().WhitelistedChannels.Contains(s.Channel.Id))
@@ -52,8 +54,11 @@ namespace XDB
                         var management = new List<ulong>() { 93765631177920512, 99710940601135104, 97675548985143296 };
 
                         if (!management.Contains(s.Author.Id))
-                            if(!msg.Content.StartsWith("~tag"))
-                                return;
+                        {
+                            if (!msg.Content.StartsWith(new string[] { $"{prefix}tag", $"{prefix}shitposter" }))
+                                return; // TODO: Only allow shitposter in #badlands
+                        }
+                            
                     }
 
                 if (s.Author.IsBot)

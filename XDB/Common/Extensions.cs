@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace XDB.Common
 {
@@ -36,6 +37,14 @@ namespace XDB.Common
             return String.Join(newVal, temp);
         }
 
-        
+        public static bool StartsWith(this string str, string[] values)
+        {
+            if (values.Any(x => str.StartsWith(x)))
+                return true;
+            else
+                return false;
+        }
+
+
     }
 }
