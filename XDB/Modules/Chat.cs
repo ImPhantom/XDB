@@ -3,10 +3,13 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XDB.Common;
+using XDB.Common.Attributes;
 using XDB.Services;
+using XDB.Utilities;
 
 namespace XDB.Modules
 {
@@ -25,6 +28,34 @@ namespace XDB.Modules
         {
             await Context.Message.DeleteAsync();
             await ReplyAsync(Xeno.Changelog);
+        }
+
+        // slightly out of place i know.
+        [RequireRoleByName("Badlands Council")] // and yes this is a really bad idea
+        [Command("shitposter"), Summary("Applies the shitposter role to a specified user.")]
+        [Ratelimit(1, 1, Measure.Hours)]
+        public async Task Shitposter(SocketGuildUser user)
+        {
+            var spRole = Context.Guild.Roles.First(x => x.Name == "Shitposter");
+            var protectedRoles = new string[] { "Owners", "Head-Admin", "Community Manager" };
+            if (protectedRoles.Any(x => user.Roles.Any(y => y.Name == x)))
+            {
+                await SendErrorEmbedAsync($@"Cannot apply shitposter role to someone with any of these roles:{Environment.NewLine}`{string.Join(" `,`", protectedRoles)}`");
+                return;
+            }
+
+            if (user.Roles.Any(x => x.Name == "Shitposter"))
+            {
+                await user.RemoveRoleAsync(spRole);
+                await Logging.TryLoggingAsync($":poop:  `{Context.User.Username}#{Context.User.Discriminator}` has removed the `Shitposter` role from: {user.Mention}");
+                await ReplyThenRemoveAsync(":ok_hand: **Role removed.**");
+            } else
+            {
+                await user.AddRoleAsync(spRole);
+                await Logging.TryLoggingAsync($":poop:  `{Context.User.Username}#{Context.User.Discriminator}` has applied the `Shitposter` role to: {user.Mention}");
+                await ReplyThenRemoveAsync(":ok_hand: **Role applied.**");
+            }
+            
         }
 
         [Command("8ball"), Summary("Asks the magic 8 ball a question.")]
