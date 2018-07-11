@@ -9,13 +9,14 @@ namespace XDB
 {
     public class Xeno
     {
-        public static readonly string Version = "1.3.5";
+        public static readonly string Version = "1.3.5qol";
         public static readonly string Changelog = $@"I've updated to `v{Version}`.
 
 **Changes:**
-~ 
-~
-~";
+~ Fixed the warn argument not allowing an uncontained string.
+~ Fixed some audio non-leave cases.
+~ Changed how the bot replys command success for some commands.
+~ Minor command formatting changes";
 
         public static string Status = $"XDB (rel: {Version})(api: {DiscordConfig.Version})";
 
@@ -42,8 +43,6 @@ namespace XDB
         public static string TempBanPath = Path.Combine(AppContext.BaseDirectory, $"data/tempbans.json");
         public static string CringePath = Path.Combine(AppContext.BaseDirectory, $"data/boardmessages.json");
         public static string BlacklistedUsersPath = Path.Combine(AppContext.BaseDirectory, $"data/blacklisted_users.json");
-
-        public static string LocalAudioPath = Path.Combine(AppContext.BaseDirectory, $"data/local_audio");
 
         public static Color RandomColor()
         {
