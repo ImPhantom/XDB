@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Rest;
 using Discord.WebSocket;
 using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,6 @@ namespace XDB
         private CheckingService _checking;
         private BoardService _board;
         private ListService _lists;
-        private AudioService _audio;
         private TagService _tags;
 
         public async Task Run()
@@ -55,8 +55,6 @@ namespace XDB
 
             _lists = new ListService(client);
             _lists.Initialize();
-
-            _audio = new AudioService();
 
             _tags = new TagService();
             _tags.Initialize();
@@ -102,7 +100,6 @@ namespace XDB
                 .AddSingleton<RemindService>()
                 .AddSingleton<CheckingService>()
                 .AddSingleton<ListService>()
-                .AddSingleton<AudioService>()
                 .AddSingleton<TagService>();
 
             return new DefaultServiceProviderFactory().CreateServiceProvider(services);
@@ -111,17 +108,6 @@ namespace XDB
         #region Events
         private async Task OnVoiceStateChange(SocketUser user, SocketVoiceState before, SocketVoiceState after)
         {
-            if (user.Id == client.CurrentUser.Id)
-            {
-                if (after.VoiceChannel == null) // if bot somehow randomly disconnects from voice force end audio
-                    await _audio.LeaveAudio(before.VoiceChannel.Guild);
-
-                if(_audio.ConnectedChannels.TryGetValue(before.VoiceChannel.Guild.Id, out ulong channelId)) // modify dictionary value everytime the bot moves channels
-                    if (_audio.ConnectedChannels.TryUpdate(before.VoiceChannel.Guild.Id, after.VoiceChannel.Id, before.VoiceChannel.Id))
-                        BetterConsole.Log("Notice", "Voice", "Bot has moved channels, updated dictionary.");
-            }
-                
-
             if (_checking.Mutes.Any(x => x.UserId == user.Id))
             {
                 var mute = _moderation.FetchMutes().First(x => x.UserId == user.Id);
@@ -216,34 +202,64 @@ namespace XDB
                     await Task.Delay(6000);
                     await message.Channel.SendMessageAsync("Cares.");
                 }
-                    
+            await Task.CompletedTask;
         }
 
-        private async Task OnMessageDelete(Cacheable<IMessage, ulong> message, ISocketMessageChannel channel)
+        private async Task OnMessageDelete(Cacheable<IMessage, ulong> _message, ISocketMessageChannel _channel)
         {
             if (Config.Load().ExtraLogging)
             {
-                if (!message.HasValue)
-                    return;
-                var msg = await message.GetOrDownloadAsync();
-                if (msg.Content.Contains("~") || msg.Author.IsBot || Config.Load().IgnoredChannels.Contains(channel.Id))
-                    return;
+                try
+                {
+                    if (_message.Value.Author.IsBot)
+                        return;
 
-                await Logging.TryLoggingAsync($":heavy_multiplication_x: (`#{channel.Name}`) **{msg.Author.Username}** deleted their message:\n{msg.Content.Replace("@", "@\u200B")}");
+                    if(_message.Value.Channel is ITextChannel channel)
+                    {
+                        var log = await channel.Guild.GetAuditLogsAsync(1);
+                        var audit = log.ToList();
+                        var name = $"`{_message.Value.Author}`";
+                        var logData = audit[0].Data as MessageDeleteAuditLogData;
+
+                        if (logData?.ChannelId == _message.Value.Channel.Id && audit[0].Action == ActionType.MessageDeleted)
+                            name = $"`{audit[0].User}`";
+
+                        var loggingMessage = $":heavy_multiplication_x: ({channel.Mention}) {name} deleted {_message.Value.Author.Mention}'s message:\n{_message.Value.Content.Replace("@", "@\u200B")}";
+                        await Logging.TryLoggingAsync(loggingMessage);
+                    }
+                } catch (Exception e)
+                {
+                    BetterConsole.LogError("Event Logging", e.InnerException.ToString());
+                }
+                await Task.CompletedTask;
             }
         }
 
-        private async Task OnMessageUpdate(Cacheable<IMessage, ulong> before, SocketMessage after, ISocketMessageChannel channel)
+        private async Task OnMessageUpdate(Cacheable<IMessage, ulong> _before, SocketMessage _after, ISocketMessageChannel _channel)
         {
             if (Config.Load().ExtraLogging)
             {
-                var old = await before.GetOrDownloadAsync();
-                if (old.Content != after.Content)
+                try
                 {
-                    if (after.Author.IsBot || Config.Load().IgnoredChannels.Contains(channel.Id))
-                        return;
-                    await Logging.TryLoggingAsync($":heavy_plus_sign: **{after.Author.Username}** edited their message:\n**Before:** {old.Content.Replace("@", "@\u200B")}\n**After:** {after.Content.Replace("@", "@\u200B")}");
+                    var before = (_before.HasValue ? _before.Value : null) as IUserMessage;
+                    if(_channel is IGuildChannel channel)
+                    {
+                        if (_after.Author.IsBot)
+                            return;
+
+                        var after = _after as IUserMessage;
+                        if (_after.Content == null || before == null || before.Content == after?.Content)
+                            return;
+
+                        var loggingMessage = $":heavy_plus_sign: `{after?.Author}` has edited their message:\n**Before:** {_before.Value.Content}\n**After:** {_after.Content}";
+                        await Logging.TryLoggingAsync(loggingMessage);
+                    
+                    }
+                } catch (Exception e)
+                {
+                    BetterConsole.LogError("Event Logging", e.InnerException.ToString());
                 }
+                await Task.CompletedTask;
             }
         }
 
