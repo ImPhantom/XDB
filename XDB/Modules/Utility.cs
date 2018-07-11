@@ -2,7 +2,6 @@
 using Discord.Commands;
 using Google.Apis.Customsearch.v1;
 using Google.Apis.Customsearch.v1.Data;
-using Google.Apis.Urlshortener.v1;
 using Google.Apis.Services;
 using Newtonsoft.Json.Linq;
 using System;
@@ -11,7 +10,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using XDB.Common.Types;
-using Google.Apis.Urlshortener.v1.Data;
 
 namespace XDB.Modules
 {
@@ -20,7 +18,6 @@ namespace XDB.Modules
     public class Utility : ModuleBase<SocketCommandContext>
     {
         private CustomsearchService _search;
-        private UrlshortenerService _shortener;
 
         protected override void BeforeExecute(CommandInfo command)
         {
@@ -32,24 +29,6 @@ namespace XDB.Modules
                 ApiKey = Config.Load().GoogleKey,
                 MaxUrlLength = 256
             });
-
-            _shortener = new UrlshortenerService(new BaseClientService.Initializer()
-            {
-                ApiKey = Config.Load().GoogleKey
-            });
-        }
-
-        [Command("shorten"), Summary("Shortens a link.")]
-        public async Task Shorten([Remainder] string url)
-        {
-            if(!url.Contains("http"))
-            {
-                await ReplyAsync(":heavy_multiplication_x:  Please provide a valid link.");
-                return;
-            }
-            var response = _shortener.Url.Insert(new Url { LongUrl = url }).ExecuteAsync();
-            await Context.Message.DeleteAsync();
-            await ReplyAsync($":heavy_check_mark:  Shortened: {response.Result.Id}");
         }
 
         [Command("google"), Alias("g"), Summary("Returns a search query from google.")]
