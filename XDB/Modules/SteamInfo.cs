@@ -7,11 +7,12 @@ using SteamWebAPI2.Interfaces;
 using XDB.Common.Types;
 using XDB.Common;
 using System.Diagnostics;
-using System.Net.Http;
-using System.IO;
-using System.Text.RegularExpressions;
 using XDB.Utilities;
 using XDB.Common.Attributes;
+using Phantom.CSourceQuery;
+using System.Net;
+using System.Text;
+using Humanizer;
 
 namespace XDB.Modules
 {
@@ -19,42 +20,69 @@ namespace XDB.Modules
     [RequireContext(ContextType.Guild)]
     public class SteamInfo : XenoBase
     {
-        [Ratelimit(2, 1, Measure.Hours)]
-        [Command("query"), Summary("Querys a source server for its public information.")]
-        public async Task QuerySourceServer(string queryIp)
+        [Ratelimit(3, 1, Measure.Hours)]
+        [Command("query"), Alias("sourcequery", "sq"), Summary("Querys a source server for its public information.")]
+        public async Task QuerySource(string queryIp)
         {
             var sw = Stopwatch.StartNew();
             var ip = queryIp.Split(':');
             if (ip.Length != 2)
                 return;
 
-            var url = $"http://45.63.78.183/query.php?ip={ip[0]}&port={ip[1]}";
-            using (HttpClient client = new HttpClient())
-            using (HttpResponseMessage response = await client.GetAsync(url))
-            using (HttpContent content = response.Content)
-            {
-                var stream = await content.ReadAsStreamAsync();
-                var reader = new StreamReader(stream);
-                string _streamContent;
-                while ((_streamContent = reader.ReadLine()) != null)
-                {
-                    string vac;
-                    _streamContent = Regex.Replace(_streamContent, "<br />", Environment.NewLine);
-                    string[] _content = _streamContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-                    if (_content[6] == "1") vac = "Yes"; else vac = "No";
-                    sw.Stop();
-                    var embed = new EmbedBuilder().WithColor(new Color(29, 140, 209)).WithDescription($"__**{_content[1]}**__\n\n").WithFooter($"Generated in: {sw.ElapsedMilliseconds}ms");
-                    embed.AddField("Map:", $"`{_content[4]}`", true);
-                    embed.AddField("Players:", $"{_content[2]}/{_content[3]}", true);
-                    embed.AddField("Game:", _content[0], true);
-                    embed.AddField("Gamemode:", $"`{_content[5]}`", true);
-                    embed.AddField("OS:", SteamUtil.GetServerOS(_content[7]), true);
-                    embed.AddField("VAC Secure:", vac, true);
+            var endpoint = new IPEndPoint(IPAddress.Parse(ip[0]), int.Parse(ip[1]));
 
-                    await ReplyAsync("" , embed: embed.Build());
-                }
-            }
+            var sq = new SourceQuery();
+            var serverInfo = sq.QueryServer(endpoint);
+
+            var embed = new EmbedBuilder()
+                .WithColor(new Color(29, 140, 209))
+                .WithTitle($"{serverInfo.Name}")
+                .WithDescription($"To get the full playerlist, run:\n`{Config.Load().Prefix}players {queryIp}`")
+                .WithFooter($"Generated in: {sw.ElapsedMilliseconds}ms");
+            embed.AddField("Map:", $"`{serverInfo.Map}`", true);
+            embed.AddField("Players:", $"{serverInfo.PlayerCount}/{serverInfo.MaxPlayers}", true);
+            embed.AddField("Gamemode:", $"{serverInfo.Game}", true);
+            embed.AddField("Server OS:", $"{serverInfo.OS} ({serverInfo.Dedicated})", true);
+            embed.AddField("VAC Status:", $"{serverInfo.VAC}", true);
+
+            await ReplyAsync("", embed: embed.Build());
         }
+
+        [Ratelimit(3, 1, Measure.Hours)]
+        [Command("players"), Alias("sqp"), Summary("Querys a source server for information on its players.")]
+        public async Task QueryPlayers(string queryIp)
+        {
+            var sw = Stopwatch.StartNew();
+            var ip = queryIp.Split(':');
+            if (ip.Length != 2)
+                return;
+
+            var endpoint = new IPEndPoint(IPAddress.Parse(ip[0]), int.Parse(ip[1]));
+
+            var sq = new SourceQuery();
+            var serverInfo = sq.QueryServer(endpoint);
+            var playerList = sq.QueryPlayers(endpoint);
+
+            var str = new StringBuilder();
+            str.AppendLine();
+
+            var maxSize = (playerList.Select(x => x.Name).ToArray()).Max(x => x.Length) + 6;
+            foreach(var player in playerList)
+            {
+                var name = player.Name.PadRight(maxSize);
+                str.AppendLine(string.Format("{0}{1}", name, (new TimeSpan(0, 0, Convert.ToInt32(player.Time)).Humanize())));
+            }
+                
+
+            var embed = new EmbedBuilder()
+                .WithColor(new Color(29, 140, 209))
+                .WithTitle($"{serverInfo.Name} ({serverInfo.PlayerCount}/{serverInfo.MaxPlayers})")
+                .WithDescription($"```{str.ToString()}```")
+                .WithFooter($"Generated in: {sw.ElapsedMilliseconds}ms");
+
+            await ReplyAsync("", embed: embed.Build());
+        }
+
 
         [Command("steamuser"), Alias("suser"), Summary("Provides all information about a steam user.")]
         public async Task FetchSteamUser(string input)
@@ -108,7 +136,8 @@ namespace XDB.Modules
                 var details = await _store.GetStoreAppDetailsAsync(app.AppId);
                 var embed = new EmbedBuilder().WithTitle(details.Name).WithThumbnailUrl(details.HeaderImage).WithFooter(new EmbedFooterBuilder().WithText($"Current Players: {ret.Data}, Released: {details.ReleaseDate.Date}")).WithDescription($"{details.AboutTheGame.Substring(0, 675)}...\n\n**Publisher(s):** {string.Join(", ", details.Publishers)}\n**Store Link:** http://store.steampowered.com/app/{details.SteamAppId}/");
                 await ReplyAsync("", embed: embed.Build());
-            } else
+            }
+            else
             {
                 await ReplyAsync(":x: Game not found, try typing the full game title");
             }
